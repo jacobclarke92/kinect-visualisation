@@ -1,0 +1,143 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Live Visuals | Controls</title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <script type="text/javascript">
+    	w = false;
+    	controlsLoaded = true;
+    	if (window.opener != null && !window.opener.closed) {
+    		// window.opener.testConnection();
+    		w = window.opener;
+    	}
+    	window.onunload = function() {
+    		w.controlsClosed();
+    	}
+    	function loaded() {
+    		if(w) w.startPage('lsd1');
+        if(w.gotKinect) w.jQuery('#kinectCheck',document).removeClass('error');
+        if(w.gotAudio) w.jQuery('#soundCheck',document).removeClass('error');
+    	}
+    </script>
+
+
+</head>
+<body onload="loaded()" onkeypress="w.keyPressed(event)">
+
+  <h2>
+    <span class="error" id="soundCheck">Sound</span> | 
+    <span class="error" id="kinectCheck">Kinect</span>
+  </h2>
+  <div id="volumeBar"></div>
+  <br>
+	<p>
+      <script>
+      for(var n=0; n < w.effects.length; n++) {
+        document.write('<a href="javascript:w.changeScript(\''+w.effects[n]+'\')" id="'+w.effects[n]+'" class="changeScript">'+w.effects[n]+'</a>');
+        // if(n < w.effects.length-1) document.write(' | ');
+      }
+      </script>
+    </p>
+
+    <div id="paletteZone"></div>
+
+    <div id="controlsZone" class="left"></div>
+    
+    <div id="canvasControls" class="left">
+      <form action="javascript:void(0); return false;">
+        <table align="center" id="canvasControls">
+          <thead><tr><td colspan="3">Canvas Controls</td></tr></thead>
+          <tbody>
+
+            <tr><td align="right">depthThreshhold</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasDepthThreshold" min="100" max="200" step="1" value="145">
+            </td><td>
+              (100 - 200)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="0" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">depthRange</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasDepthRange" min="1" max="50" step="1" value="20">
+            </td><td>
+              (1 - 200)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="1" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">mirrored</td><td>
+              <input type="checkbox" checked="checked" id="canvasMirror" onchange="w.updateCanvas(); w.dragCC(this,true); w.saveCookie();">
+            </td><td></td></tr>
+
+            <tr><td align="right">zoom</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasZoom" min="0.2" max="4" step="0.05" value="1">
+            </td><td>
+              (0.2 - 2)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="2" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">rotateX</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()"  id="canvasRotateX" min="-65" max="65" step="5">
+            </td><td>
+              (-65° - 65°)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="3" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">rotateY</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasRotateY" min="-65" max="65" step="5">
+            </td><td>
+              (-65° - 65°)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="4" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">perspective</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasPerspective" min="10" max="2000" step="10" value="800">
+            </td><td>
+              (10 - 2000)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="5" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">offsetX</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasOffsetX" min="-200" max="200" step="5">
+            </td><td>
+              (-200 - 200)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="6" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+
+            <tr><td align="right">offsetY</td><td>
+              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasOffsetY" min="0" max="200" step="5" value="0">
+            </td><td>
+              (0 - 200)
+            </td><td>
+              <input type="button" class="map" value="map" data-id="7" onclick="w.mapCC(this, true)"></td>
+            </td></tr>
+            <tr><td colspan="3" align="center">
+              <input type="reset" value="reset" onclick="setTimeout(function() {w.updateCanvas(); w.dragCC(this,true)},200)">
+            </td></tr>
+          </tbody>
+
+        </table>
+      </form>
+    </div>
+    <!--
+    <p style="clear:both">
+      <input type="checkbox" id="imageToggle" onchange="w.toggleTesting('image',false); w.saveCookie()">
+      <a href="javascript:w.randomizeImage()">Random test image</a> | 
+      <a href="javascript:w.toggleTesting('sound',this)">Enable test sound</a>
+    </p>
+    <p>
+      <input type="text" readonly value="chrome://settings/content#media-stream-settings" onclick="this.select()" style="width: 300px; text-align: center;">
+    </p>
+    -->
+
+</body>
+</html>

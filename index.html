@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Live Visuals</title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style type="text/css">
+   
+    #contentZone{
+      perspective-origin: 50% 240px;
+      perspective: 800px;
+    }
+    #processingCanvas{
+      zoom: 1;
+      transform: scaleX(-1);
+      border: 2px solid #111;
+    }
+    #testCanvas{
+      zoom: 0.5;
+      /*display: block !important;*/
+    }
+
+    </style>
+    
+    <script language="javascript" src="/scripts/pixi.dev.js"></script>
+    <script data-main="scripts/init" src="node_modules/requirejs/require.js"></script>
+
+    <script type="application/javascript">
+
+
+      var sampleSize = 2048;
+      var sendFFT = true; // can be more processor intensive
+
+
+      effects = [
+        'lsd1',
+        'triangles1',
+        'triangles2',
+        'squiggle',
+        'outline1',
+        'outline2',
+        'outline3',
+        'circles1',
+        'triangulation1',
+        'fft',
+        'spheres3D',
+        'cubes3D',
+        'cubes3D_springy'
+      ];
+
+      
+    </script>
+
+  </head>
+
+
+  <body>
+    <div id="contentZone">
+      <canvas id="testCanvas" width="640" height="480"></canvas>
+      <canvas id="processingCanvas"></canvas>
+      <canvas id="processingCanvas3D"></canvas>
+    </div>
+    <br>
+    
+    <p id="openControlsToggle">
+      <a href="javascript:openControls()">Open controls</a>
+    </p>
+    
+  </body>
+</html>
+ 

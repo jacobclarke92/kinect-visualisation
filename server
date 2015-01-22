@@ -1,0 +1,181 @@
+#!/usr/bin/env node
+
+var BufferedNetstringStream = require('./scripts/netstring').BufferedNetstringStream;
+var http = require('http');
+var fs = require('fs');
+var midi = require('midi');
+var httpRequest = require('http-request');
+
+
+
+var selectPort = 0;
+
+if(process.argv.length > 2) {
+  var params = process.argv.slice(2);
+  // console.log(params);
+  for(var i=0; i < params.length; i++) {
+    
+    var param = params[i];
+    if(param.indexOf('-port') === 0) {
+      selectPort = parseInt( param.substring(5,param.length) )
+      // console.log("port: "+selectPort);
+    }
+
+  }
+
+}else{
+  console.log("no params given! include -portXX to select midi device");
+}
+
+
+
+
+
+
+var input = new midi.input();
+
+
+var portCount = input.getPortCount();
+console.log(portCount+" MIDI PORTS AVAILABLE");
+
+if(portCount < selectPort) {
+  console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
+  selectPort = 0;
+}
+
+for(var i=0; i < input.getPortCount(); i ++) {
+  console.log('port'+i+": "+input.getPortName(i));
+}
+
+// /^[a-zA-Z\s\-]+$/
+
+// // Configure a callback.
+input.on('message', function(deltaTime, message) {
+
+  clients.forEach(function(client) {
+    client.write('data: ' + message + '\n\n');
+  });
+  //console.log('m:' + message + ' d:' + deltaTime);
+});
+
+console.log("Using port "+selectPort);
+// // Open the first available input port.
+input.openPort(selectPort);
+
+
+
+// // Sysex, timing, and active sensing messages are ignored
+// // by default. To enable these message types, pass false for
+// // the appropriate type in the function below.
+// // Order: (Sysex, Timing, Active Sensing)
+// // For example if you want to receive only MIDI Clock beats
+// // you should use 
+// // input.ignoreTypes(true, false, true)
+input.ignoreTypes(false, false, false);
+
+
+//get top colours xml
+
+console.log('Attempting to download top colours palette')
+httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './palettes.xml', function (error, result) {
+    if (error) {
+        console.error('Error getting xml file',error);
+    } else {
+        console.log('File downloaded at: ' + result.file);
+    }
+});
+
+
+
+//start doing stream data stuff
+
+var clients = [], id = 0;
+
+function stream(req, res) {
+  res.writeHead(200, {
+    'Content-Type':  'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection':    'keep-alive'
+  });
+
+  clients.push(res);
+
+  req.on('close', function() {
+    var index = clients.indexOf(res);
+    if (index != -1) {
+      clients.splice(index, 1);
+    }
+  });
+}
+
+
+function serve(res, path, contentType) {
+  fs.readFile(path, function(err, data) {
+    if (err) {
+      res.writeHead(500, {'Content-Type': 'text/plain'});
+      res.write('500 Error');
+    } else {
+      res.writeHead(200, {'Content-Type': contentType});
+      res.write(data);
+    }
+    res.end();
+  });
+}
+
+function writeImage(image) {
+
+  console.log(image);
+  var uri = 'data:image/png;base64,' + image.toString('base64');
+
+  clients.forEach(function(client) {
+    client.write('id: ' + id + '\n');
+    //client.write('fft: ' + JSON.stringify(fftLevels) + '\n');
+    client.write('data: ' + uri + '\n\n');  
+
+    //fftLevels = new Array(2048);
+  });
+
+  id++;
+}
+
+var urlRules = [
+
+  ['/effects/','application/javascript'],
+  ['.pde','text/processing'],
+  ['.png','image/png'],
+  ['.js','application/javascript'],
+  ['.html','text/html'],
+  ['.css','text/css'],
+  ['.json','text/event-stream'],
+  ['.xml','text/xml']
+];
+
+var server = http.createServer(function(req, res) {
+
+  
+  if (req.url == '/images') {
+    stream(req, res);
+
+  } else {
+    var found = false;
+    for(var i=0; i< urlRules.length; i++) {
+      if (req.url.indexOf(urlRules[i][0]) > -1) {
+        serve(res, __dirname + req.url, urlRules[i][1]);
+        found = true;
+      }
+    }
+    if(!found) {
+      serve(res, __dirname + '/index.html', 'text/html');
+    }
+  }
+
+});
+
+
+console.log('server will start in 5 seconds...');
+setTimeout(function() {
+  process.stdin.resume();
+  process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
+  server.listen(5600);
+},4000);
+
