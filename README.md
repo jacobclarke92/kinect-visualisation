@@ -9,6 +9,8 @@ I'm working on a system that uses kinect depth data, audio analysis and midi inp
 2. [libfreenect](https://github.com/OpenKinect/libfreenect) and
 [libpng](http://www.libpng.org/). I would highly recommend OS X users use [Homebrew](http://mxcl.github.com/homebrew/) to install these dependencies
 
+`brew install libfreenect libpng`
+
 3. [Node.js](http://nodejs.org/) to run the streaming server and to install other dependencies
 
 
@@ -28,7 +30,6 @@ If all has gone as expected you should see a stream of a data running in termina
 The node server will be running at 
 
 `http://localhost:5600/`
-
 
 
 
