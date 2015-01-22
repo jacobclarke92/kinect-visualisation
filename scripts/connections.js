@@ -141,11 +141,11 @@ function run() {
           //generate array of outline points, second parameter is smoothing
           outlineArray = MarchingSquares.getBlobOutlinePointsFromImage(pixels, 3, 20);
 
-          if(!startedPhysics) {
-            startPhysics();
+          // if(!startedPhysics) {
+          //   startPhysics();
 
-            startedPhysics = true;
-          }
+          //   startedPhysics = true;
+          // }
 
           // var tmp = Smooth(outlineArray, {
           //     method: Smooth.METHOD_CUBIC, 

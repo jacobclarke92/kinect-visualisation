@@ -33,8 +33,8 @@
     MarchingSquares.minPoints = 20;
 
     MarchingSquares.cT = 0;
-    MarchingSquares.cR = 0;
-    MarchingSquares.cB = 0;
+    MarchingSquares.cR = 320;
+    MarchingSquares.cB = 240;
     MarchingSquares.cL = 0;
 
     // Takes a canvas and returns a list of pixels that
@@ -91,11 +91,11 @@
 
         // var context = canvas.getContext("2d");
         var y, i, rowData;
-        for(y = window.cropTop; y < MarchingSquares.h - window.cropBottom; y+= 10){
+        for(y = MarchingSquares.cT; y < MarchingSquares.h - MarchingSquares.cB; y+= 10){
             rowData = MarchingSquares.sourceContext.getImageData(0, y, MarchingSquares.w, 1).data;
             // MarchingSquares.sourceContext.putImageData(rowData, MarchingSquares.w, y);
             // rowData = rowData.data;
-            for(i=window.cropLeft*4; i<rowData.length - window.cropRight*4; i+=4){
+            for(i=MarchingSquares.cL*4; i<rowData.length - MarchingSquares.cR*4; i+=4){
                 // console.log(rowData[i+2]);
                 if(rowData[i+2] > depthThreshold && rowData[i+2] < 255){
 

@@ -1,15 +1,9 @@
 effect_circles1 = {
 
-  invertImageData: false,
-  flattenDepth: false,
-  getImageEdges: false,
-
-  screens: [],
-  graphics: false,
-
   init: function() {
     setMapping('volumeDivider', 400, 100, 150);
     setMapping('maxPointDist', 10, 200, 20);
+    setMapping('lineThickness', 1, 50, 2);
     setMapping('trailAmount', 0, 1, 0.2); //51 works well
   },
 
@@ -33,21 +27,26 @@ effect_circles1 = {
     var rand1 = Math.floor(Math.random()*(320*240));
     while(!pixelInRange(pixels[rand1*4 +2]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
 
+    if(count >= breakLoop) return false;
+
     count = 0;
 
-    int rand2 = int(random(0,img.pixels.length-1));
+    var rand2 = Math.floor(Math.random()*(320*240));
     while(
       (
-        !pixelInRange(pixels[rand2*4 +2]) || comparePts(rand1,rand2) > maxPointDist || 
-        !pixelInRange(pixels[ Math.round( (rand1+rand2)/2 ) ] )
+        !pixelInRange(pixels[rand2*4 +2]) || 
+        comparePts(rand1,rand2) > maxPointDist || 
+        !pixelInRange(pixels[ Math.round( (rand1+rand2)/2 )*4 + 2 ] )
       )  && ++count < breakLoop ) { 
       rand2 = Math.floor(Math.random()*(320*240));
     }
 
+    if(count >= breakLoop) return false;
+
     var midpoint = Math.round((rand1+rand2)/2);
 
     var alf = 255;
-    alf = rangeAdjustedPixel(pixels[mean*4 +2])/255;
+    alf = rangeAdjustedPixel(pixels[midpoint*4 +2])/255;
 
 
     var yPos1 = Math.floor(rand1/320);
@@ -64,9 +63,9 @@ effect_circles1 = {
     var additionalSize = kickVolume/20;
     // additionalSize += img.pixels[midpoint];
 
-    this.graphics.lineStyle(randomPaletteColour(), alf);
+    this.graphics.lineStyle(lineThickness, randomPaletteColour(), alf);
 
-    this.graphics.circle(xPos3, yPos3, diameter/2 + additionalSize);
+    this.graphics.drawCircle(xPos3*2, yPos3*2, diameter/2 + additionalSize);
 
   }
 

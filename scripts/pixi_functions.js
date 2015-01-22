@@ -46,7 +46,15 @@ function pixelInRange(val) {
 	return (val > depthThreshold && val < depthThreshold+depthRange) ? true : false;
 }
 function dist(x1,y1,x2,y2) {
+	
 	return Math.sqrt( Math.pow(x2-x1,2) + Math.pow(y2-y1,2) );
+}
+function rand(from,to) {
+	var range = Math.abs(from) + Math.abs(to);
+	return (from + Math.random()*range);
+}
+function r(flot) {
+	return Math.round(flot);
 }
 
 function comparePts(pos1, pos2) {
@@ -59,6 +67,9 @@ function comparePts(pos1, pos2) {
 	
 	return dist(xPos1, yPos1, xPos2, yPos2);
   
+}
+function maybeLog(val) {
+	if(Math.random()*500 <= 1) console.log(val);
 }
 
 
@@ -92,10 +103,10 @@ function addFrame() {
 
 function animateFrame() {
 
-	$('#volumeBar',controlsPopup.document).css('width',(volume/50)+'%');
+	$('#volumeBar',controlsPopup.document).css('width',(volume/255)+'%');
 
 	if(currentScript) {
-		if(typeof currentScript.initFrame != 'undefined') currentScript.initFrame();
+		if(typeof currentScript.initFrame != 'undefined') currentScript.initFrame(currentScript);
 		else initFrame();
 		currentScript.draw();
 		addFrame();
@@ -131,6 +142,10 @@ function changeScript(script) {
 				
 				//always run init before anything else
 				currentScript.init();
+				if(typeof currentScript.screens == 'undefined') {
+					currentScript.screens = [];
+					currentScript.graphics = false;
+				}
 				createControls();
 
 				console.info('Script loaded! ',currentScript);

@@ -391,7 +391,7 @@ function updateCanvas(getVals) {
 
   var transform = 'scaleX('+mirror+') rotateX('+rotateX+'deg) rotateY('+rotateY+'deg)';
       transform += ' translate('+offsetX+'px,'+offsetY+'px)';
-  $('#processingCanvas,#processingCanvas3D').css({
+  $('.effectsRenderer,#processingCanvas3D').css({
     'zoom': zoom,
     'transform': transform
   });

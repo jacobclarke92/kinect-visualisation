@@ -14,7 +14,7 @@ effect_triangles1 = {
 	init: function() {
 		setMapping('volumeDivider', 400, 100, 150);
 		setMapping('maxPointDist', 10, 200, 20);
-		setMapping('trailAmount', 0, 1, 0.2); //51 works well
+		setMapping('trailAmount', 0, 0.5, 0.2); //51 works well
 	},
 	
 
