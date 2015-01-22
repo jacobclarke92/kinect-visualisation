@@ -13,6 +13,7 @@ I'm working on a system that uses kinect depth data, audio analysis and midi inp
 
 
 Once Step 2 is done, navigate to the root folder in terminal and install npm dependencies
+
 `npm install`
 
 Then to launch the server type
