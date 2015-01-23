@@ -12,5 +12,5 @@
 * Make a heap of effects!
 
 * Expand upon audio/FFT anaysis
-** make a frequency spectrum output in the controls window for range selection
-** implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
+	* make a frequency spectrum output in the controls window for range selection
+	* implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
