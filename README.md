@@ -26,10 +26,14 @@ You will be prompted with a list of MIDI devices if you have any plugged in/runn
 
 `./launcher | ./server -port2`
 
+*Note: if you get an error 'Bus error: 10', then I recommend just [enabling a midi network session](http://support.apple.com/kb/PH5171), this simply gives it a midi port to work with. I'm unsure why this error occurs.
+
 If all has gone as expected you should see a stream of a data running in terminal after a few seconds.
 The node server will be running at 
 
 `http://localhost:5600/`
+
+Obviously enable popups. I use chrome but it should work for any browser (tested and working in firefox). I wish there were a way to permanently allow a site to access microphone in chrome... Allowallwoalwowlawoalwawoalwoaw
 
 
 
