@@ -71,7 +71,7 @@ effect_outline3 = {
           if(outlineArray[i][1] < this.minY) this.minY = outlineArray[i][1];
           if(outlineArray[i][1] > this.maxY) this.maxY = outlineArray[i][1];
 
-          maybeLog(outlineArray[i][0]+", "+outlineArray[i][1]);
+          // maybeLog(outlineArray[i][0]+", "+outlineArray[i][1]);
 
           
           if(i == 1) this.graphics.moveTo(outlineArray[i][0]*2, outlineArray[i][1]*2);
