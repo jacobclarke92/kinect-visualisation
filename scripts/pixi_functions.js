@@ -42,7 +42,7 @@ function rangeAdjustedPixel(val) {
 
 }
 function pixelInRange(val) {
-	// console.log(val);
+	if(!gotKinect) return true; // mostly for debugging
 	return (val > depthThreshold && val < depthThreshold+depthRange) ? true : false;
 }
 function dist(x1,y1,x2,y2) {

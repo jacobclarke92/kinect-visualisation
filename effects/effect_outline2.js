@@ -1,4 +1,4 @@
-effect_outline1 = {
+effect_outline2 = {
 
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
@@ -12,15 +12,14 @@ effect_outline1 = {
 	lastX: 0,
 	lastY: 0,
 	lastDiff: 0,
-
 	draw: function() {
 
 		if(gotImage) {
 
 			this.graphics.lineStyle(lineThickness,randomPaletteColour());
 
-			// PImage edgeImg = createImage(img.width, img.height, ARGB);
 			var rez = Math.round(pixelResolution);
+
 			for (var x = rez; x < 320-rez; x+= rez) {
 				for (var y = 5; y < 240; y+= rez) {
 
@@ -35,26 +34,20 @@ effect_outline1 = {
 
 					// New color is difference between pixel and left neighbor
 					var diffLeft = Math.abs(pix - leftPix);
-
-					if(diffLeft > 0 && this.lastDiff > 0 && pixelInRange(pix)) {
-						this.graphics.moveTo(this.lastX*2, this.lastY*2);
-						this.graphics.lineTo(x*2, y*2);
-						// line(this.lastX,this.lastY,x,y);
+					if(diffLeft > 0 && this.lastDiff > 0) {
+						this.graphics.moveTo(this.lastX,this.lastY);
+						this.graphics.lineTo(x,y);
 					}
 
 
-					if(diffLeft > 50) {
+					if(diffLeft > 0) {
 					    this.lastX = x;
 					    this.lastY = y;
 					}
-					
 					this.lastDiff = diffLeft;
-
 
 				}
 			}
 		}
 	}
 }
-
-
