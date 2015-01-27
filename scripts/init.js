@@ -1,5 +1,16 @@
-requirejs(['jquery', 'underscore', 'marchingsquares', 'connections','mappings','audio','cookies','colours','pixi_functions'],
-function   ($, underscore, marchingsquares, connections, midi) {
+requirejs(
+	[
+		'jquery', 
+		'underscore',
+		'marchingsquares',
+		'connections',
+		'mappings',
+		'audio',
+		'cookies',
+		'colours',
+		'pixi_functions',
+		'/node_modules/event-source-polyfill/eventsource.js'
+	], function ($) {
   
 	console.info('all dependencies loaded');
 	openControls();

@@ -54,7 +54,7 @@ function startPage(fallback) {
     }
 
     if(e.data.substring(0,14) != 'data:image/png' ) {
-      updateMappings(e.data.split(','));
+      updateMappings(e.data.split(' '));
       console.log("midi: "+e.data);
     }
 
