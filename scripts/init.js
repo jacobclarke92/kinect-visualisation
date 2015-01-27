@@ -8,6 +8,7 @@ function   ($, underscore, marchingsquares, connections, midi) {
 
 	setTimeout(function() {
 		initPIXI();
+		startPage();
 	},500);
 	
 

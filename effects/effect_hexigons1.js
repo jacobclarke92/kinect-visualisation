@@ -44,16 +44,6 @@ effect_hexigons1 = {
 			if(pixelInRange(pix*4 + 2)) {
 
 				if(this.hexigons[i].triggerAmount > 0) this.graphics.lineStyle(2,randomPaletteColour());
-				// else if(i == mid) this.graphics.lineStyle(2,0x00FF00);
-				/*else if(
-						// (typeof midNum != 'undefined' && i == midNum)
-						   i == mid - 1
-						|| i == mid + 1
-						|| i == mid - 2
-						|| i == mid + 2
-						|| i == mid - rowLength + 1
-						|| i == mid - rowLength - 1
-						) this.graphics.lineStyle(2,0xFF0000);*/
 				else this.graphics.lineStyle(2,0xFFFFFF);
 				this.hexigons[i].draw();
 

@@ -7,9 +7,7 @@ I'm working on a system that uses kinect depth data, audio analysis and midi inp
 1. An old [Kinect](http://www.ebay.com/bhp/xbox-360-kinect-sensor) for starters, maybe the new ones work too I haven't tried
 
 2. [libfreenect](https://github.com/OpenKinect/libfreenect) and
-[libpng](http://www.libpng.org/). I would highly recommend OS X users use [Homebrew](http://mxcl.github.com/homebrew/) to install these dependencies
-
-`brew install libfreenect libpng`
+[libpng](http://www.libpng.org/). I would highly recommend OS X users use [Homebrew](http://mxcl.github.com/homebrew/) to install these dependencies `brew install libfreenect libpng`
 
 3. [Node.js](http://nodejs.org/) to run the streaming server and to install other dependencies
 
@@ -25,8 +23,6 @@ Then to launch the server type
 You will be prompted with a list of MIDI devices if you have any plugged in/running, to select a device add something like:
 
 `./launcher | ./server -port2`
-
-*Note: if you get an error 'Bus error: 10', then I recommend just [enabling a midi network session](http://support.apple.com/kb/PH5171), this simply gives it a midi port to work with. I'm unsure why this error occurs.
 
 If all has gone as expected you should see a stream of a data running in terminal after a few seconds.
 The node server will be running at 

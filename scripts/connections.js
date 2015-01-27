@@ -93,6 +93,7 @@ var bufferData = bufferContext.createImageData(width, height);
 outlineArray = [];
 
 var image;
+var imageLoaded = false;
 
 
 
@@ -104,6 +105,8 @@ function run() {
   image = new Image();
   var showDepth = true;
   image.onload = function() {
+
+    imageLoaded = image;
 
     bufferContext.drawImage(image, 0, 0);
     pixels = bufferContext.getImageData(0, 0, width, height).data;

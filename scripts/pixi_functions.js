@@ -106,10 +106,14 @@ function animateFrame() {
 	$('#volumeBar',controlsPopup.document).css('width',(volume/255)+'%');
 
 	if(currentScript) {
+		
 		if(typeof currentScript.initFrame != 'undefined') currentScript.initFrame(currentScript);
 		else initFrame();
+
 		currentScript.draw();
-		addFrame();
+
+		if(typeof currentScript.addFrame != 'undefined') currentScript.addFrame();
+		else addFrame();
 	}
 	// depthImageSprite.setTexture(depthTexture);
 	renderer.render(stage);
@@ -141,7 +145,9 @@ function changeScript(script) {
 				currentScript = window['effect_'+script];
 				
 				//always run init before anything else
-				currentScript.init();
+				if(typeof currentScript.init != 'undefined') currentScript.init();
+				else trailAmount = 1;
+
 				if(typeof currentScript.screens == 'undefined') {
 					currentScript.screens = [];
 					currentScript.graphics = false;
