@@ -163,9 +163,9 @@ var server = http.createServer(function(req, res) {
         found = true;
       }
     }
-    // if(!found) {
-    //   serve(res, __dirname + '/index.html', 'text/html');
-    // }
+    if(pathname == '/') {
+      serve(res, __dirname + '/index.html', 'text/html');
+    }
   }
 
 });

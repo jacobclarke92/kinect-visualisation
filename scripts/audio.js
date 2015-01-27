@@ -11,6 +11,9 @@ var audioStream;
 var volume = 0;
 
 var gotSound = false;
+var showFrequencyData = true;
+var showFrequencyDataSkip = 8;
+
 
 
 var session = {
@@ -32,7 +35,7 @@ function attemptUseMic() {
 }
 attemptUseMic();
 
-
+var initedControlsFreq = false;
 
 function setupAudioNodes(stream) {
 
@@ -65,9 +68,14 @@ function setupAudioNodes(stream) {
         volume += Math.abs(amplitudeArray[i]-128);
       }
 
-      if(loadedScript) {
-        // if(sendFFT) Processing.getInstanceById(processingInstanceName).setSound(frequencyArray);
-        // Processing.getInstanceById(processingInstanceName).setVolume(volume);
+      if(showFrequencyData) {
+        if(!initedControlsFreq) {
+          console.log(frequencyArray.length);
+          var bars = '';
+          for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) bars += '<div class="frequencyBar"></div>';
+          $('#frequencyBars',controlsPopup.document).html(bars);
+          initedControlsFreq = true;
+        }
       }
   }
 

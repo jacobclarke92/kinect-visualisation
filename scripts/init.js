@@ -19,7 +19,7 @@ requirejs(
 
 	setTimeout(function() {
 		initPIXI();
-		startPage();
+		startPage('depth_image');
 	},500);
 	
 

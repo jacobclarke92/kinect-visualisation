@@ -105,10 +105,22 @@ function animateFrame() {
 
 	$('#volumeBar',controlsPopup.document).css('width',(volume/255)+'%');
 
+    if(gotSound && showFrequencyData && typeof frequencyArray.length != 'undefined') {
+		var n=0;
+		// console.log(frequencyArray.length);
+		// console.log(frequencyArray);
+        for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
+        	n++;
+        	$('#frequencyBars .frequencyBar:eq('+n+')',controlsPopup.document).css('height',frequencyArray[i]);
+        }
+    }
+
 	if(currentScript) {
 		
 		if(typeof currentScript.initFrame != 'undefined') currentScript.initFrame(currentScript);
 		else initFrame();
+
+
 
 		currentScript.draw();
 

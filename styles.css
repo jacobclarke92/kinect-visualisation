@@ -77,3 +77,15 @@ input[type=range] {
   height: 10px;
   background-color: white;
 }
+
+#frequencyBars{
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+.frequencyBar{
+  width: 8px;
+  background-color: white;
+  display: inline-block;
+  vertical-align: top;
+}
