@@ -6,6 +6,8 @@ Object.size = function(obj) {
     return size;
 };
 
+var frequencyBars;
+var freqBarsCanvas;
 
 controlsPopup = false;
 function openControls() {
@@ -15,6 +17,11 @@ function openControls() {
 
 
     setTimeout(function() {
+      
+      frequencyBars = $('#frequencyBars',controlsPopup.document).get(0);
+      // console.log(frequencyBars);
+      freqBarsCanvas = frequencyBars.getContext('2d');
+
       if(typeof controlsPopup.controlsLoaded != 'undefined') $('#openControlsToggle').hide();
 
 

@@ -17,10 +17,45 @@
     	window.onunload = function() {
     		w.controlsClosed();
     	}
+      var curDrag = false;
+      var offsetLeft = 0;
+      function windowResize() {
+        offsetLeft = parseInt(w.jQuery('#frequencySelector',document).css('left'));
+        console.log(offsetLeft);
+      }
     	function loaded() {
-    		if(w) w.startPage('lsd1');
+    		// if(w) w.startPage('lsd1');
+        windowResize();
+
         if(w.gotKinect) w.jQuery('#kinectCheck',document).removeClass('error');
         if(w.gotAudio) w.jQuery('#soundCheck',document).removeClass('error');
+
+        w.jQuery('#leftSlider',document).bind('mousedown',function() {
+          console.log('left slider click');
+          curDrag = this;
+        });
+        w.jQuery('#rightSlider',document).bind('mousedown',function() {
+          console.log('right slider click');
+          curDrag = this;
+        });
+
+        w.jQuery(document,document).bind('mouseup',function() {
+          curDrag = false;
+        });
+        w.jQuery(document,document).bind('mousemove',function(e) {
+          if(curDrag != false) {
+            var posX = e.clientX - offsetLeft;
+            posX = posX < 0 ? 0 : posX > 512 ? 512 : posX;
+            w.jQuery(curDrag).css('left',posX+'px');
+
+            w.soundRange = [
+              parseInt(w.jQuery('#leftSlider',document).css('left')),
+              parseInt(w.jQuery('#rightSlider',document).css('left'))
+            ];
+            w.soundRange.sort();
+            if(w.soundRange[0] > w.soundRange[1]) w.soundRange.reverse();
+          }
+        })
     	}
     </script>
 
@@ -33,7 +68,11 @@
     <span class="error" id="kinectCheck">Kinect</span>
   </h2>
   <div id="volumeBar"></div>
-  <div id="frequencyBars"></div>
+  <div id="frequencySelector">
+    <canvas id="frequencyBars" width="512" height="200"></canvas>
+    <div id="leftSlider" class="slider"></div>
+    <div id="rightSlider" class="slider"></div>
+  </div>
   <br>
 	<p>
       <script>

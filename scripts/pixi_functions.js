@@ -103,17 +103,43 @@ function addFrame() {
 
 function animateFrame() {
 
-	$('#volumeBar',controlsPopup.document).css('width',(volume/255)+'%');
+	
 
-    if(gotSound && showFrequencyData && typeof frequencyArray.length != 'undefined') {
-		var n=0;
-		// console.log(frequencyArray.length);
-		// console.log(frequencyArray);
-        for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
-        	n++;
-        	$('#frequencyBars .frequencyBar:eq('+n+')',controlsPopup.document).css('height',frequencyArray[i]);
-        }
+    if(gotSound && showFrequencyData && typeof frequencyArray != 'undefined' && typeof frequencyArray.length != 'undefined') {
+		
+		if(freqBarsCanvas) {
+
+			var n=0;
+
+			freqBarsCanvas.fillStyle = 'rgb(0, 0, 0)';
+  			freqBarsCanvas.fillRect(0, 0, 512, 200);
+
+  			currentFreqRangeVolume = 0;
+
+  			var x = 0;
+
+  			for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
+	        	n++;
+	        	var barHeight = frequencyArray[i];
+	        	var barWidth = 20 - i;
+	        	if(barWidth < 1) barWidth = 1;
+
+
+			    if(x >= soundRange[0] && x <= soundRange[1]) {
+			    	freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+			    	currentFreqRangeVolume += barHeight;
+			    }else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
+			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);
+
+			    x += barWidth;
+	        	// $('#frequencyBars .frequencyBar:eq('+n+')',controlsPopup.document).css('height',frequencyArray[i]);
+	        }
+	        currentFreqRangeVolume /= soundRange[1]-soundRange[0];
+		}
     }
+
+    if(controlsPopup.curDrag != false) $('#volumeBar',controlsPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
+	else $('#volumeBar',controlsPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});
 
 	if(currentScript) {
 		

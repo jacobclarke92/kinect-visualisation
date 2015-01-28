@@ -79,13 +79,31 @@ input[type=range] {
 }
 
 #frequencyBars{
-  width: 100%;
+  width: 512px;
   height: 200px;
-  position: relative;
 }
-.frequencyBar{
-  width: 8px;
-  background-color: white;
-  display: inline-block;
-  vertical-align: top;
+#frequencySelector{
+  position: relative;
+  width: 512px;
+  height: 230px;
+  left: calc((100% - 512px) / 2);
+
+
+}
+.slider{
+  width: 10px;
+  height: 25px;
+  border: 1px solid white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin-left: -5px;
+  position: absolute;
+  cursor: ew-resize;
+}
+
+#leftSlider{
+  left: 0;
+}
+#rightSlider{
+  left: 100%;
 }

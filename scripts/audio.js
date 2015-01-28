@@ -12,7 +12,9 @@ var volume = 0;
 
 var gotSound = false;
 var showFrequencyData = true;
-var showFrequencyDataSkip = 8;
+var showFrequencyDataSkip = 1;
+var soundRange = [0,512];
+var currentFreqRangeVolume;
 
 
 
@@ -50,6 +52,7 @@ function setupAudioNodes(stream) {
   console.warn('fft size = '+analyserNode.fftSize);
   // analyserNode.fftSize = 256;
   analyserNode.fftSize = audioSampleSize;
+  console.warn('fft size = '+analyserNode.fftSize);
   analyserNode.smoothingTimeConstant = 0.5;
   javascriptNode = audioContext.createScriptProcessor(audioSampleSize, 1, 1);
 
@@ -68,6 +71,7 @@ function setupAudioNodes(stream) {
         volume += Math.abs(amplitudeArray[i]-128);
       }
 
+      /*
       if(showFrequencyData) {
         if(!initedControlsFreq) {
           console.log(frequencyArray.length);
@@ -77,6 +81,7 @@ function setupAudioNodes(stream) {
           initedControlsFreq = true;
         }
       }
+      */
   }
 
   sourceNode.connect(analyserNode);
