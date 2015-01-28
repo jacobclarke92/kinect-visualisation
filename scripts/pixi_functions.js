@@ -115,6 +115,7 @@ function animateFrame() {
   			freqBarsCanvas.fillRect(0, 0, 512, 200);
 
   			currentFreqRangeVolume = 0;
+  			var freqCount = 0;
 
   			var x = 0;
 
@@ -128,13 +129,14 @@ function animateFrame() {
 			    if(x >= soundRange[0] && x <= soundRange[1]) {
 			    	freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
 			    	currentFreqRangeVolume += barHeight;
+			    	freqCount ++;
 			    }else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
 			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);
 
 			    x += barWidth;
 	        	// $('#frequencyBars .frequencyBar:eq('+n+')',controlsPopup.document).css('height',frequencyArray[i]);
 	        }
-	        currentFreqRangeVolume /= soundRange[1]-soundRange[0];
+	        currentFreqRangeVolume /= freqCount;
 		}
     }
 

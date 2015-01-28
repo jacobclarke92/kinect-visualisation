@@ -22,6 +22,19 @@ function openControls() {
       // console.log(frequencyBars);
       freqBarsCanvas = frequencyBars.getContext('2d');
 
+      $('#leftSlider',controlsPopup.document).css('left',soundRange[0]+'px');
+      $('#rightSlider',controlsPopup.document).css('left',soundRange[1]+'px');
+
+      /*
+      var id = currentPalette ? currentPalette.id : paletteID ? paletteID : false;
+      console.log('paletteID: ',id);
+      if(id) {
+        // console.log(id);
+        console.log($('#'+id,controlsPopup.document));
+        $('#'+id,controlsPopup.document).addClass('active');
+      }
+      */
+
       if(typeof controlsPopup.controlsLoaded != 'undefined') $('#openControlsToggle').hide();
 
 
@@ -59,7 +72,7 @@ function openControls() {
       }
 
 
-    },200);
+    },1000);
 }
 function controlsClosed() {
   console.warn('controls closed!');
