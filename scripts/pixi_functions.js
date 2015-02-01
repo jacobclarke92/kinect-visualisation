@@ -10,6 +10,25 @@ var maxFrames = 500; //amount of trail frames to allows before force deleting th
 var breakLoop = 500; //amount of times a while loop can try before breaking
 
 
+//filter effects
+var displacementTexture = PIXI.Texture.fromImage("/img/displacement_map.png");
+var displacementFilter = new PIXI.DisplacementFilter(displacementTexture);
+var blurFilter = new PIXI.BlurFilter();
+var pixelateFilter = new PIXI.PixelateFilter();
+var invertFilter = new PIXI.InvertFilter();
+var rgbSplitterFilter = new PIXI.RGBSplitFilter();
+var twistFilter = new PIXI.TwistFilter();
+
+rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = rgbSplitterFilter.green.y = rgbSplitterFilter.blue.x = rgbSplitterFilter.blue.y = 0;
+
+var filterCollection = [displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter];
+
+window.displacement_filter = 0;
+window.blur_filter = 0;
+window.pixelate_filter = 0;
+window.invert_filter = 0;
+window.rgbSplit_filter = 0;
+window.twist_filter = 0;
 
 function initPIXI() {
 	stage = new PIXI.Stage(0x000000);
@@ -55,6 +74,9 @@ function rand(from,to) {
 }
 function r(flot) {
 	return Math.round(flot);
+}
+function isset(val) {
+	return (typeof val != 'undefined');
 }
 
 function comparePts(pos1, pos2) {
@@ -104,7 +126,7 @@ function addFrame() {
 function animateFrame() {
 
 	
-
+	//update sound spectrum visualisation in countrols window
     if(gotSound && showFrequencyData && typeof frequencyArray != 'undefined' && typeof frequencyArray.length != 'undefined') {
 		
 		if(freqBarsCanvas) {
@@ -134,7 +156,6 @@ function animateFrame() {
 			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);
 
 			    x += barWidth;
-	        	// $('#frequencyBars .frequencyBar:eq('+n+')',controlsPopup.document).css('height',frequencyArray[i]);
 	        }
 	        currentFreqRangeVolume /= freqCount;
 		}
@@ -155,7 +176,34 @@ function animateFrame() {
 		if(typeof currentScript.addFrame != 'undefined') currentScript.addFrame();
 		else addFrame();
 	}
-	// depthImageSprite.setTexture(depthTexture);
+
+
+	//apply webgl filters
+
+	//if one is defined then they probably all are
+	if(typeof displacement_filter != 'undefined') {
+		displacementFilter.scale.x = displacementFilter.scale.y = displacement_filter;
+		twistFilter.angle = twist_filter;
+		pixelateFilter.size.x = pixelateFilter.size.y = pixelate_filter;
+		invertFilter.invert = invert_filter;
+		rgbSplitterFilter.red.x = rgbSplit_filter;
+		rgbSplitterFilter.blue.x = -rgbSplit_filter;
+		blurFilter.blurX = blurFilter.blurY = blur_filter;
+
+		filterCollection = [];
+		if(displacement_filter != 0) filterCollection.push(displacementFilter);
+		if(twist_filter != 0) filterCollection.push(twistFilter);
+		if(pixelate_filter != 0) filterCollection.push(pixelateFilter);
+		if(rgbSplit_filter != 0) filterCollection.push(rgbSplitterFilter);
+		if(invert_filter != 0) filterCollection.push(invertFilter);
+		if(blur_filter != 0) filterCollection.push(blurFilter);
+		if(filterCollection.length == 0) filterCollection = null;
+	}	
+
+	
+	stage.filters = filterCollection;
+
+	//render it go go go
 	renderer.render(stage);
 	if(animating) requestAnimFrame(animateFrame);
 

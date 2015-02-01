@@ -42,11 +42,12 @@ function openControls() {
       
       if(typeof mappings['controls'] == 'undefined') {
         mappings['controls'] = [];
-        $('#canvasControls tr', controlsPopup.document).each(function(index,elem) {
+        $('#canvasControls tr, #renderEffectsControls tr', controlsPopup.document).each(function(index,elem) {
           
           if($('td',elem).length > 3) {
             var id = $('td:eq(3) input',elem).attr('data-id');
-            var name = $('td',elem).get(0).innerHTML;
+            // var name = $('td',elem).get(0).innerHTML;
+            var name = $('td:eq(1) input',elem).attr('id');
             var min = $('td:eq(1) input',elem).attr('min');
             var max = $('td:eq(1) input',elem).attr('max');
             var val = $('td:eq(1) input',elem).attr('value');
@@ -141,11 +142,14 @@ function isMappingSet(key,val) {
       // console.warn(mappings[hash][i][key]+' == '+val+'?');
       if(mappings[hash][i][key] == val) return i;
     }
-    for(var i=0; i < mappings['controls'].length; i++) {
-      // console.warn(mappings[hash][i][key]+' == '+val+'?');
-      if(mappings['controls'][i][key] == val) {
-        mappingCanvasControl = true;
-        return i;
+    if(typeof mappings['controls'] != 'undefined') {
+      for(var i=0; i < mappings['controls'].length; i++) {
+        // console.warn(mappings[hash][i][key]+' == '+val+'?');
+        if(mappings['controls'][i] && 
+        mappings['controls'][i][key] == val) {
+          mappingCanvasControl = true;
+          return i;
+        }
       }
     }
   }//else console.log('no mappings length hey', mappings);
@@ -275,7 +279,7 @@ function dragCC(elem,isCanvasControl) {
   var mapping = mappings[tempHash][id];
   var val = elem.value;
 
-  if(typeof val == 'string') val = parseInt(val);
+  if(typeof val == 'string') val = parseFloat(val);
   else console.log('not string?');
 
   val = map_range(val, 0, 100, mapping.min, mapping.max);
@@ -283,10 +287,8 @@ function dragCC(elem,isCanvasControl) {
   if(Math.abs(mapping.max-mapping.min) > 50) window[mapping.name] = Math.round(val);
   else window[mapping.name] = val;
 
-  
   mappings[tempHash][id]['value'] = val;
 
-  // console.log(mapping.name+": "+val);
 }
 
 function updateCC(hashy, id, val) {
