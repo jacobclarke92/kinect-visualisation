@@ -8,8 +8,8 @@ requirejs(
 		'audio',
 		'cookies',
 		'colours',
-		'pixi_functions',
-		'/node_modules/event-source-polyfill/eventsource.js'
+		'pixi_functions'
+		//,'/node_modules/event-source-polyfill/eventsource.js'
 	], function ($) {
   
 	console.info('all dependencies loaded');
