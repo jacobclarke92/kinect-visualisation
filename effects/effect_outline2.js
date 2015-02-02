@@ -3,7 +3,7 @@ effect_outline2 = {
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
 		setMapping('pixelResolution', 1, 10, 3);
-		setMapping('trailAmount', 0, 255, 102);
+		setMapping('trailAmount', 0, 100, 50);
 
 	},
 
@@ -26,25 +26,29 @@ effect_outline2 = {
 					// Pixel location and color
 					var loc = x + y*320;
 					var pix = pixels[loc*4 + 2];
-					// color pix = img.pixels[loc];
 
-					// Pixel to the left location and color
-					var leftLoc = (x-1) + y*320;
-					var leftPix = pixels[leftLoc*4 + 2];
+					if(pixelInRange(pix)) {
+						// color pix = img.pixels[loc];
 
-					// New color is difference between pixel and left neighbor
-					var diffLeft = Math.abs(pix - leftPix);
-					if(diffLeft > 0 && this.lastDiff > 0) {
-						this.graphics.moveTo(this.lastX,this.lastY);
-						this.graphics.lineTo(x,y);
+						// Pixel to the left location and color
+						var leftLoc = (x-1) + y*320;
+						var leftPix = pixels[leftLoc*4 + 2];
+
+						// New color is difference between pixel and left neighbor
+						var diffLeft = Math.abs(pix - leftPix);
+						if(diffLeft > 0 && this.lastDiff > 0) {
+							this.graphics.moveTo(this.lastX*2,this.lastY*2);
+							this.graphics.lineTo(x*2,y*2);
+						}
+
+
+						if(diffLeft > 0) {
+						    this.lastX = x;
+						    this.lastY = y;
+						}
+						this.lastDiff = diffLeft;
+
 					}
-
-
-					if(diffLeft > 0) {
-					    this.lastX = x;
-					    this.lastY = y;
-					}
-					this.lastDiff = diffLeft;
 
 				}
 			}
