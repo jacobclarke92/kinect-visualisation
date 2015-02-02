@@ -13,7 +13,7 @@ var selectPort = 0;
 
 
 console.reset = function () { return process.stdout.write('\033c') }
-console.reset();
+//console.reset();
 
 if(process.argv.length > 2) {
   var params = process.argv.slice(2);
@@ -163,8 +163,9 @@ var server = http.createServer(function(req, res) {
         found = true;
       }
     }
-    if(pathname == '/') {
-      serve(res, __dirname + '/index.html', 'text/html');
+    if(!found) {
+      if(pathname == '/') serve(res, __dirname + '/index.html', 'text/html');
+      else res.end();
     }
   }
 

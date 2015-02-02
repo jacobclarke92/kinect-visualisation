@@ -102,7 +102,7 @@ var bassCount = 0;
 
 function processAudio() {
 
-  // console.log(frequencyArray);
+  if(typeof frequencyArray == 'undefined') return false;
 
   //never really gets over 1000
   bass = 0;
