@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+var midi = require('web-midi-api');
+var midi;
+var inputs;
+var outputs;
+
+
+function onsuccesscallback( access ) {
+  midi = access;
+  inputs = midi.inputs;
+  outputs = midi.outputs;
+  var portCount = inputs.size;
+  // console.log(portCount+" MIDI PORTS AVAILABLE");
+  if(portCount != 0) {
+
+    var devices = inputs.values();
+    // console.log(devices);
+    var logStr = '';
+    for(var i=0; i < devices._items.length; i++) {
+      logStr += i+':'+devices._items[i].name+(i != devices._items.length-1 ? ',' : '');
+    }
+    console.log(logStr);
+
+  }else{
+    console.log('none');
+  }
+  process.exit();
+}
+function onerrorcallback( err ) {
+  console.log( "error," + err.code );
+}
+midi.requestMIDIAccess().then( onsuccesscallback, onerrorcallback );
+

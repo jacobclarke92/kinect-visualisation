@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>409.1</string>
+	<key>AMApplicationVersion</key>
+	<string>2.5</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>set UnixPath to POSIX path of ((path to me as text) &amp; "::")if (UnixPath is equal to "/Applications/") then	set UnixPath to "~/Projects/kinect-visualisation/"end ifdisplay dialog UnixPathrepeat	set midiFeedback to do shell script "cd " &amp; UnixPath &amp; "; node getmidiports"	set portStr to ""	if (midiFeedback is equal to "none") then		display dialog "No midi ports!" buttons {"Very well..."}	else if (midiFeedback is equal to "error") then		display dialog "Error getting midi ports!"	else		set midiArray to my theSplit(midiFeedback, ",")		(choose from list midiArray with prompt "Select MIDI port")		set listAnswer to result as text		set listAnswerSplit to my theSplit(listAnswer, ":")		set portStr to "-port" &amp; item 1 of listAnswerSplit	end if	do shell script "cd ~/Projects/kinect-visualisation/; ./launcher | ./server_quick " &amp; portStr &amp; " &amp;&gt; /dev/null &amp; echo $!"	set pid to result	set site to "http://localhost:5600"		tell application "Google Chrome"		reopen		activate		tell window 1			make new tab with properties {URL:site}		end tell	end tell			display dialog "Server running - PID " &amp; pid &amp; " @ " &amp; site &amp; " " &amp; portStr buttons {"Change Port", "Exit"}	set buttonTxt to button returned of result	if (buttonTxt is equal to "Exit") then		exit repeat	end if	tell application "System Events"		set ProcessList to name of every process		if "node" is in ProcessList then			set appID to unix id of process "PDApp"			do shell script "kill -KILL " &amp; appID		end if	end tellend repeaton theSplit(theString, theDelimiter)	set oldDelimiters to AppleScript's text item delimiters	set AppleScript's text item delimiters to theDelimiter	set theArray to every text item of theString	set AppleScript's text item delimiters to oldDelimiters	return theArrayend theSplit</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>94E88F27-833B-4330-AE2F-A7329C6B476B</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>27274392-5C03-4097-9CE9-5EB23F99271B</string>
+				<key>UUID</key>
+				<string>39B33619-77CF-430A-8BAB-7B411290DE7C</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>229.000000:248.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.workflow</string>
+	</dict>
+</dict>
+</plist>
