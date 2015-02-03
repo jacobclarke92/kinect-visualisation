@@ -11,6 +11,8 @@ var clients = [];
 
 var selectPort = 0;
 
+var quickStart = false;
+
 
 console.reset = function () { return process.stdout.write('\033c') }
 //console.reset();
@@ -23,7 +25,7 @@ if(process.argv.length > 2) {
     var param = params[i];
     if(param.indexOf('-port') === 0) {
       selectPort = parseInt( param.substring(5,param.length) );
-    }
+    }else if(param.indexOf('-quick') === 0) quickStart = true;
   }
 }else{
   console.log("no params given! include -portXX to select midi device");
@@ -170,22 +172,29 @@ var server = http.createServer(function(req, res) {
   }
 
 });
+function startServer() {
+  process.stdin.resume();
+  process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
+  server.listen(5600);
 
-var interval = false;
-var count = 5;
-setTimeout(function() {
-  console.log('5 seconds until node server launch...');
+  console.log('Node server started!'); 
+}
+
+if(quickStart) startServer();
+else{
+  var interval = false;
+  var count = 5;
   setTimeout(function() {
+    console.log('5 seconds until node server launch...');
+    setTimeout(function() {
 
-    process.stdin.resume();
-    process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
-    server.listen(5600);
-
-    console.log('Node server started!');
-    clearInterval(interval);
-  },5000);
-  interval = setInterval(function() {
-    count --;
-    console.log(count);
-  },1000);
-},1500);
+      startServer();
+      
+      clearInterval(interval);
+    },5000);
+    interval = setInterval(function() {
+      count --;
+      console.log(count);
+    },1000);
+  },1500);
+}
