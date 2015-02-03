@@ -23,12 +23,12 @@ rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = 
 
 var filterCollection = [displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter];
 
-window.displacement_filter = 0;
-window.blur_filter = 0;
-window.pixelate_filter = 0;
-window.invert_filter = 0;
-window.rgbSplit_filter = 0;
-window.twist_filter = 0;
+window.filter_displacement = 0;
+window.filter_blur = 0;
+window.filter_pixelate = 0;
+window.filter_invert = 0;
+window.filter_rgbSplit = 0;
+window.filter_twist = 0;
 
 function initPIXI() {
 	stage = new PIXI.Stage(0x000000);
@@ -181,22 +181,22 @@ function animateFrame() {
 	//apply webgl filters
 
 	//if one is defined then they probably all are
-	if(typeof displacement_filter != 'undefined') {
-		displacementFilter.scale.x = displacementFilter.scale.y = displacement_filter;
-		twistFilter.angle = twist_filter;
-		pixelateFilter.size.x = pixelateFilter.size.y = pixelate_filter;
-		invertFilter.invert = invert_filter;
-		rgbSplitterFilter.red.x = rgbSplit_filter;
-		rgbSplitterFilter.blue.x = -rgbSplit_filter;
-		blurFilter.blurX = blurFilter.blurY = blur_filter;
+	if(typeof filter_displacement != 'undefined') {
+		displacementFilter.scale.x = displacementFilter.scale.y = filter_displacement;
+		twistFilter.angle = filter_twist;
+		pixelateFilter.size.x = pixelateFilter.size.y = filter_pixelate;
+		invertFilter.invert = filter_invert;
+		rgbSplitterFilter.red.x = filter_rgbSplit;
+		rgbSplitterFilter.blue.x = -filter_rgbSplit;
+		blurFilter.blurX = blurFilter.blurY = filter_blur;
 
 		filterCollection = [];
-		if(displacement_filter != 0) filterCollection.push(displacementFilter);
-		if(twist_filter != 0) filterCollection.push(twistFilter);
-		if(pixelate_filter != 0) filterCollection.push(pixelateFilter);
-		if(rgbSplit_filter != 0) filterCollection.push(rgbSplitterFilter);
-		if(invert_filter != 0) filterCollection.push(invertFilter);
-		if(blur_filter != 0) filterCollection.push(blurFilter);
+		if(filter_displacement != 0) filterCollection.push(displacementFilter);
+		if(filter_twist != 0) filterCollection.push(twistFilter);
+		if(filter_pixelate != 0) filterCollection.push(pixelateFilter);
+		if(filter_rgbSplit != 0) filterCollection.push(rgbSplitterFilter);
+		if(filter_invert != 0) filterCollection.push(invertFilter);
+		if(filter_blur != 0) filterCollection.push(blurFilter);
 		if(filterCollection.length == 0) filterCollection = null;
 	}	
 

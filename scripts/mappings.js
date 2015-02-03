@@ -270,7 +270,10 @@ function map_range(value, low1, high1, low2, high2) {
 
 // console.error(map_range(5,200, 5, 0, 100));
 
+/*
 function dragCC(elem,isCanvasControl) {
+
+
   //0-100
   var tempHash = hash;
   if(typeof isCanvasControl != 'undefined') tempHash = 'controls';
@@ -288,6 +291,16 @@ function dragCC(elem,isCanvasControl) {
   else window[mapping.name] = val;
 
   mappings[tempHash][id]['value'] = val;
+
+}*/
+
+function sliderDrag(slider) {
+  if(window[slider.data.name] == slider.data.value) return;
+  var parentID = slider._parent_cell.id;
+  var tempHash = hash;
+  if(parentID == 'params_calibration' || parentID == 'params_filters') tempHash = 'controls';
+  console.log(slider.data.name, slider.data.value);
+  window[slider.data.name] = mappings[tempHash][slider.data.name] = slider.data.value;
 
 }
 
@@ -353,6 +366,7 @@ function createControls() {
     console.info('is ^^^ an empty array? because is creating one now...');
     mappings[hash] = [];
   }
+  /*
   if(mappings[hash].length > 0) {
     if(mappings[hash][0]['name'] != 'volumeMaster') {
       console.log('creating volumeMaster becuase one doesn\'t exist for this effect?');
@@ -363,6 +377,9 @@ function createControls() {
     mappings[hash].unshift({name: 'volumeMaster', min: 16, max: 0.5, value: 1, cc: -1});
     console.warn('there are no mappings .. there should have been a volumeMaster by now');
   }
+  */
+
+  controlsPopup.updateEffectMappings();
 
   // console.log(mappings);
 
