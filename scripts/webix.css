@@ -666,7 +666,7 @@ label.webix_required:after{padding-left:4px;content:"*";color:red}
  *  Font Awesome 4.2.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
-@font-face{font-family:FontAwesome;src:url(fonts/fontawesome-webfont.eot?v=4.2.0);src:url(fonts/fontawesome-webfont.eot?#iefix&v=4.2.0) format('embedded-opentype'),url(fonts/fontawesome-webfont.woff?v=4.2.0) format('woff'),url(fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular) format('svg');font-weight:400;font-style:normal}
+@font-face{font-family:FontAwesome;src:url(/fonts/fontawesome-webfont.eot);src:url(/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0) format('embedded-opentype'),url(/fonts/fontawesome-webfont.woff) format('woff'),url(/fonts/fontawesome-webfont.svg#fontawesomeregular) format('svg');font-weight:400;font-style:normal}
 .webix_icon,.webix_icon_btn,.webix_input_icon,.fa{display:inline-block;font-family:FontAwesome;font-style:normal;font-weight:400;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 .fa-lg{font-size:1.33333333em;line-height:.75em;vertical-align:-15%}
 .fa-2x{font-size:2em}
@@ -1187,8 +1187,8 @@ label.webix_required:after{padding-left:4px;content:"*";color:red}
 .webix_icon_btn{font-size:17px;display:inline-block;text-align:center;width:24px;color:#606060}
 .webix_el_iconBbutton .webix_icon_btn{text-align:center;width:100%;padding:5px 0}
 .webix_el_icon{cursor:pointer}
-@font-face{font-family:'PT Sans';font-style:normal;font-weight:400;src:local('PT Sans'),local('PTSans-Regular'),url(fonts/PTS-webfont.eot) format('embedded-opentype'),url(fonts/PTS-webfont.woff) format('woff'),url(fonts/PTS-webfont.ttf) format('truetype')}
-@font-face{font-family:'PT Sans';font-style:normal;font-weight:700;src:local('PT Sans Bold'),local('PTSans-Bold'),url(fonts/PTS-bold.eot) format('embedded-opentype'),url(fonts/PTS-bold.woff) format('woff'),url(fonts/PTS-bold.ttf) format('truetype')}
+@font-face{font-family:'PT Sans';font-style:normal;font-weight:400;src:local('PT Sans'),local('PTSans-Regular'),url(/fonts/PTS-webfont.eot) format('embedded-opentype'),url(/fonts/PTS-webfont.woff) format('woff'),url(/fonts/PTS-webfont.ttf) format('truetype')}
+@font-face{font-family:'PT Sans';font-style:normal;font-weight:700;src:local('PT Sans Bold'),local('PTSans-Bold'),url(/fonts/PTS-bold.eot) format('embedded-opentype'),url(/fonts/PTS-bold.woff) format('woff'),url(/fonts/PTS-bold.ttf) format('truetype')}
 .mainFont{font-family:'PT Sans',Tahoma;font-size:15px;color:#666}
 .webix_layout_toolbar.webix_toolbar{color:#fff;font-size:18px;background:#3498db}
 .webix_layout_toolbar.webix_toolbar .webix_el_button,.webix_layout_toolbar.webix_toolbar .webix_el_label,.webix_layout_toolbar.webix_toolbar .webix_inp_label{color:#fff}

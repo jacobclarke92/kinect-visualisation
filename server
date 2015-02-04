@@ -144,7 +144,13 @@ var urlRules = [
   ['.html','text/html'],
   ['.css','text/css'],
   ['.json','text/event-stream'],
-  ['.xml','text/xml']
+  ['.xml','text/xml'],
+
+  ['.svg','image/svg+xml'],
+  ['.ttf','application/x-font-ttf'],
+  ['.otf','application/x-font-opentype'],
+  ['.woff','application/x-font-woff'],
+  ['.eot','application/vnd.ms-fontobject']
 ];
 
 var server = http.createServer(function(req, res) {
