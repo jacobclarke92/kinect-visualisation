@@ -4,7 +4,7 @@ effect_test_visuals = {
 
 	init: function() {
     	setMapping('spawnAmount', 1, 50, 10);
-		setMapping('trailAmount', 0, 255, 102);
+		setMapping('trailAmount', 0, 1, 0.2);
 	},
 
 	draw: function() {

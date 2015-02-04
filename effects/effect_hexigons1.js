@@ -6,7 +6,7 @@ effect_hexigons1 = {
 		setMapping('shapeSize', 15, 200, 50);
 		setMapping('coolOff', 1, 0.05, 1);
 		setMapping('triggerSize', 5, 50, 20);
-		setMapping('trailAmount', 0, 255, 102);
+		setMapping('trailAmount', 0, 1, 0.2);
 
 		this.defineHexigonGrid();
 	},
