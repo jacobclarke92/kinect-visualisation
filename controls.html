@@ -5,9 +5,26 @@
     <meta charset="UTF-8">
     <title>Live Visuals | Controls</title>
 
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
+
+    <link rel="stylesheet" type="text/css" href="/scripts/webix.css">
+    <link rel="stylesheet" type="text/css" href="/controls.css">
+    <script type="text/javascript" src="/scripts/webix_debug.js"></script>
+
+
 
     <script type="text/javascript">
+
+      String.prototype.capitalize = function() {
+          return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+      };
+      String.prototype.readable = function() {
+
+        return this.replace(/[_-]+(.)?/g,function(str) { return str.charAt(1).toUpperCase() }).replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase() })
+      }
+
+
+
     	w = false;
     	controlsLoaded = true;
     	if (window.opener != null && !window.opener.closed) {
@@ -57,16 +74,61 @@
           }
         })
     	}
+
+      function sliderChange() {
+        // console.log(this);
+        w.saveCookie();
+      }
+      function sliderDrag() {
+        // if(this.data.name.indexOf('calib'))
+        w.sliderDrag(this);
+        console.log(this.getValue());
+      }
+      function checkboxToggle() {
+
+      }
+      function effectSelected() {
+        var script = this._item_clicked;
+        if(script != 'all_effects') w.changeScript(script);
+      }
+
+
+      var effectUI_data = [];
+
+      //called from createControls function in mappings.js
+      function updateEffectMappings() {
+        effectUI_data = [];
+        for(var i=0; i < w.mappings[w.hash].length; i++) {
+          var m = w.mappings[w.hash][i];
+          console.log(m);
+          effectUI_data.push(
+            {view: 'slider', label: m.name.readable(), name: m.name, min: m.min, max: m.max, value: m.value, on: {onChange: sliderChange, onSliderDrag: sliderDrag}}
+          );
+        }
+        $$('tab_effectOptions').elements = effectUI_data;
+
+        // cells[1].elements = effectUI_data;
+        console.log($$('params_effect').elements);
+        $$('tab_effectOptions').elements.set(effectUI_data);
+        $$('tab_effectOptions').define({'elements': effectUI_data});
+        $$('tab_effectOptions').refresh();
+        
+        $$('params').refresh();
+      }
     </script>
 
 
 </head>
 <body onload="loaded()" onkeypress="w.keyPressed(event)">
 
-  <h2>
-    <span class="error" id="soundCheck">Sound</span> | 
-    <span class="error" id="kinectCheck">Kinect</span>
-  </h2>
+  <div id="statusIcons">
+    <span class="error" id="soundCheck">
+      <svg xmlns="http://www.w3.org/2000/svg" version="1" width="400pt" height="400pt" viewBox="0 0 75 75"><g stroke="#111" stroke-width="5"><path stroke-linejoin="round" fill="#111" d="M39.389 13.769l-17.154 14.837h-16.235v19.093h15.989l17.4 15.051v-48.981z"/><path id="path1" d="M48.128 49.03c1.929-3.096 3.062-6.739 3.062-10.653 0-3.978-1.164-7.674-3.147-10.8" stroke-linecap="round" fill="none"/><path d="M55.082 20.537c3.695 4.986 5.884 11.157 5.884 17.84 0 6.621-2.151 12.738-5.788 17.699" stroke-linecap="round" fill="none"/><path d="M61.71 62.611c5.267-6.666 8.418-15.08 8.418-24.233 0-9.217-3.192-17.682-8.519-24.368" stroke-linecap="round" fill="none"/></g></svg>
+    </span>
+    <span class="error" id="kinectCheck">
+      <svg xmlns="http://www.w3.org/2000/svg" width="118" height="27"><defs><clipPath id="a"><path d="M0 88h200v-88h-200v88z"/></clipPath></defs><path d="M66.239 13.845c-2.503 0-4.532-2.027-4.532-4.532 0-2.503 2.029-4.533 4.532-4.533s4.532 2.03 4.532 4.533c0 2.505-2.029 4.532-4.532 4.532m-11.928 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m-23.218 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m82.46-13.837h-109.099c-2.45 0-4.452 2.004-4.452 4.455v9.382c0 2.45 2.002 4.454 4.452 4.454h52.323v1.239c-.453.004-.903.052-1.273.191-1.272.478-10.02 3.657-10.337 5.248-.32 1.591.953 1.591 3.339 1.591h20.993000000000002c2.386 0 3.657 0 3.341-1.591-.319-1.591-9.065-4.771-10.339-5.248-.369-.139-.819-.187-1.273-.191v-1.239h52.323c2.448 0 4.454-2.004 4.454-4.454v-9.382c0-2.451-2.006-4.455-4.454-4.455" fill="#00669c" clip-path="url(#a)"/></svg>
+    </span>
+  </div>
   <div id="volumeBar"></div>
   <div id="frequencySelector">
     <canvas id="frequencyBars" width="512" height="200"></canvas>
@@ -76,155 +138,84 @@
   <br>
 	<p>
       <script>
-      for(var n=0; n < w.effects.length; n++) {
-        document.write('<a href="javascript:w.changeScript(\''+w.effects[n]+'\')" id="'+w.effects[n]+'" class="changeScript">'+w.effects[n]+'</a>');
-        // if(n < w.effects.length-1) document.write(' | ');
+
+      var effectsUI_data = [];
+      for(var n=0; n<w.effects.length; n++) {
+        effectsUI_data.push({id: w.effects[n], value: (w.effects[n]).readable()});
       }
+      var effectsUI = new webix.ui();
+
+      // for(var n=0; n < w.effects.length; n++) {
+      //   document.write('<a href="javascript:w.changeScript(\''+w.effects[n]+'\')" id="'+w.effects[n]+'" class="changeScript">'+w.effects[n]+'</a>');
+      //   // if(n < w.effects.length-1) document.write(' | ');
+      // }
       </script>
     </p>
 
-    <div id="paletteZone"></div>
+    <div id="controlsZone"></div>
+      <script>
+        var cells = [
+          {
+            header: 'Effects List',
+            container: 'controlsZone',
+            id: 'tab_effects',
+            body: {
+              view: 'tree',
+              select: true,
+              on: {'onItemClick': effectSelected},
+              data: [{
+                id: 'all_effects', value: 'All Effects', open: true, data: effectsUI_data
+              }]
+            }
+          },{
+            header: "Effect Options",
+            id: 'tab_effectOptions',
+            view: 'form', id: 'params_effect', elements: effectUI_data
+          },{
+            header: "Filters",
+            id: 'tab_filters',
+            body: {
+              view: 'form', id: 'params_filter', elements: [
+                 {view: 'slider', label: 'RGB Split', name: 'filter_rgbSplit', min: 0, max: 100, value: 0, on: {onChange: sliderChange, onSliderDrag: sliderDrag}}
+                ,{view: 'slider', label: 'Displacement', name: 'filter_displacement', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+                ,{view: 'slider', label: 'Pixelate', name: 'filter_pixelate', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+                ,{view: 'slider', label: 'Twist', name: 'filter_twist', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+                ,{view: 'slider', label: 'Invert', name: 'filter_invert', min: -10, max: 10, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+                ,{view: 'slider', label: 'Blur', name: 'filter_blur', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
 
-    <div id="controlsZone" class="left"></div>
-
-    <div id="renderEffectsZone" class="left">
-       <table align="center" id="renderEffectsControls">
-          <thead><tr><td colspan="3">Render Effects</td></tr></thead>
-          <tbody>
+                //,{view: 'button', label: 'Reset', click: function() {$$("params_filter").refresh()}}
+              ]
+            }
             
-            <tr><td align="right">RGB Split</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="rgbSplit_filter" min="0" max="100" step="1" value="0" data-id="10">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="10" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
+          },{
+            header: "Calibration",
+            id: 'tab_calibration',
+            view: 'form', id: 'params_calibration', elements: [
+               {view: 'checkbox', label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:checkboxToggle}}
+              ,{view: 'slider', label: 'Depth Threshold', name: 'calibration_depthThreshold', min: 100, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Depth Range', name: 'calibration_depthRange', min: 1, max: 50, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Zoom', name: 'calibration_zoom', min: 0.2, max: 4, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Offset X', name: 'calibration_offsetX', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Offset Y', name: 'calibration_offsetY', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Rotate X', name: 'calibration_rotateX', min: -65, max: 65, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Rotate Y', name: 'calibration_rotateY', min: -65, max: 65, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Perspective', name: 'calibration_perspective', min: 10, max: 2000, value: 800, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
 
-            <tr><td align="right">Displacement</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="displacement_filter" min="0" max="100" step="1" value="0" data-id="11">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="11" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
+              //,{view: 'button', label: 'Reset', click: function() {$$("params_calibration").refresh()}}
+            ]
+          }
 
-            <tr><td align="right">Pixelate</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="pixelate_filter" min="0" max="100" step="1" value="0" data-id="12">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="12" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-             <tr><td align="right">Twist</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="twist_filter" min="0" max="100" step="1" value="0" data-id="13">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="13" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">Invert</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="invert_filter" min="0" max="100" step="0.1" value="0" data-id="14">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="14" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">Blur</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="blur_filter" min="0" max="100" step="1" value="0" data-id="15">
-            </td><td>
-              (0 - 100)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="15" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-
-          </tbody>
-        </table>
+        ];
+        var paramsUI = new webix.ui({
+          view: 'tabview',
+          // container: 'params',
+          id: 'params',
+          cells: cells
+        });
+      </script>
     </div>
-    <div id="canvasControls" class="left">
-      <form action="javascript:void(0); return false;">
-        <table align="center" id="canvasControls">
-          <thead><tr><td colspan="3">Canvas Controls</td></tr></thead>
-          <tbody>
 
-            <tr><td align="right">depthThreshhold</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasDepthThreshold" min="100" max="200" step="1" value="145" data-id="0">
-            </td><td>
-              (100 - 200)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="0" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">depthRange</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasDepthRange" min="1" max="50" step="1" value="20" data-id="1">
-            </td><td>
-              (1 - 200)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="1" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">mirrored</td><td>
-              <input type="checkbox" checked="checked" id="canvasMirror" onchange="w.updateCanvas(); w.dragCC(this,true); w.saveCookie();">
-            </td><td></td></tr>
-
-            <tr><td align="right">zoom</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasZoom" min="0.2" max="4" step="0.05" value="1" data-id="2">
-            </td><td>
-              (0.2 - 2)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="2" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">rotateX</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()"  id="canvasRotateX" min="-65" max="65" step="5" data-id="3">
-            </td><td>
-              (-65° - 65°)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="3" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">rotateY</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasRotateY" min="-65" max="65" step="5" data-id="4">
-            </td><td>
-              (-65° - 65°)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="4" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">perspective</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasPerspective" min="10" max="2000" step="10" value="800" data-id="5">
-            </td><td>
-              (10 - 2000)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="5" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">offsetX</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasOffsetX" min="-200" max="200" step="5" data-id="6">
-            </td><td>
-              (-200 - 200)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="6" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-
-            <tr><td align="right">offsetY</td><td>
-              <input type="range" oninput="w.updateCanvas(); w.dragCC(this,true)" onchange="w.saveCookie()" id="canvasOffsetY" min="0" max="200" step="5" value="0" data-id="7">
-            </td><td>
-              (0 - 200)
-            </td><td>
-              <input type="button" class="map" value="map" data-id="7" onclick="w.mapCC(this, true)"></td>
-            </td></tr>
-            <tr><td colspan="3" align="center">
-              <input type="reset" value="reset" onclick="setTimeout(function() {w.updateCanvas(); w.dragCC(this,true)},200)">
-            </td></tr>
-          </tbody>
-
-        </table>
-      </form>
-    </div>
+    
     <!--
     <p style="clear:both">
       <input type="checkbox" id="imageToggle" onchange="w.toggleTesting('image',false); w.saveCookie()">
