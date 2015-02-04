@@ -49,7 +49,6 @@ function getTopColours() {
 				var darkest = 765;
 				var lightest = 0;
 
-				palettesHtml += '<div class="palette" onclick="w.paletteChange(this)" id="'+palette.id+'">';
 				$(this).find('colors hex').each(function(colorIndex) {
 					var color = {};
 					color.hex = $(this).html();
@@ -64,9 +63,7 @@ function getTopColours() {
 						palette.darkest = color;
 					}
 					palette.colors.push(color);
-					palettesHtml += '<span style="background-color: #'+color.hex+'"></span>';
 				});
-				palettesHtml += '</div>';
 
 				for(var i=0; i<palette.colors.length; i++) {
 					if(palette.colors[i].hex != palette.lightest.hex && palette.colors[i].hex != palette.darkest.hex) palette.colorsMids.push(palette.colors[i]);
@@ -76,7 +73,9 @@ function getTopColours() {
 			});
 
 			setTimeout(function() {
-				$('#paletteZone',controlsPopup.document).html(palettesHtml);
+
+				controlsPopup.updatePalettes();
+
 				if(cookieLoaded && paletteID) {
 					for(var i=0; i < palettes.length; i++) {
 						
@@ -87,18 +86,17 @@ function getTopColours() {
 							console.info('Palette changed to:', currentPalette.title);
 						}
 					}
-					
 				}
-			},200);
+
+			},2500);
 
 		}
 	});
 }
-function paletteChange(div) {
-	$('.palette',controlsPopup.document).removeClass('active');
-	$(div).addClass('active');
+function paletteChange(colorID) {
+	
 	for(var i=0; i< palettes.length; i++) {
-		if(palettes[i].id == $(div).attr('id')) currentPalette = palettes[i];
+		if(palettes[i].id == colorID) currentPalette = palettes[i];
 	}
 	console.info('Palette changed to:', currentPalette.title);
 	// console.log(div);

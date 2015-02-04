@@ -39,10 +39,13 @@
       function windowResize() {
         offsetLeft = parseInt(w.jQuery('#frequencySelector',document).css('left'));
         console.log(offsetLeft);
+        $$('palettes').resize();
+        $$('params').resize();
       }
     	function loaded() {
     		// if(w) w.startPage('lsd1');
         windowResize();
+        updatePalettes();
 
         if(w.gotKinect) w.jQuery('#kinectCheck',document).removeClass('error');
         if(w.gotAudio) w.jQuery('#soundCheck',document).removeClass('error');
@@ -111,11 +114,40 @@
           });
         }
       }
+
+      var palettesUI_data = [];
+      function updatePalettes() {
+        if(typeof w.palettes != 'object') return;
+
+        for(var i=0; i<w.palettes.length; i++) {
+          var palette = w.palettes[i];
+          palettesUI_data.push({
+            id: palette.id,
+            name: palette.title,
+            hex1: palette.colors[0].hex,
+            hex2: palette.colors[1].hex,
+            hex3: palette.colors[2].hex,
+            hex4: palette.colors[3].hex,
+            hex5: palette.colors[4].hex
+          });
+
+        }
+        $$('palettes').clearAll();
+        $$('palettes').parse(palettesUI_data);
+        $$('palettes').render();
+
+      }
+      
+      function colorChanged() {
+        console.log('color changed',this);
+        w.paletteChange(this._selected[0]);
+      }
+
     </script>
 
 
 </head>
-<body onload="loaded()" onkeypress="w.keyPressed(event)">
+<body onload="loaded()" onkeypress="w.keyPressed(event)" onresize="windowResize()">
 
   <div id="statusIcons">
     <span class="error" id="soundCheck">
@@ -132,20 +164,41 @@
     <div id="rightSlider" class="slider"></div>
   </div>
   <br>
-	<p>
-      <script>
-
-      var effectsUI_data = [];
-      for(var n=0; n<w.effects.length; n++) {
-        effectsUI_data.push({id: w.effects[n], value: (w.effects[n]).readable()});
-      }
-      </script>
-    </p>
 
     <div id="paletteZone"></div>
+    <div id="paletteZone2"></div>
+      <script>
+
+
+
+        new webix.ui({
+          view: 'dataview',
+          id: 'palettes',
+          container: 'paletteZone2',
+          height: 180,
+          responsive: true,
+          select: true,
+          type: {
+            width: 101,
+            height: 21,
+            css: 'palette'
+          },
+          template: '<span style="background-color: ##hex1#"></span><span style="background-color: ##hex2#"></span><span style="background-color: ##hex3#"></span><span style="background-color: ##hex4#"></span><span style="background-color: ##hex5#"></span>',
+          data: palettesUI_data
+        });
+        $$('palettes').attachEvent('onSelectChange', colorChanged);
+
+
+      </script>
 
     <div id="controlsZone"></div>
       <script>
+
+        var effectsUI_data = [];
+        for(var n=0; n<w.effects.length; n++) {
+          effectsUI_data.push({id: w.effects[n], value: (w.effects[n]).readable()});
+        }
+
         var cells = [
           {
             header: 'Effects List',
@@ -202,11 +255,13 @@
           }
 
         ];
-        var paramsUI = new webix.ui({
+        new webix.ui({
           view: 'tabview',
+          container: 'controlsZone',
           id: 'params',
           height: 600,
-          cells: cells
+          cells: cells,
+          responsive: true
         });
       </script>
     </div>

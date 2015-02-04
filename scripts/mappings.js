@@ -11,7 +11,7 @@ var freqBarsCanvas;
 
 controlsPopup = false;
 function openControls() {
-    controlsPopup = window.open("controls.html", "Controls", 'width=520,height='+screen.height+',left=0,top=0');
+    controlsPopup = window.open("controls.html", "Controls", 'width=524,height='+screen.height+',left=0,top=0');
     controlsPopup.focus();
 
 
@@ -73,7 +73,7 @@ function openControls() {
       }
 
 
-    },1500);
+    },2500);
 }
 function controlsClosed() {
   console.warn('controls closed!');
