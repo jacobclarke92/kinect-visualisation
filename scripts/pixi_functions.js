@@ -55,14 +55,14 @@ function rgbToHexInt(rgb) {
 
 function rangeAdjustedPixel(val) {
 
-	var val2 = map_range(val, 0, 255, depthThreshold, (depthThreshold+depthRange < 255) ? depthThreshold-depthRange : 255 );
+	var val2 = map_range(val, 0, 255, calibration_depthThreshold, (calibration_depthThreshold+calibration_depthRange < 255) ? calibration_depthThreshold-calibration_depthRange : 255 );
 	val2 = (val2 < 0) ? 0 : (val2 > 255) ? 255 : val2;
 	return val2;
 
 }
 function pixelInRange(val) {
 	if(!gotKinect) return true; // mostly for debugging
-	return (val > depthThreshold && val < depthThreshold+depthRange) ? true : false;
+	return (val > calibration_depthThreshold && val < calibration_depthThreshold+calibration_depthRange) ? true : false;
 }
 function dist(x1,y1,x2,y2) {
 	

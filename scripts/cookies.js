@@ -67,7 +67,8 @@ function loadCookie() {
 
         }
       }
-      updateCanvas(false);
+      
+      updateCanvas();
 
     }
 	}

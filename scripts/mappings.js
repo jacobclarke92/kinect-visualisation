@@ -73,7 +73,7 @@ function openControls() {
       }
 
 
-    },1000);
+    },1500);
 }
 function controlsClosed() {
   console.warn('controls closed!');
@@ -268,45 +268,26 @@ function map_range(value, low1, high1, low2, high2) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-// console.error(map_range(5,200, 5, 0, 100));
-
-/*
-function dragCC(elem,isCanvasControl) {
-
-
-  //0-100
-  var tempHash = hash;
-  if(typeof isCanvasControl != 'undefined') tempHash = 'controls';
-
-  var id = parseInt(elem.getAttribute('data-id'))
-  var mapping = mappings[tempHash][id];
-  var val = elem.value;
-
-  if(typeof val == 'string') val = parseFloat(val);
-  else console.log('not string?');
-
-  val = map_range(val, 0, 100, mapping.min, mapping.max);
-
-  if(Math.abs(mapping.max-mapping.min) > 50) window[mapping.name] = Math.round(val);
-  else window[mapping.name] = val;
-
-  mappings[tempHash][id]['value'] = val;
-
-}*/
-
 function sliderDrag(slider) {
-  if(window[slider.data.name] == slider.data.value) return;
-  var parentID = slider._parent_cell.id;
+  var val = slider.data.value;
+  if(slider.data.view == 'checkbox') val = (val == 0) ? -1 : 1;
+
+  if(window[slider.data.name] == val) return;
+
+  var parentID = slider._parent_cell.config.id;
   var tempHash = hash;
   if(parentID == 'params_calibration' || parentID == 'params_filters') tempHash = 'controls';
-  console.log(slider.data.name, slider.data.value);
-  window[slider.data.name] = mappings[tempHash][slider.data.name] = slider.data.value;
+  console.log(parentID, slider.data.name, val);
+  window[slider.data.name] = val;
+  mappings[tempHash][slider.data.name] = val;
+
+  if(parentID == 'params_calibration') {
+    updateCanvas();
+  }
 
 }
 
 function updateCC(hashy, id, val) {
-
-  //
 
   var m = mappings[hashy][id];
   var varVal = map_range(val, 0, 127, m.min, m.max);
@@ -351,96 +332,41 @@ function mapCC(elem, isCanvasControl) {
 
 function createControls() {
 
-  //generate sliders when new script is loaded
-
-
-  if(!mappings[hash] || mappings[hash].length == 0) {
-    console.warn('no CC controls set for this visualization .. add some');
-
-  }
-
   // at this stage the effect should have set all the standard values
-  // console.info(mappings[hash]);
   if(!mappings[hash]) {
     console.info(mappings[hash]);
     console.info('is ^^^ an empty array? because is creating one now...');
     mappings[hash] = [];
   }
-  /*
-  if(mappings[hash].length > 0) {
-    if(mappings[hash][0]['name'] != 'volumeMaster') {
-      console.log('creating volumeMaster becuase one doesn\'t exist for this effect?');
-      mappings[hash].unshift({name: 'volumeMaster', min: 16, max: 0.5, value: 1, cc: -1});
-      // console.info(hash+' = '+JSON.stringify(mappings[hash]));
-    }//else console.info('PRAISE volumeMaster was defined already');
-  }else{
-    mappings[hash].unshift({name: 'volumeMaster', min: 16, max: 0.5, value: 1, cc: -1});
-    console.warn('there are no mappings .. there should have been a volumeMaster by now');
-  }
-  */
 
   controlsPopup.updateEffectMappings();
-
-  // console.log(mappings);
-
-  var ctrlStr = '<table align="center">';
-  ctrlStr += '<thead><tr><td colspan="4">Effect Controls</td></tr></thead>'
-  for(var i=0; i < mappings[hash].length; i++) {
-
-    var m = mappings[hash][i];
-    var val = m.value;
-    // console.info(typeof val);
-    if(typeof val == 'string') val = parseFloat(val);
-    val = map_range(val, m.min, m.max, 0, 100);
-    console.log('giving '+m.name+' a range value of '+val);
-
-    ctrlStr += 
-      '<tr><td class="right">'+(mappings[hash][i].name)+'</td><td>' + 
-      '<input type="range" oninput="w.dragCC(this)" onchange="w.saveCookie()" data-id="'+i+'" value="'+val+'">' + 
-      '</td><td>('+mappings[hash][i].min+' - '+mappings[hash][i].max+')</td>' + 
-      '<td><input type="button" class="map" value="map" data-id="'+i+'" onclick="w.mapCC(this)"></td></tr>';
-  }
-  ctrlStr += '</table>';
-  // console.log(controlsPopup.document);
-  // console.log($('#controlsZone',controlsPopup.document));
-  $('#controlsZone',controlsPopup.document).html(ctrlStr);
   console.info('controls updated');
 }
 
 
-var mirror, zoom = 1;
-var rotateX, rotateY, offsetX, offsetY = 0;
-depthThreshold = 145;
-depthRange = 50;
-var perspective = 800;
+calibration_mirrored = calibration_zoom = 1;
+calibration_rotateX = calibration_rotateY = calibration_offsetX = calibration_offsetY = 0;
+var calibration_depthThreshold = 145;
+var calibration_depthRange = 50;
+var calibration_perspective = 800;
 
-function updateCanvas(getVals) {
-  if(typeof getVals == 'undefined') {
-    depthThreshold = $('#canvasDepthThreshold',controlsPopup.document).val();
-    depthRange = $('#canvasDepthRange',controlsPopup.document).val();
-    mirror = $('#canvasMirror',controlsPopup.document).attr('checked') ? -1 : 1;
-    zoom = $('#canvasZoom',controlsPopup.document).val();
-    rotateX = $('#canvasRotateX',controlsPopup.document).val();
-    rotateY = $('#canvasRotateY',controlsPopup.document).val();
-    offsetX = $('#canvasOffsetX',controlsPopup.document).val();
-    offsetY = $('#canvasOffsetY',controlsPopup.document).val();
-    perspective = $('#canvasPerspective',controlsPopup.document).val();
-    if(mirror == -1) offsetX = -offsetX;
-  }
+function updateCanvas() {
+ 
+  console.log('updating canvas');
+  //console.log(calibration_mirrored,calibration_rotateX,calibration_rotateY,calibration_offsetX,calibration_offsetY);
 
-  var transform = 'scaleX('+mirror+') rotateX('+rotateX+'deg) rotateY('+rotateY+'deg)';
-      transform += ' translate('+offsetX+'px,'+offsetY+'px)';
+  var transform = 'scaleX('+calibration_mirrored+') rotateX('+calibration_rotateX+'deg) rotateY('+calibration_rotateY+'deg)';
+      transform += ' translate('+calibration_offsetX+'px,'+calibration_offsetY+'px)';
   $('.effectsRenderer,#processingCanvas3D').css({
-    'zoom': zoom,
+    'zoom': calibration_zoom,
     'transform': transform
   });
-  var h = 480*zoom;
+
+  var h = 480*calibration_zoom;
   $('#contentZone').css({
     'perspective-origin': '50% '+(h/2),
-    'perspective': perspective+'px',
-    'padding-bottom': offsetY+'px'
+    'perspective': calibration_perspective+'px',
+    'padding-bottom': calibration_offsetY+'px'
   });
-  // console.log(mirror,zoom,rotateX,rotateY,offsetX,offsetY);
-  // console.log(transform);
 }
 

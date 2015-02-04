@@ -120,8 +120,8 @@ function run() {
 
     if (!waiting && window.worker) {
 
-      //depthThreshold and depthRange are delcared in mappings.js and are controlled in popup
-      window.worker.postMessage([pixels, depthThreshold, depthRange]);
+      //calibration_depthThreshold and calibration_depthRange are delcared in mappings.js and are controlled in popup
+      window.worker.postMessage([pixels, calibration_depthThreshold, calibration_depthRange]);
       waiting = true;
     }
 

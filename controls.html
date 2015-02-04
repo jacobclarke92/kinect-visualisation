@@ -76,16 +76,11 @@
     	}
 
       function sliderChange() {
-        // console.log(this);
+        w.sliderDrag(this);
         w.saveCookie();
       }
       function sliderDrag() {
-        // if(this.data.name.indexOf('calib'))
         w.sliderDrag(this);
-        console.log(this.getValue());
-      }
-      function checkboxToggle() {
-
       }
       function effectSelected() {
         var script = this._item_clicked;
@@ -107,7 +102,8 @@
           var m = w.mappings[w.hash][i];
           $$('params_effect').addView({
             view: 'slider', 
-            label: m.name.readable(), 
+            label: m.name.readable(),
+            labelWidth: 150,
             name: m.name, 
             min: m.min, max: m.max, 
             value: m.value, 
@@ -143,14 +139,10 @@
       for(var n=0; n<w.effects.length; n++) {
         effectsUI_data.push({id: w.effects[n], value: (w.effects[n]).readable()});
       }
-      var effectsUI = new webix.ui();
-
-      // for(var n=0; n < w.effects.length; n++) {
-      //   document.write('<a href="javascript:w.changeScript(\''+w.effects[n]+'\')" id="'+w.effects[n]+'" class="changeScript">'+w.effects[n]+'</a>');
-      //   // if(n < w.effects.length-1) document.write(' | ');
-      // }
       </script>
     </p>
+
+    <div id="paletteZone"></div>
 
     <div id="controlsZone"></div>
       <script>
@@ -177,6 +169,7 @@
           },{
             header: "Filters",
             id: 'tab_filters',
+            hide: (w.renderer instanceof w.PIXI.CanvasRenderer),
             body: {
               view: 'form', id: 'params_filter', elements: [
                  {view: 'slider', label: 'RGB Split', name: 'filter_rgbSplit', min: 0, max: 100, value: 0, on: {onChange: sliderChange, onSliderDrag: sliderDrag}}
@@ -194,10 +187,10 @@
             header: "Calibration",
             id: 'tab_calibration',
             view: 'form', id: 'params_calibration', elements: [
-               {view: 'checkbox', label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:checkboxToggle}}
+               {view: 'checkbox', label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:sliderChange}}
               ,{view: 'slider', label: 'Depth Threshold', name: 'calibration_depthThreshold', min: 100, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
               ,{view: 'slider', label: 'Depth Range', name: 'calibration_depthRange', min: 1, max: 50, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
-              ,{view: 'slider', label: 'Zoom', name: 'calibration_zoom', min: 0.2, max: 4, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+              ,{view: 'slider', label: 'Zoom', name: 'calibration_zoom', min: 0.2, max: 4.0, step: 0.1, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
               ,{view: 'slider', label: 'Offset X', name: 'calibration_offsetX', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
               ,{view: 'slider', label: 'Offset Y', name: 'calibration_offsetY', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
               ,{view: 'slider', label: 'Rotate X', name: 'calibration_rotateX', min: -65, max: 65, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
@@ -212,6 +205,7 @@
         var paramsUI = new webix.ui({
           view: 'tabview',
           id: 'params',
+          height: 600,
           cells: cells
         });
       </script>
