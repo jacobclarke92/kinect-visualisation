@@ -97,23 +97,23 @@
 
       //called from createControls function in mappings.js
       function updateEffectMappings() {
-        effectUI_data = [];
+
+        var elems = $$('params_effect').elements;
+        for(var key in elems) $$('params_effect').removeView(elems[key].data.id);
+
+        if(w.mappings[w.hash].length == 0) $$('params_effect').addView({view: 'text', value: 'No options available for this effect...' });
+
         for(var i=0; i < w.mappings[w.hash].length; i++) {
           var m = w.mappings[w.hash][i];
-          console.log(m);
-          effectUI_data.push(
-            {view: 'slider', label: m.name.readable(), name: m.name, min: m.min, max: m.max, value: m.value, on: {onChange: sliderChange, onSliderDrag: sliderDrag}}
-          );
+          $$('params_effect').addView({
+            view: 'slider', 
+            label: m.name.readable(), 
+            name: m.name, 
+            min: m.min, max: m.max, 
+            value: m.value, 
+            on: {onChange: sliderChange, onSliderDrag: sliderDrag}
+          });
         }
-        $$('tab_effectOptions').elements = effectUI_data;
-
-        // cells[1].elements = effectUI_data;
-        console.log($$('params_effect').elements);
-        $$('tab_effectOptions').elements.set(effectUI_data);
-        $$('tab_effectOptions').define({'elements': effectUI_data});
-        $$('tab_effectOptions').refresh();
-        
-        $$('params').refresh();
       }
     </script>
 
@@ -157,7 +157,6 @@
         var cells = [
           {
             header: 'Effects List',
-            container: 'controlsZone',
             id: 'tab_effects',
             body: {
               view: 'tree',
@@ -170,7 +169,11 @@
           },{
             header: "Effect Options",
             id: 'tab_effectOptions',
-            view: 'form', id: 'params_effect', elements: effectUI_data
+            body: {
+              view: 'form', 
+              id: 'params_effect', 
+              elements: effectUI_data
+            }
           },{
             header: "Filters",
             id: 'tab_filters',
@@ -208,7 +211,6 @@
         ];
         var paramsUI = new webix.ui({
           view: 'tabview',
-          // container: 'params',
           id: 'params',
           cells: cells
         });
