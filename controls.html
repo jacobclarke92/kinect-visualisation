@@ -108,7 +108,9 @@
             label: m.name.readable(),
             labelWidth: 150,
             name: m.name, 
-            min: m.min, max: m.max, 
+            min: m.min, 
+            max: m.max, 
+            step: (m.max-m.min)/100,
             value: m.value, 
             on: {onChange: sliderChange, onSliderDrag: sliderDrag}
           });

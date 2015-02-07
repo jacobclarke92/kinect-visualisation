@@ -29084,8 +29084,12 @@ webix.protoUI({
         if (handle){    //view is rendered for sure
             var width = this._get_input_width(config);
 
-	        var value = config.value%config.step?(Math.round(config.value/config.step)*config.step):config.value;
+            
+	        var value = config.value%config.step ? ((config.value/config.step)*config.step) : config.value;
 	        value =  Math.max(Math.min(value,config.max),config.min);
+
+	        //console.log(value, config.value, config.step, config.min, config.max);
+
             var max = config.max - config.min;
             var left = Math.ceil((width - 20) * (value-config.min) / max);
             var right = width-20-left;
