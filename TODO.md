@@ -5,10 +5,9 @@
 * Get the node server working on windows / find a solution to stream [intrael](https://code.google.com/p/intrael/) seems very promising
 * Potentially switch from image streaming to raw depth data for higher depth precision than 0-255 [this](http://blog.mackerron.com/2012/02/03/depthcam-webkinect/) seems like a good solution
 
-* Improve MIDI mapping capabiities -- UI overhaul imminenet
+* Improve MIDI mapping capabiities -- UI overhaul imminent
 * Size stage to window size / fill to an aspect ratio, instead of 640x480
 * Beat detection / BPM punch in for more reliable audio cues?
-* Generate canvas and openGL controls dynamically
 * Create a crossfade feature to blend between effects
 * Expand upon audio/FFT anaysis
 	* implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
