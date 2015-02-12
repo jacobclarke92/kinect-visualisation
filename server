@@ -12,6 +12,8 @@ var clients = [];
 var selectPort = 0;
 
 var quickStart = false;
+var skipColour = false;
+var skipMidi = false;
 
 
 console.reset = function () { return process.stdout.write('\033c') }
@@ -26,62 +28,75 @@ if(process.argv.length > 2) {
     if(param.indexOf('-port') === 0) {
       selectPort = parseInt( param.substring(5,param.length) );
     }else if(param.indexOf('-quick') === 0) quickStart = true;
+    else if(param.indexOf('-skipcolour') === 0) skipColour = true;
+    else if(param.indexOf('-skipmidi') === 0) skipMidi = true;
   }
 }else{
   console.log("no params given! include -portXX to select midi device");
 }
 
+
+
 var midi;
 var inputs;
 var outputs;
 
+if(!skipMidi) {
 
-function onsuccesscallback( access ) {
-  midi = access;
-  inputs = midi.inputs;
-  outputs = midi.outputs;
-  var portCount = inputs.size;
-  console.log(portCount+" MIDI PORTS AVAILABLE");
-  if(portCount != 0) {
-    if(portCount < selectPort) {
-      console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
-      selectPort = 0;
+  function onsuccesscallback( access ) {
+    midi = access;
+    inputs = midi.inputs;
+    outputs = midi.outputs;
+    var portCount = inputs.size;
+    console.log(portCount+" MIDI PORTS AVAILABLE");
+    if(portCount != 0) {
+      if(portCount < selectPort) {
+        console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
+        selectPort = 0;
+      }
+
+      var devices = inputs.values();
+      // console.log(devices);
+      for(var i=0; i < devices._items.length; i++) {
+        console.log('port'+i+': '+devices._items[i].name);
+      }
+      console.log("Using port "+selectPort);
+      devices._items[selectPort].onmidimessage = onMidiIn;
+
     }
-
-    var devices = inputs.values();
-    // console.log(devices);
-    for(var i=0; i < devices._items.length; i++) {
-      console.log('port'+i+': '+devices._items[i].name);
-    }
-    console.log("Using port "+selectPort);
-    devices._items[selectPort].onmidimessage = onMidiIn;
-
   }
-}
-function onerrorcallback( err ) {
-  console.log( "uh-oh midi-o! Something went wrong! Error code: " + err.code );
-}
-function onMidiIn(ev){
-  var arr = [];
-  for(var i=0; i<ev.data.length; i++) arr.push(ev.data[i]);//arr.push((ev.data[i]<16 ? '0' : '') + ev.data[i].toString(16));
-  clients.forEach(function(client) {
-    client.write('data: ' + arr.join(' ') + '\n\n');
-  });
-  console.log('MIDI:', arr.join(' '));
-}
+  function onerrorcallback( err ) {
+    console.log( "uh-oh midi-o! Something went wrong! Error code: " + err.code );
+  }
+  function onMidiIn(ev){
+    var arr = [];
+    for(var i=0; i<ev.data.length; i++) arr.push(ev.data[i]);//arr.push((ev.data[i]<16 ? '0' : '') + ev.data[i].toString(16));
+    clients.forEach(function(client) {
+      client.write('data: ' + arr.join(' ') + '\n\n');
+    });
+    console.log('MIDI:', arr.join(' '));
+  }
 
-midi.requestMIDIAccess().then( onsuccesscallback, onerrorcallback );
+  midi.requestMIDIAccess().then( onsuccesscallback, onerrorcallback );
+
+}else{
+  console.log('Skipping midi setup');
+}
 
 //get top colours xml
 
-console.log('Attempting to download top colour palettes...')
-httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './palettes.xml', function (error, result) {
-    if (error) {
-        console.error('Error getting xml file',error);
-    } else {
-        console.log('File downloaded at: ' + result.file);
-    }
-});
+if(!skipColour) {
+  console.log('Attempting to download top colour palettes...')
+  httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './palettes.xml', function (error, result) {
+      if (error) {
+          console.error('Error getting xml file',error);
+      } else {
+          console.log('File downloaded at: ' + result.file);
+      }
+  });
+}else{
+  console.log('Skipping colour palette download');
+}
 
 
 

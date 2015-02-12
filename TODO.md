@@ -15,7 +15,6 @@
 ### Future endeavours
 * Build a kaleidoscope openGL effect [refer to this](http://stackoverflow.com/questions/13739901/vertex-kaleidoscope-shader)
 * Pull a few new filter effects from the [DEV branch of PIXI](https://github.com/GoodBoyDigital/pixi.js/tree/dev/src/filters) such as bloom, tiltshift, shockwave
-
 * Implement a more robust method of getting outlines -- [blob detection](http://blog.acipo.com/blob-detection-js/)
 * Look into using [Matter.js](http://brm.io/matter-js/) for sweet sweet physics-based effects
 * Make a heap of effects!
@@ -27,5 +26,5 @@
 * Tree branches spawn from outline angles / spirals 
 * [lightning](http://gamedevelopment.tutsplus.com/tutorials/how-to-generate-shockingly-good-2d-lightning-effects--gamedev-2681)
 * Rain effect -- particles with splash
-* Cut up outline into pieces / offset
+* Cut up outline into pieces and offset in, jagged glitchy manner
 * Spread lines out from center of person 
