@@ -209,51 +209,61 @@ function animateFrame() {
 
 }
 
-function changeScript(script) {
-	clearStage();
+var currentScriptString = false;
 
+function changeScript(script) {
+
+	//remove instance of previous script
+	if(currentScriptString && currentScriptString != script) {
+		delete window['effect_'+currentScriptString];
+	}
+	currentScriptString = script;
+
+	//clear stage
+	clearStage();
+	loadedScript = false;
+
+	//change window hash to new script
 	console.info('loading ~'+script+'~');
 	window.location.href = '/#'+script;
 	hash = script;
 
+	//clear mappings for current hash
 	if(typeof mappings != 'object') mappings = {};
 	if(typeof mappings[hash] != 'object') mappings[hash] = [];
 
+	//begin loading script
+	requirejs(['/effects/effect_'+script+'.js'],function() {
 
-	loadedScript = false;
-	
-	if(window[script]) {
-		currentScript = window['effect_'+script];
-		loadedScript = true;
-		console.info('Loading from cached script');
-	}else{
-		requirejs(['/effects/effect_'+script+'.js'],function() {
-			if(window['effect_'+script]) {
+		//check that the loaded file contained the actual effect object
+		if(window['effect_'+script]) {
 
-				currentScript = window['effect_'+script];
-				
-				//always run init before anything else
-				if(typeof currentScript.init != 'undefined') currentScript.init();
-				else trailAmount = 1;
+			currentScript = window['effect_'+script];
+			
+			//always run init before anything else -- this sets up mapping controls
+			if(typeof currentScript.init != 'undefined') currentScript.init();
+			else trailAmount = 1;
 
-				if(typeof currentScript.screens == 'undefined') {
-					currentScript.screens = [];
-					currentScript.graphics = false;
-				}
-				createControls();
-
-				console.info('Script loaded! ',currentScript);
-				loadedScript = true;
-				requestAnimFrame(animateFrame);
-			}else{
-				console.warn('Loaded script but incorrectly named or something');
+			if(typeof currentScript.screens == 'undefined') {
+				currentScript.screens = [];
+				currentScript.graphics = false;
 			}
-		});
-	}
+
+			//creates the mapping controls for the effect
+			createControls();
+
+			//begin animation frame
+			console.info('Script loaded! ',currentScript);
+			loadedScript = true;
+			requestAnimFrame(animateFrame);
+
+		}else{
+			console.warn('Loaded script but incorrectly named or something');
+		}
+	});
 	
 	$('.changeScript',controlsPopup.document).removeClass('active');
 	$('#'+script, controlsPopup.document).addClass('active');
-	// currentScript = window[script];
 
 	if(!inited) {
         inited = true;

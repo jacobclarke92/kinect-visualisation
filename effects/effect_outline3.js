@@ -20,6 +20,7 @@ effect_outline3 = {
     setMapping('trailAmount', 0, 0.5, 0.2);
   },
 
+  //overriding function for enterframe init
   initFrame: function() {
 
     if(this.screens.length > maxFrames) {
@@ -38,8 +39,6 @@ effect_outline3 = {
 
       this.screens[i].x = (640-640*this.screens[i].scale.x)/2;
       this.screens[i].y = (480-480*this.screens[i].scale.y)/2;
-      // this.screens[i].x += (320-this.centerX)/2;
-      // this.screens[i].y += (240-this.centerY)/2;
 
       
       if(this.screens[i].alpha <= 0 || this.screens[i].scale.x <= 0) {
