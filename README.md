@@ -11,7 +11,9 @@ I'm working on a system that uses kinect depth data, audio analysis and midi inp
 
 3. [Node.js](http://nodejs.org/) to run the streaming server and to install other dependencies
 
-4. Navigate to the root folder in terminal and install npm dependencies
+## Setup
+
+Navigate to the project folder in terminal and install npm dependencies
 
 `npm install`
 
@@ -23,23 +25,28 @@ You will be prompted with a list of MIDI devices if you have any plugged in/runn
 
 `./launcher | ./server -port2`
 
-So far I've set up the following parameters
+So far I've set up the following parameters:
+
 `-portX` selects the approriate MIDI port (the ports are listed when the script is run)
+
 `-skipmidi` don't even listen for MIDI, if you see a `Segmentation fault 11` message then add this
+
 `-skipcolours` doesn't attempt to download the latest top colour palettes from [Colour Lovers](http://colourlovers.com)
+
 `-quick` skips the countdown for the node server start up
+
 
 If all has gone as expected and you're using a kinect you should see a stream of a data running in terminal after a few seconds. Otherwise simply a countdown to node server launch.
 The node server will be running at 
 
 `http://localhost:5600/`
 
+
+## Notes
+
 Obviously enable popups. I use chrome but it should work for any browser (tested and working in firefox). I wish there were a way to permanently allow a site to access microphone in chrome... Allowallwoalwowlawoalwawoalwoaw
 
-
-
 For audio you can use your microphone but I highly recommend getting [Soundflower](https://rogueamoeba.com/freebies/soundflower/), which allows you to stream system audio as an audio input. Once install just set system output and input to `Soundflower (2ch)` open `Soundflowerbed` and select 'Build-in Output' from the flower icon in the tray.
-
 
 I was originally running Processing.js but the performance was atrocious so I went with PIXI.js instead. No 3D now but the 2D effects are enough and translate well when projected directly onto a person.
 
