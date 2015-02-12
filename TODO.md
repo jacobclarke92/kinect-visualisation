@@ -13,11 +13,13 @@
 	* implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
 
 ### Future endeavours
+* Add hotkeys for controls window
 * Build a kaleidoscope openGL effect [refer to this](http://stackoverflow.com/questions/13739901/vertex-kaleidoscope-shader)
 * Pull a few new filter effects from the [DEV branch of PIXI](https://github.com/GoodBoyDigital/pixi.js/tree/dev/src/filters) such as bloom, tiltshift, shockwave
 * Implement a more robust method of getting outlines -- [blob detection](http://blog.acipo.com/blob-detection-js/)
 * Look into using [Matter.js](http://brm.io/matter-js/) for sweet sweet physics-based effects
 * Make a heap of effects!
+
 
 
 
