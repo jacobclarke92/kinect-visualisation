@@ -43,7 +43,7 @@ function setupAudioNodes(stream) {
 
   console.info('mic conencted!');
   gotSound = true;
-  $('#soundCheck',controlsPopup.document).removeClass('error');
+  $('#soundCheck',uiPopup.document).removeClass('error');
 
   sourceNode = audioContext.createMediaStreamSource(stream);
   audioStream = stream;
@@ -77,7 +77,7 @@ function setupAudioNodes(stream) {
           console.log(frequencyArray.length);
           var bars = '';
           for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) bars += '<div class="frequencyBar"></div>';
-          $('#frequencyBars',controlsPopup.document).html(bars);
+          $('#frequencyBars',uiPopup.document).html(bars);
           initedControlsFreq = true;
         }
       }

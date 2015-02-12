@@ -11,7 +11,7 @@ var breakLoop = 500; //amount of times a while loop can try before breaking
 
 
 //filter effects
-var displacementTexture = PIXI.Texture.fromImage("/img/displacement_map.png");
+var displacementTexture = PIXI.Texture.fromImage("/app/img/displacement_map.png");
 var displacementFilter = new PIXI.DisplacementFilter(displacementTexture);
 var blurFilter = new PIXI.BlurFilter();
 var pixelateFilter = new PIXI.PixelateFilter();
@@ -161,8 +161,8 @@ function animateFrame() {
 		}
     }
 
-    if(controlsPopup.curDrag != false) $('#volumeBar',controlsPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
-	else $('#volumeBar',controlsPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});
+    if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
+	else $('#volumeBar',uiPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});
 
 	if(currentScript) {
 		
@@ -206,69 +206,5 @@ function animateFrame() {
 	//render it go go go
 	renderer.render(stage);
 	if(animating) requestAnimFrame(animateFrame);
-
-}
-
-var currentScriptString = false;
-
-function changeScript(script) {
-
-	//remove instance of previous script
-	if(currentScriptString && currentScriptString != script) {
-		delete window['effect_'+currentScriptString];
-	}
-	currentScriptString = script;
-
-	//clear stage
-	clearStage();
-	loadedScript = false;
-
-	//change window hash to new script
-	console.info('loading ~'+script+'~');
-	window.location.href = '/#'+script;
-	hash = script;
-
-	//clear mappings for current hash
-	if(typeof mappings != 'object') mappings = {};
-	if(typeof mappings[hash] != 'object') mappings[hash] = [];
-
-	//begin loading script
-	requirejs(['/effects/effect_'+script+'.js'],function() {
-
-		//check that the loaded file contained the actual effect object
-		if(window['effect_'+script]) {
-
-			currentScript = window['effect_'+script];
-			
-			//always run init before anything else -- this sets up mapping controls
-			if(typeof currentScript.init != 'undefined') currentScript.init();
-			else trailAmount = 1;
-
-			if(typeof currentScript.screens == 'undefined') {
-				currentScript.screens = [];
-				currentScript.graphics = false;
-			}
-
-			//creates the mapping controls for the effect
-			createControls();
-
-			//begin animation frame
-			console.info('Script loaded! ',currentScript);
-			loadedScript = true;
-			requestAnimFrame(animateFrame);
-
-		}else{
-			console.warn('Loaded script but incorrectly named or something');
-		}
-	});
-	
-	$('.changeScript',controlsPopup.document).removeClass('active');
-	$('#'+script, controlsPopup.document).addClass('active');
-
-	if(!inited) {
-        inited = true;
-        //THIS CAN ONLY BE RUN ONCE OR ELSE MAX LAG (due to listener double-ups)
-        run();
-    }
 
 }

@@ -2,6 +2,7 @@ var testingImage = false;
 var testingSound = false;
 var testImageURL = '';
 var currentTestImage = 1;
+var currentScriptString = false;
 
 
 var loadedScript = false;
@@ -11,10 +12,9 @@ var timeoutTimer = 0;
 var intervalCheck = 100; //ms
 hash = false;
 
+
 var inited = false;
-
 var jsonStream;
-
 var wasClosed = false;
 
 
@@ -46,7 +46,7 @@ function startPage(fallback) {
     run();
   }
 
-  jsonStream = new EventSource('/midi.json');
+  jsonStream = new EventSource('/app/midi.json');
   jsonStream.addEventListener('message', function(e) {
     if(wasClosed) {
       console.info("port reopened!");
@@ -74,6 +74,68 @@ function startPage(fallback) {
 
 }
 
+function changeScript(script) {
+
+  //remove instance of previous script
+  if(currentScriptString && currentScriptString != script) {
+    delete window['effect_'+currentScriptString];
+  }
+  currentScriptString = script;
+
+  //clear stage
+  clearStage();
+  loadedScript = false;
+
+  //change window hash to new script
+  console.info('loading ~'+script+'~');
+  window.location.href = '/#'+script;
+  hash = script;
+
+  //clear mappings for current hash
+  if(typeof mappings != 'object') mappings = {};
+  if(typeof mappings[hash] != 'object') mappings[hash] = [];
+
+  //begin loading script
+  requirejs(['/effects/effect_'+script+'.js'],function() {
+
+    //check that the loaded file contained the actual effect object
+    if(window['effect_'+script]) {
+
+      currentScript = window['effect_'+script];
+      
+      //always run init before anything else -- this sets up mapping controls
+      if(typeof currentScript.init != 'undefined') currentScript.init();
+      else trailAmount = 1;
+
+      if(typeof currentScript.screens == 'undefined') {
+        currentScript.screens = [];
+        currentScript.graphics = false;
+      }
+
+      //creates the mapping controls for the effect
+      createControls();
+
+      //begin animation frame
+      console.info('Script loaded! ',currentScript);
+      loadedScript = true;
+      requestAnimFrame(animateFrame);
+
+    }else{
+      console.warn('Loaded script but incorrectly named or something');
+    }
+  });
+  
+  $('.changeScript',uiPopup.document).removeClass('active');
+  $('#'+script, uiPopup.document).addClass('active');
+
+  if(!inited) {
+        inited = true;
+        //THIS CAN ONLY BE RUN ONCE OR ELSE MAX LAG (due to listener double-ups)
+        run();
+    }
+
+}
+
 
 
 var pixels = false;
@@ -94,12 +156,8 @@ outlineArray = [];
 
 var image;
 var imageLoaded = false;
-
-
-
 var gotKinect = false;
 
-var startedPhysics = false;
 function run() {
 
   image = new Image();
@@ -110,11 +168,6 @@ function run() {
 
     bufferContext.drawImage(image, 0, 0);
     pixels = bufferContext.getImageData(0, 0, width, height).data;
-
-    // console.log(image.src);
-    // depthTextureBase = new PIXI.BaseTexture(image);
-    // depthTexture.baseTexture = depthTextureBase;
-    // no idea hey
 
     if(testingImage) console.log('test image loaded',pixels.length);
 
@@ -144,26 +197,12 @@ function run() {
           //generate array of outline points, second parameter is smoothing
           outlineArray = MarchingSquares.getBlobOutlinePointsFromImage(pixels, 3, 20);
 
-          // if(!startedPhysics) {
-          //   startPhysics();
-
-          //   startedPhysics = true;
-          // }
-
-          // var tmp = Smooth(outlineArray, {
-          //     method: Smooth.METHOD_CUBIC, 
-          //     clip: Smooth.CLIP_PERIODIC, 
-          //     cubicTension: Smooth.CUBIC_TENSION_CATMULL_ROM
-          // });
-          // outlineArray = tmp;
-          // console.info(outlineArray.length);
-          // console.log(outlineArray);
         }
 
         if(!gotKinect) {
          console.log(event);
          gotKinect = true;
-         $('#kinectCheck',controlsPopup.document).removeClass('error');
+         $('#kinectCheck',uiPopup.document).removeClass('error');
         }
       }
     });
@@ -175,20 +214,22 @@ function run() {
 }
 
 function startWorker() {
+
+  //remove instance of worker if one already exists
   if(window.worker) {
     console.log("removing window worker");
     window.worker.terminate();
     delete window.worker;
   }
 
-
+  //create window worker
   window.worker = createWorker(process, 320, 240, hash);
   window.worker.addEventListener('message', function(event) {
 
     if(testingImage) console.log('test image received from worker');
     waiting = false;
     gotImage = true;
-    // if(loadedScript) Processing.getInstanceById(processingInstanceName).setImage(event.data);
+
   });
 }
 
@@ -204,15 +245,11 @@ function createWorker(source) {
 
 
 
-//this function is outside of any scope in this page
-
+//this function is a worker and only exists in its own scope\
 function process(width, height, hash) {
-
-  //var outline = (hash == 'outline') ? true : false;
 
   addEventListener('message', function(event) {
 
-    // console.log("WORKER HASH: "+hash);
     var pixels = event.data[0];
     var threshold = event.data[1];
     var range = event.data[2];
@@ -227,7 +264,7 @@ function process(width, height, hash) {
         var offset = ((y * width) + x)*4;
         var value = pixels[offset];
         
-        if(value > min && value < max) value = ((value-min)/range)*255;
+        if(value > min && value < max) value = ((value-min)/(max-min))*255;
         else value = 0; 
         
 

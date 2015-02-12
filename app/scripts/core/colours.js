@@ -29,7 +29,7 @@ function getTopColours() {
 
 	$.ajax({
 		type: "GET",
-		url: "palettes.xml",
+		url: "/app/palettes.xml",
 		datatype: "xml",
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('Error: ' + errorThrown);
@@ -74,7 +74,7 @@ function getTopColours() {
 
 			setTimeout(function() {
 
-				controlsPopup.updatePalettes();
+				uiPopup.updatePalettes();
 
 				if(cookieLoaded && paletteID) {
 					for(var i=0; i < palettes.length; i++) {
@@ -82,7 +82,7 @@ function getTopColours() {
 						if(paletteID == palettes[i].id) {
 
 							currentPalette = palettes[i];
-							$('#'+paletteID+'.palette',controlsPopup.document).addClass('active');
+							$('#'+paletteID+'.palette',uiPopup.document).addClass('active');
 							console.info('Palette changed to:', currentPalette.title);
 						}
 					}

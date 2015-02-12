@@ -1,0 +1,156 @@
+<!doctype html>
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Live Visuals | Controls</title>
+
+		<!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
+
+		<link rel="stylesheet" type="text/css" href="/app/styles/styles.css">
+		<link rel="stylesheet" type="text/css" href="/app/styles/ui.css">
+		<link rel="stylesheet" type="text/css" href="/app/libs/webix.css">
+		<script src="/app/libs/webix_debug.js"></script>
+		<script data-main="/app/scripts/init_ui" src="/node_modules/requirejs/require.js"></script>
+
+
+</head>
+<body>
+
+	<div id="statusIcons">
+		<span class="error" id="soundCheck">
+			<svg xmlns="http://www.w3.org/2000/svg" version="1" width="400pt" height="400pt" viewBox="0 0 75 75"><g stroke="#111" stroke-width="5"><path stroke-linejoin="round" fill="#111" d="M39.389 13.769l-17.154 14.837h-16.235v19.093h15.989l17.4 15.051v-48.981z"/><path id="path1" d="M48.128 49.03c1.929-3.096 3.062-6.739 3.062-10.653 0-3.978-1.164-7.674-3.147-10.8" stroke-linecap="round" fill="none"/><path d="M55.082 20.537c3.695 4.986 5.884 11.157 5.884 17.84 0 6.621-2.151 12.738-5.788 17.699" stroke-linecap="round" fill="none"/><path d="M61.71 62.611c5.267-6.666 8.418-15.08 8.418-24.233 0-9.217-3.192-17.682-8.519-24.368" stroke-linecap="round" fill="none"/></g></svg>
+		</span>
+		<span class="error" id="kinectCheck">
+			<svg xmlns="http://www.w3.org/2000/svg" width="118" height="27"><defs><clipPath id="a"><path d="M0 88h200v-88h-200v88z"/></clipPath></defs><path d="M66.239 13.845c-2.503 0-4.532-2.027-4.532-4.532 0-2.503 2.029-4.533 4.532-4.533s4.532 2.03 4.532 4.533c0 2.505-2.029 4.532-4.532 4.532m-11.928 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m-23.218 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m82.46-13.837h-109.099c-2.45 0-4.452 2.004-4.452 4.455v9.382c0 2.45 2.002 4.454 4.452 4.454h52.323v1.239c-.453.004-.903.052-1.273.191-1.272.478-10.02 3.657-10.337 5.248-.32 1.591.953 1.591 3.339 1.591h20.993000000000002c2.386 0 3.657 0 3.341-1.591-.319-1.591-9.065-4.771-10.339-5.248-.369-.139-.819-.187-1.273-.191v-1.239h52.323c2.448 0 4.454-2.004 4.454-4.454v-9.382c0-2.451-2.006-4.455-4.454-4.455" fill="#00669c" clip-path="url(#a)"/></svg>
+		</span>
+	</div>
+	<div id="volumeBar"></div>
+	<div id="frequencySelector">
+		<canvas id="frequencyBars" width="512" height="200"></canvas>
+		<div id="leftSlider" class="slider"></div>
+		<div id="rightSlider" class="slider"></div>
+	</div>
+	<br>
+
+		<div id="paletteZone"></div>
+		<div id="controlsZone"></div>
+		<div id="testButtons"></div>
+			<script>
+
+			//create ui once page is loaded
+			//
+			setTimeout(function() {
+
+				new webix.ui({
+					view: 'dataview',
+					id: 'palettes',
+					container: 'paletteZone',
+					height: 180,
+					responsive: true,
+					select: true,
+					type: {
+						width: 101,
+						height: 21,
+						css: 'palette'
+					},
+					template: '<span style="background-color: ##hex1#"></span><span style="background-color: ##hex2#"></span><span style="background-color: ##hex3#"></span><span style="background-color: ##hex4#"></span><span style="background-color: ##hex5#"></span>',
+					data: palettesUI_data
+				});
+				$$('palettes').attachEvent('onSelectChange', colorChanged);
+
+					
+				var effectsUI_data = [];
+				for(var n=0; n<w.effects.length; n++) {
+					effectsUI_data.push({id: w.effects[n], value: (w.effects[n]).readable()});
+				}
+
+				var cells = [
+					{
+						header: 'Effects List',
+						id: 'tab_effects',
+						body: {
+							view: 'tree',
+							select: true,
+							on: {'onItemClick': effectSelected},
+							data: [{
+								id: 'all_effects', value: 'All Effects', open: true, data: effectsUI_data
+							}]
+						}
+					},{
+						header: "Effect Options",
+						id: 'tab_effectOptions',
+						body: {
+							view: 'form', 
+							id: 'params_effect', 
+							elements: effectUI_data
+						}
+					},{
+						header: "Filters",
+						id: 'tab_filters',
+						hide: (w.renderer instanceof w.PIXI.CanvasRenderer),
+						body: {
+							view: 'form', id: 'params_filter', elements: [
+								 {view: 'slider', label: 'RGB Split', name: 'filter_rgbSplit', min: 0, max: 100, value: 0, on: {onChange: sliderChange, onSliderDrag: sliderDrag}}
+								,{view: 'slider', label: 'Displacement', name: 'filter_displacement', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+								,{view: 'slider', label: 'Pixelate', name: 'filter_pixelate', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+								,{view: 'slider', label: 'Twist', name: 'filter_twist', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+								,{view: 'slider', label: 'Invert', name: 'filter_invert', min: -10, max: 10, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+								,{view: 'slider', label: 'Blur', name: 'filter_blur', min: 0, max: 100, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+
+								//,{view: 'button', label: 'Reset', click: function() {$$("params_filter").refresh()}}
+							]
+						}
+						
+					},{
+						header: "Calibration",
+						id: 'tab_calibration',
+						view: 'form', id: 'params_calibration', elements: [
+							 {view: 'checkbox', label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:sliderChange}}
+							,{view: 'slider', label: 'Depth Threshold', name: 'calibration_depthThreshold', min: 100, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Depth Range', name: 'calibration_depthRange', min: 1, max: 50, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Zoom', name: 'calibration_zoom', min: 0.2, max: 4.0, step: 0.1, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Offset X', name: 'calibration_offsetX', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Offset Y', name: 'calibration_offsetY', min: -200, max: 200, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Rotate X', name: 'calibration_rotateX', min: -65, max: 65, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Rotate Y', name: 'calibration_rotateY', min: -65, max: 65, value: 0, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+							,{view: 'slider', label: 'Perspective', name: 'calibration_perspective', min: 10, max: 2000, value: 800, on:{onChange:sliderChange, onSliderDrag: sliderDrag}}
+
+							//,{view: 'button', label: 'Reset', click: function() {$$("params_calibration").refresh()}}
+						]
+					}
+
+				];
+				new webix.ui({
+					view: 'tabview',
+					container: 'controlsZone',
+					id: 'params',
+					height: 600,
+					cells: cells,
+					responsive: true
+				});
+
+				new webix.ui({
+					container: 'testButtons',
+					height: 50,
+					responsive: true,
+					rows: [
+						{cols: [
+							{view: 'form', elements: [
+								{view: 'button', lable: 'Toggle test image'}
+							]},
+							{elements: [
+								{view: 'button', lable: 'Toggle test audio'}
+							]}
+
+						]}
+					]
+				});
+
+
+			},500);
+			</script>
+		</div>
+
+</body>
+</html>

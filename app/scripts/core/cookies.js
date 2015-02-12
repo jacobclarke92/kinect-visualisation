@@ -61,9 +61,9 @@ function loadCookie() {
         window[key] = controls[key];
         console.log(key+' = '+controls[key]);
 
-        if(key != 'mirror') $('#canvas'+capitaliseFirstLetter(key),controlsPopup.document).val(controls[key]);
+        if(key != 'mirror') $('#canvas'+capitaliseFirstLetter(key), uiPopup.document).val(controls[key]);
         else{
-          if(mirror == 1) $('#canvasMirror',controlsPopup.document).removeAttr('checked');
+          if(mirror == 1) $('#canvasMirror', uiPopup.document).removeAttr('checked');
 
         }
       }
@@ -121,7 +121,7 @@ function randomizeImage(intervalChange) {
   while(rand == currentTestImage && testImages > 1) rand = Math.round(Math.random()*(testImages-1))+1;
 
   currentTestImage = rand;
-  testImageURL = '/img/test'+currentTestImage+'.png';
+  testImageURL = '/app/img/test'+currentTestImage+'.png';
 
   //console.log('new image: '+testImageURL);
 

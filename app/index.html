@@ -5,27 +5,10 @@
     <meta charset="UTF-8">
     <title>Live Visuals</title>
 
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <style type="text/css">
-   
-    #contentZone{
-      perspective-origin: 50% 240px;
-      perspective: 800px;
-    }
-    #processingCanvas{
-      zoom: 1;
-      transform: scaleX(-1);
-      border: 2px solid #111;
-    }
-    #testCanvas{
-      zoom: 0.5;
-      /*display: block !important;*/
-    }
-
-    </style>
-    
-    <script language="javascript" src="/scripts/pixi.dev.js"></script>
-    <script data-main="scripts/init" src="node_modules/requirejs/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="/app/styles/styles.css">
+    <link rel="stylesheet" type="text/css" href="/app/styles/core.css">
+    <script src="/app/libs/pixi.dev.js"></script>
+    <script data-main="/app/scripts/init_core" src="/node_modules/requirejs/require.js"></script>
 
     <script type="application/javascript">
 
@@ -49,7 +32,8 @@
         'fft',
         'hexigons1',
         'letters',
-        'rain'
+        'rain',
+        'linesfromcenter'
         // 'spheres3D',
         // 'cubes3D',
         // 'cubes3D_springy'

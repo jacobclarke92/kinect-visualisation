@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var BufferedNetstringStream = require('./scripts/netstring').BufferedNetstringStream;
+var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
 var http = require('http');
 var fs = require('fs');
 var url = require("url");
@@ -87,7 +87,7 @@ if(!skipMidi) {
 
 if(!skipColour) {
   console.log('Attempting to download top colour palettes...')
-  httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './palettes.xml', function (error, result) {
+  httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './app/palettes.xml', function (error, result) {
       if (error) {
           console.error('Error getting xml file',error);
       } else {
@@ -187,7 +187,7 @@ var server = http.createServer(function(req, res) {
       }
     }
     if(!found) {
-      if(pathname == '/') serve(res, __dirname + '/index.html', 'text/html');
+      if(pathname == '/') serve(res, __dirname + '/app/index.html', 'text/html');
       else res.end();
     }
   }
