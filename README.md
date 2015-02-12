@@ -4,7 +4,7 @@ I'm working on a system that uses kinect depth data, audio analysis and midi inp
 
 
 ## You'll need:
-1. An old [Kinect](http://www.ebay.com/bhp/xbox-360-kinect-sensor) for starters, maybe the new ones work too I haven't tried. This is essential for testing purposes though.
+1. An old [Kinect](http://www.ebay.com/bhp/xbox-360-kinect-sensor) for starters, maybe the new ones work too I haven't tried. This isn't essential for testing purposes though.
 
 2. [libfreenect](https://github.com/OpenKinect/libfreenect) and
 [libpng](http://www.libpng.org/). I would highly recommend OS X users use [Homebrew](http://mxcl.github.com/homebrew/) to install these dependencies `brew install libfreenect libpng`. While a kinect isn't necessarily required for testing the libraries still need to exist for the script to run.
@@ -31,7 +31,7 @@ So far I've set up the following parameters:
 
 `-skipmidi` don't even listen for MIDI, if you see a `Segmentation fault 11` message then add this
 
-`-skipcolours` doesn't attempt to download the latest top colour palettes from [Colour Lovers](http://colourlovers.com)
+`-skipcolours` doesn't attempt to download the top colour palettes from [Colour Lovers](http://colourlovers.com)
 
 `-quick` skips the countdown for the node server start up
 
