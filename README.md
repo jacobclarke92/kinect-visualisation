@@ -3,7 +3,7 @@
 I'm working on a system that uses kinect depth data, audio analysis and midi input to create immersive visuals -- ideal for live performances. It uses code borrowed from sstephenson/kinect for streaming kinect data via node, PIXI.js as a rendering client (delicious openGL) and node.js for kinect and midi streaming.
 
 
-## You'll need:
+## Requirements
 1. An old [Kinect](http://www.ebay.com/bhp/xbox-360-kinect-sensor) for starters, maybe the new ones work too I haven't tried. This isn't essential for testing purposes though.
 
 2. [libfreenect](https://github.com/OpenKinect/libfreenect) and
@@ -46,7 +46,7 @@ The node server will be running at
 
 Obviously enable popups. I use chrome but it should work for any browser (tested and working in firefox). I wish there were a way to permanently allow a site to access microphone in chrome... Allowallwoalwowlawoalwawoalwoaw
 
-For audio you can use your microphone but I highly recommend getting [Soundflower](https://rogueamoeba.com/freebies/soundflower/), which allows you to stream system audio as an audio input. Once install just set system output and input to `Soundflower (2ch)` open `Soundflowerbed` and select 'Build-in Output' from the flower icon in the tray.
+For audio you can use your microphone but I highly recommend getting [Soundflower](https://rogueamoeba.com/freebies/soundflower/), which allows you to stream system audio as an audio input. Once installed just set system output and input to `Soundflower (2ch)` open `Soundflowerbed` and select 'Build-in Output' from the flower icon in the tray.
 
 I was originally running Processing.js but the performance was atrocious so I went with PIXI.js instead. No 3D now but the 2D effects are enough and translate well when projected directly onto a person.
 
