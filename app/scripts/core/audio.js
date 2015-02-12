@@ -1,5 +1,4 @@
 
-
 var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 var analyserNode;
 var javascriptNode;
@@ -23,10 +22,7 @@ var session = {
   video: false
 };
 var recordRTC = null;
-navigator.getUserMedia = (navigator.getUserMedia ||
-                    navigator.webkitGetUserMedia ||
-                    navigator.mozGetUserMedia ||
-                    navigator.msGetUserMedia);
+navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
 function attemptUseMic() {
   navigator.getUserMedia(session, setupAudioNodes, function() {

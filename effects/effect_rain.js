@@ -1,3 +1,4 @@
+//exclude
 effect_rain = {
 
 	particles: [],

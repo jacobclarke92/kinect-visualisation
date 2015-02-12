@@ -1,0 +1,1 @@
+effects = ["circles1", "depth_image", "hexigons1", "letters", "lines1", "lsd1", "outline1", "outline2", "outline3", "squiggle", "test_visuals", "triangles1", "triangles2", "triangulation1"];

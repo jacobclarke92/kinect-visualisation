@@ -3,6 +3,7 @@ requirejs(
 		'/app/libs/jquery.js',
 		'/app/libs/underscore.js',
 
+		'/app/scripts/effects_list.js',
 		'/app/scripts/helpers/polyfills.js',
 		'/app/scripts/helpers/marchingsquares.js',
 		'/app/scripts/helpers/polygon_math.js',
