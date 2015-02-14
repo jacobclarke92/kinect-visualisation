@@ -24,7 +24,7 @@
 
 ;(function($, window, undefined) {
   "use strict";
-
+  console.log($); // for some reason not including this log make it so that jquery is not ready when the script loads...
   $.fn.tabslet = function(options) {
 
     var defaults = {
@@ -158,4 +158,4 @@
 
   $(document).ready(function () { $('[data-toggle="tabslet"]').tabslet(); });
 
-})(jQuery);
+})(window.jQuery);

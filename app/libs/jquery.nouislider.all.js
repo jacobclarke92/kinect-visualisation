@@ -345,6 +345,9 @@ var
 
 // Helpers
 
+	console.log($);
+	console.log(jQuery); // wtf not logging these makes the script fail idk why .... ?????
+
 	// Test in an object is an instance of jQuery or Zepto.
 	function isInstance ( a ) {
 		return a instanceof $ || ( $.zepto && $.zepto.isZ(a) );
@@ -2311,4 +2314,4 @@ function closure ( target, options, originalOptions ){
 		});
 	};
 
-}( window.jQuery || window.Zepto ));
+}( window.jQuery));
