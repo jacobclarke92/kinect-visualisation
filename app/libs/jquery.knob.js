@@ -36,7 +36,8 @@
         min = Math.min;
 
     k.c = {};
-    k.c.d = $(document);
+    // console.log(jQuery);
+    k.c.d = jQuery(document);
     k.c.t = function (e) {
         return e.originalEvent.touches.length - 1;
     };
@@ -95,7 +96,7 @@
             this.$.data('kontroled', true);
 
             this.extend();
-            this.o = $.extend({
+            this.o = jQuery.extend({
                     // Config
                     min: this.$.data('min') !== undefined ? this.$.data('min') : 0,
                     max: this.$.data('max') !== undefined ? this.$.data('max') : 100,
@@ -150,7 +151,7 @@
                 this.v = {};
                 this.i = this.$.find('input');
                 this.i.each(function(k) {
-                    var $this = $(this);
+                    var $this = jQuery(this);
                     s.i[k] = $this;
                     s.v[k] = s.o.parse($this.val());
 
@@ -182,14 +183,14 @@
             !this.o.displayInput && this.$.hide();
 
             // adds needed DOM elements (canvas, div)
-            this.$c = $(document.createElement('canvas')).attr({
+            this.$c = jQuery(document.createElement('canvas')).attr({
                 width: this.o.width,
                 height: this.o.height
             });
 
             // wraps all elements in a div
             // add to DOM before Canvas init is triggered
-            this.$div = $('<div style="'
+            this.$div = jQuery('<div style="'
                 + (this.o.inline ? 'display:inline;' : '')
                 + 'width:' + this.o.width + 'px;height:' + this.o.height + 'px;'
                 + '"></div>');
@@ -423,7 +424,7 @@
             }
 
             if (this.relative) {
-                $(window).resize(function() {
+                jQuery(window).resize(function() {
                     s._carve().init();
                     s._draw();
                 });
@@ -505,7 +506,7 @@
         this.PI2 = 2*Math.PI;
 
         this.extend = function () {
-            this.o = $.extend({
+            this.o = jQuery.extend({
                 bgColor: this.$.data('bgcolor') || '#EEEEEE',
                 angleOffset: this.$.data('angleoffset') || 0,
                 angleArc: this.$.data('anglearc') || 360,
@@ -791,12 +792,12 @@
         };
     };
 
-    $.fn.dial = $.fn.knob = function (o) {
+    jQuery.fn.dial = jQuery.fn.knob = function (o) {
         return this.each(
             function () {
                 var d = new k.Dial();
                 d.o = o;
-                d.$ = $(this);
+                d.$ = jQuery(this);
                 d.run();
             }
         ).parent();
