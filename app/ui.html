@@ -8,14 +8,20 @@
 		<!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
 
 		<link rel="stylesheet" type="text/css" href="/app/styles/styles.css">
-		<link rel="stylesheet" type="text/css" href="/app/styles/ui.css">
 		<link rel="stylesheet" type="text/css" href="/app/libs/webix.css">
+		<link rel="stylesheet" type="text/css" href="/app/libs/jquery.nouislider.css">
+		<link rel="stylesheet" type="text/css" href="/app/libs/jquery.nouislider.pips.css">
+		<link rel="stylesheet" type="text/css" href="/app/styles/ui.css">
 		
+		<script src="/app/libs/jquery.js"></script>
+		<script src="/app/libs/jquery.nouislider.all.js"></script>
+		<script src="/app/libs/jquery.tabslet.js"></script>
+		<script src="/app/libs/jquery.knob.js"></script>
 		<script data-main="/app/scripts/init_ui" src="/node_modules/requirejs/require.js"></script>
 
 
 </head>
-<body>
+<body class="mapping">
 
 	<div id="statusIcons">
 		<span class="error" id="soundCheck">
@@ -28,14 +34,56 @@
 	<div id="volumeBar"></div>
 	<div id="frequencySelector">
 		<canvas id="frequencyBars" width="512" height="200"></canvas>
-		<div id="leftSlider" class="slider"></div>
-		<div id="rightSlider" class="slider"></div>
+		<input type="range" id="freqRange" min="0" max="100">
 	</div>
 	<br>
 
 		<div id="paletteZone"></div>
 		<div id="controlsZone"></div>
-		<div id="testButtons"></div>
+
+		<div class='tabs tabs_default'>
+			<ul class='horizontal'>
+				<li><a href="#tab-1" data-mappable>Effect List</a></li>
+				<li><a href="#tab-2" data-mappable>Effect Options</a></li>
+				<li><a href="#tab-3" data-mappable>Filters</a></li>
+				<li><a href="#tab-4" data-mappable>Calibration</a></li>
+			</ul>
+			<div id="tab-1" class="tabArea">
+				<div id="filesZone"></div>
+			</div>
+			<div id="tab-2" class="tabArea">
+				<div id="effectsZone"></div>
+			</div>
+			<div id="tab-3" class="tabArea">
+				<div id="filtersZone"></div>
+			</div>
+			<div id="tab-4" class="tabArea">
+				<div id="calibrationZone"></div>
+			</div>
+		</div>
+
+		<!-- <div id="templates"> -->
+		<div id="templates" style="display:none">
+
+			<div id="paramTemplate">
+				<div class="effectParam">
+					<div class="title"><span></span></div>
+					<div class="slider">
+						<input type="range" class="range" min="0" max="100" step="1" value="0" data-mappable>
+					</div>
+					<div class="mapKnob">
+						<input type="text" class="dial" value="0" data-min="-100" data-max="100" data-step="1" data-width="50" data-height="50" data-angleArc="250" data-angleOffset="-125" data-mappable>
+					</div>
+				</div>
+			</div>
+			<div id="fileTemplate">
+				<li class="file"></li>
+			</div>
+
+		</div>
+
+
+		<div id="testButtons"></div>	
 			<script>
 
 			//create ui once page is loaded
@@ -148,7 +196,7 @@
 				});
 
 
-			},500);
+			},9999999999);
 			</script>
 		</div>
 

@@ -51,7 +51,7 @@ function createControls() {
   if(!mappings[hash])  mappings[hash] = [];
 
   //handled by the UI functions 
-  uiPopup.updateEffectMappings();
+  uiPopup.generateEffectParams();
   console.info('controls updated');
 
 }

@@ -345,9 +345,6 @@ var
 
 // Helpers
 
-	console.log($);
-	console.log(jQuery); // wtf not logging these makes the script fail idk why .... ?????
-
 	// Test in an object is an instance of jQuery or Zepto.
 	function isInstance ( a ) {
 		return a instanceof $ || ( $.zepto && $.zepto.isZ(a) );
@@ -1552,6 +1549,7 @@ function closure ( target, options, originalOptions ){
 		events = events.replace( /\s/g, namespace + ' ' ) + namespace;
 
 		// Bind a closure on the target.
+		
 		return element.on( events, function( e ){
 
 			// jQuery and Zepto (1) handle unset attributes differently,
@@ -1571,6 +1569,7 @@ function closure ( target, options, originalOptions ){
 			// Call the event handler with the event [ and additional data ].
 			callback ( e, data );
 		});
+
 	}
 
 	// Handle movement on document for handle and range drag.

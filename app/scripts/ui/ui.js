@@ -8,7 +8,8 @@ function sliderDrag() {
   w.sliderDrag(this);
 }
 function effectSelected() {
-  var script = this._item_clicked;
+  var script = this._item_clicked || $(this).data('name');
+
   if(script != 'all_effects') w.changeScript(script);
 }
 
