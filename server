@@ -6,6 +6,8 @@ var fs = require('fs');
 var url = require("url");
 var midi = require('web-midi-api');
 var httpRequest = require('http-request');
+var chokidar = require('chokidar');
+var less = require('less');
 
 var clients = [];
 
@@ -15,7 +17,11 @@ var quickStart = false;
 var skipColour = false;
 var skipMidi = false;
 var skipEffectsList = false;
+var devMode = false;
 
+
+
+var log = console.log.bind(console);
 
 console.reset = function () { return process.stdout.write('\033c') }
 //console.reset();
@@ -31,12 +37,41 @@ if(process.argv.length > 2) {
 		else if(param.indexOf('-skipmidi') === 0) skipMidi = true;
 		else if(param.indexOf('-skipcolour') === 0) skipColour = true;
 		else if(param.indexOf('-skipeffectslist') === 0) skipMidi = true;
+		else if(param.indexOf('-devMode') === 0) devMode = true;
 	}
 }else{
 	console.log("no params given! include -portXX to select midi device");
 }
 
 
+function compileLess(path) {
+	var fpath = path.replace(/\\/g, '/');
+	var fname = fpath.substring(fpath.lastIndexOf('/')+1, fpath.lastIndexOf('.'));
+	fpath = 'app/styles/'+fname+'.css';
+	fs.readFile(path,function(error,data){
+	    data = data.toString();
+	    // console.log(data);
+	    less.render(data, function (e, css) {
+	        fs.writeFile(fpath, css.css, function(err){
+	            console.log('css compiled for ',path,' at ',fpath);
+	        });
+	    });
+	});
+}
+if(devMode) {
+	var watcher = chokidar.watch('file', {
+	  ignored: /[\/\\]\./, persistent: true
+	});
+	watcher.on('change', function(path, stats) {
+
+		compileLess(path);
+
+	});
+	watcher.add('./app/styles/*.less');
+
+	compileLess('./app/styles/ui.less');
+	compileLess('./app/styles/core.less');
+}
 
 if(!skipEffectsList) {
 
