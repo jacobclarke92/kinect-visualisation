@@ -64,12 +64,10 @@ function updateCC(hashy, id, val) {
   var varVal = map_range(val, 0, 127, m.min, m.max);
   window[m.name] = varVal;
   mappings[hashy][id]['value'] = varVal;
-  var target = 'input[type=range]:eq('+id+')';
   if(hashy == 'controls') {
-    $('#canvasControls input[type=range]:eq('+id+')', uiPopup.document).val(varVal).trigger('input');
-
+    $('#'+m.name, uiPopup.document).val(varVal);
   }else{
-    $('input[type=range]:eq('+id+')', uiPopup.document).val(val/1.27);
+    $('#'+m.name, uiPopup.document).val(val/1.27);
   }
   // console.log('updated CC value aw yis');
 
@@ -77,25 +75,6 @@ function updateCC(hashy, id, val) {
   updateCookieTimeout = setTimeout(function() {saveCookie()},2000);
 
 }
-
-
-function mapCC(elem, isCanvasControl) {
-
-  if(typeof isCanvasControl != 'undefined') mappingCanvasControl = true;
-
-  //map button pressed
-
-  mappingID = parseInt($(elem).attr('data-id'));
-  $(elem, uiPopup.document).addClass('active');
-  $('.map', uiPopup.document).attr('disabled','disabled');
-  mapTimeout = setTimeout(function() {
-    $('.map', uiPopup.document).removeAttr('disabled');
-    console.warn('CC mapping timed out, is device hooked up properly?');
-    mappingCanvasControl = false;
-  },10000);
-  mappingCC = true;
-}
-
 
 
 function keyPressed(event) {

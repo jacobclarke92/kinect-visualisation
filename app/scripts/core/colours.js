@@ -94,6 +94,8 @@ function getTopColours() {
 	});
 }
 function paletteChange(colorID) {
+
+	console.log(colorID);
 	
 	for(var i=0; i< palettes.length; i++) {
 		if(palettes[i].id == colorID) currentPalette = palettes[i];
@@ -102,9 +104,10 @@ function paletteChange(colorID) {
 	// console.log(div);
 	saveCookie();
 }
+
 function randomPaletteColour() {
 	if(currentPalette) {
-		var colNum = Math.ceil(Math.random()*(currentPalette.colors.length-1));
+		var colNum = Math.floor(Math.random()*(currentPalette.colors.length));
 		return rgbToHexInt(currentPalette.colors[colNum].rgb)
 	}else{
 		return Math.floor(Math.random()*16777215).toString(16); // generates random hex
