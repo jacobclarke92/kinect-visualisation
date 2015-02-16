@@ -86,22 +86,26 @@ function updateCanvas() {
 
 
 
-function sliderDrag(slider) {
-  var val = slider.data.value;
-  if(slider.data.view == 'checkbox') val = (val == 0) ? -1 : 1;
+function sliderDrag(slider, val) {
+  
+  var slider = $(slider);
+  var paramName = slider.attr('data-name');
+  var paramParent = slider.attr('data-parent');
+  console.log(paramParent,paramName,val);
 
-  if(window[slider.data.name] == val) return;
-
-  var parentID = slider._parent_cell.config.id;
-  var tempHash = hash;
-  if(parentID == 'params_calibration' || parentID == 'params_filters') tempHash = 'controls';
-  console.log(parentID, slider.data.name, val);
-  window[slider.data.name] = val;
-  mappings[tempHash][slider.data.name] = val;
-
-  if(parentID == 'params_calibration') {
-    updateCanvas();
+  if(window[paramName] == val) {
+    console.log('param is the same as stored');
+    return;
+  }else{
+    console.log('updating param ',paramName, val);
   }
+
+  var tempHash = hash;
+  if(paramParent == 'params_calibration' || paramParent == 'params_filters') tempHash = 'controls';
+  window[paramName] = val;
+  mappings[tempHash][paramName] = val;
+
+  if(paramParent == 'calibrationZone') updateCanvas();
 
 }
 

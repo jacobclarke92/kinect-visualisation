@@ -73,26 +73,21 @@ var
 			return false;
 		}
 
-		// Rounding away decimals might cause a value of -0
-		// when using very small ranges. Remove those cases.
-		if ( decimals !== false && parseFloat(input.toFixed(decimals)) === 0 ) {
-			input = 0;
-		}
-
 		// Formatting is done on absolute numbers,
 		// decorated by an optional negative symbol.
 		if ( input < 0 ) {
 			inputIsNegative = true;
-			input = Math.abs(input);
+			// input = Math.abs(input);
 		}
 
 		// Reduce the number of decimals to the specified option.
 		if ( decimals !== false ) {
-			input = toFixed( input, decimals );
+			// input = toFixed( input, decimals );
 		}
 
 		// Transform the number into a string, so it can be split.
 		input = input.toString();
+		return input;
 
 		// Break the number on the decimal separator.
 		if ( input.indexOf('.') !== -1 ) {
@@ -1549,7 +1544,6 @@ function closure ( target, options, originalOptions ){
 		events = events.replace( /\s/g, namespace + ' ' ) + namespace;
 
 		// Bind a closure on the target.
-		
 		return element.on( events, function( e ){
 
 			// jQuery and Zepto (1) handle unset attributes differently,
@@ -1569,7 +1563,6 @@ function closure ( target, options, originalOptions ){
 			// Call the event handler with the event [ and additional data ].
 			callback ( e, data );
 		});
-
 	}
 
 	// Handle movement on document for handle and range drag.
@@ -2050,6 +2043,8 @@ function closure ( target, options, originalOptions ){
 
 		// this === instanceof $
 
+
+
 		function valMethod( a ){
 			return a.hasClass(Classes[0]) ? value : $val;
 		}
@@ -2313,4 +2308,4 @@ function closure ( target, options, originalOptions ){
 		});
 	};
 
-}( window.jQuery));
+}( window.jQuery || window.Zepto ));
