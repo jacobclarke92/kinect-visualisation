@@ -1,10 +1,14 @@
+
 requirejs(
 	[
 		'/app/libs/webix_debug.js',
 		'/app/scripts/helpers/polyfills.js',
 
-		'/app/scripts/ui/window_events.js',
-		'/app/scripts/ui/ui.js'
+		'/app/scripts/effects_list.js',
+
+		'/app/scripts/ui/ui.js',
+		'/app/scripts/ui/templates.js',
+		'/app/scripts/ui/window_events.js'
 	],
 	function($) {
 

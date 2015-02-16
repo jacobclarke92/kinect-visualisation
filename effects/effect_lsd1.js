@@ -43,7 +43,7 @@ effect_lsd1 = {
 
     var shSize = Math.round(shapeSize + kickVolume/20);
 
-    this.graphics.drawRect(xPos*2-shSize/2, yPos*2-shSize/2, shSize, shSize);
+    this.graphics.drawRect(xPos*2 - shSize/2, yPos*2 - shSize/2, shSize, shSize);
 
    
   }

@@ -17,7 +17,7 @@ function windowResize() {
 	
 	if(!$$('palettes')) return false;
 
-	offsetLeft = parseInt(w.jQuery('#frequencySelector',document).css('left'));
+	offsetLeft = parseInt($('#frequencySelector',document).css('left'));
 	console.log(offsetLeft);
 	$$('palettes').resize();
 	$$('params').resize();
@@ -30,33 +30,59 @@ function loaded() {
 	windowResize();
 	updatePalettes();
 
-	if(w.gotKinect) w.jQuery('#kinectCheck',document).removeClass('error');
-	if(w.gotAudio) w.jQuery('#soundCheck',document).removeClass('error');
+	if(w.gotKinect) $('#kinectCheck',document).removeClass('error');
+	if(w.gotAudio) $('#soundCheck',document).removeClass('error');
 
-	w.jQuery('#leftSlider',document).bind('mousedown',function() {
+	$('#leftSlider',document).bind('mousedown',function() {
 		console.log('left slider click');
 		curDrag = this;
 	});
-	w.jQuery('#rightSlider',document).bind('mousedown',function() {
+	$('#rightSlider',document).bind('mousedown',function() {
 		console.log('right slider click');
 		curDrag = this;
 	});
 
-	w.jQuery(document,document).bind('mouseup',function() {
+	$(document,document).bind('mouseup',function() {
 		curDrag = false;
 	});
-	w.jQuery(document,document).bind('mousemove',function(e) {
+	$(document,document).bind('mousemove',function(e) {
 		if(curDrag != false) {
 			var posX = e.clientX - offsetLeft;
 			posX = posX < 0 ? 0 : posX > 512 ? 512 : posX;
-			w.jQuery(curDrag).css('left',posX+'px');
+			$(curDrag).css('left',posX+'px');
 
 			w.soundRange = [
-				parseInt(w.jQuery('#leftSlider',document).css('left')),
-				parseInt(w.jQuery('#rightSlider',document).css('left'))
+				parseInt($('#leftSlider',document).css('left')),
+				parseInt($('#rightSlider',document).css('left'))
 			];
 			w.soundRange.sort();
 			if(w.soundRange[0] > w.soundRange[1]) w.soundRange.reverse();
 		}
-	})
+	});
+
+
+	$('.tabs').tabslet();
+	$('#freqRange').noUiSlider({
+		start: [0,100],
+		limit: 40,
+		behaviour: 'drag',
+		connect: true,
+		range: {
+			'min': [0],
+			'max': [100]
+		}
+	});
+	console.log($('#freqRange .noUi-handle-lower'));
+	$('#freqRange .noUi-handle-lower').attr('data-mappable','');
+	$('#freqRange .noUi-handle-upper').attr('data-mappable','');
+
+	generateEffectsFiles();
+	generateEffectParams();
+	generateFilterParams();
+	generateCalibrationParams();
+	linkMappableElements();
 }
+
+
+
+

@@ -33,7 +33,7 @@ function updateMappings(byteArray) {
           //DEAL WITH STUFF
           clearTimeout(mapTimeout);
           mappingCC = prompting = mappingCanvasControl = false;
-          $('.map', uiPopup.document).removeAttr('disabled');
+          $(document,uiPopup).removeClass('mapping');
 
           saveCookie();
 
@@ -43,7 +43,7 @@ function updateMappings(byteArray) {
           console.warn('user chose to not overwrite, nothing changed.');
           clearTimeout(mapTimeout);
           mappingCC = prompting = mappingCanvasControl = false;
-          $('.map', uiPopup.document).removeAttr('disabled');
+          $(document,uiPopup).removeClass('mapping');
 
         }
       }else{
@@ -57,7 +57,7 @@ function updateMappings(byteArray) {
         console.info('mapping updated: '+mappings[tempHash][mappingID]['name']);
         clearTimeout(mapTimeout);
         mappingCC = mappingCanvasControl = false;
-        $('.map', uiPopup.document).removeAttr('disabled');
+        $(document,uiPopup).removeClass('mapping');
 
         saveCookie();
       }
