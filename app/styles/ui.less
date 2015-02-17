@@ -102,7 +102,21 @@ svg path, svg g{
 }
 
 
+.button {
+	color: #fff;
+	background: #a0cac0;
+	display: inline-block;
+	font-size: 18px;
+	font-weight: 300;
+	padding: 15px;
+	text-decoration: none;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
 .tabs {
+
+	margin-bottom: 1em;
 
 	ul{
 		list-style: none;
@@ -125,23 +139,20 @@ svg path, svg g{
 
 		li {
 
-			a {
+			a{
 				color: #666;
-				display: block;
-				font-size: 18px;
-				font-weight: 300;
-				padding: 15px;
-				text-decoration: none;
+				background-color: #ccc;
 			}
+			
 			background: #eee;
 			border-bottom: 4px solid #E5E5E5;
 			margin-right: 10px;
 			display: inline-block;
 			transition: all 0.2s;
 			&:hover{
-				background: #a0cac0;
 				border-bottom: 4px solid #68a697;
 				a {
+					background: #a0cac0;
 					color: white;
 				}
 			}

@@ -60,7 +60,9 @@ function loaded() {
 		}
 	});
 
-
+	$('#toggleTesting').click(function() {
+		w.toggleTesting('image',false);
+	});
 	$('.tabs').tabslet();
 	$('#freqRange').noUiSlider({
 		start: [0,100],
