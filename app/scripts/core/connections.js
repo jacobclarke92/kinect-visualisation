@@ -14,8 +14,6 @@ hash = false;
 
 
 var inited = false;
-var jsonStream;
-var wasClosed = false;
 
 
 function startPage(fallback) {
@@ -45,31 +43,6 @@ function startPage(fallback) {
     randomizeImage(true);
     run();
   }
-
-  jsonStream = new EventSource('/app/midi.json');
-  jsonStream.addEventListener('message', function(e) {
-    if(wasClosed) {
-      console.info("port reopened!");
-      wasClosed = false;
-    }
-
-    if(e.data.substring(0,14) != 'data:image/png' ) {
-      updateMappings(e.data.split(' '));
-      // console.log("midi: "+e.data);
-    }
-
-
-  }, false);
-  jsonStream.addEventListener('error', function(e) {
-    
-    if (e.readyState == EventSource.CLOSED || e.type == 'error') {
-      console.warn("conncetion was closed due to inactivity");
-      wasClosed = true;
-    }else{
-      console.log('unintended error: ');
-      console.log(e);
-    }
-  }, false);
 
 
 }
@@ -187,8 +160,8 @@ function run() {
 
   }else{
 
-    var source = new EventSource('/images');
-    source.addEventListener('message', function(event) {
+    window.imageEventSource = new EventSource('/images');
+    window.imageEventSource.addEventListener('message', function(event) {
       if(event.data.substring(0,14) == 'data:image/png' ) {
         image.src = event.data;
         if(testingImage) gotImage = true;

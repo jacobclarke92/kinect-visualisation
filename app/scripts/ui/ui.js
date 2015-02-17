@@ -7,10 +7,40 @@ function linkMappableElements() {
 function mappableElementClicked(e) {
 	console.log('mappablenp item clicked ',e.target);
 	if($('body').hasClass('mapping')) {
+
+		$('[data-mappable].waiting').removeClass('waiting');
+		$(this).addClass('waiting');
+		$('body').addClass('waiting');
+		
 		e.preventDefault();
 		console.log('mapping ',e.target);
-		$('body').removeClass('mapping');
+		
 	}
+}
+// this will be triggered from core midi listener only if ui's body class is 'mapping' and 'waiting'
+function receiveMappingData(midiData) {
+
+	var mappedElement = $('[data-mappable].waiting');
+
+	var midiType = false;
+	if(midiData[0] >= 176 && midiData[0] <= 191) midiType = 'pot';
+	else if(midiData[0] >= 144 && midiData[0] <= 159) midiType = 'key';
+
+	if(mappedElement.attr('data-midi-type') == midiType) {
+		
+		console.log('compatible control type to match midi type!');
+
+
+		mappedElement.removeClass('waiting').attr('data-midi-linked','');
+		$('body').removeClass('waiting mapping');
+
+		console.log('Mapping made!',mappedElement,midiData);
+
+	}else{
+		console.log('incompatible control type to midi type!');
+	}
+
+	
 }
 
 function effectSelected() {

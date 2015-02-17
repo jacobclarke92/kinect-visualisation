@@ -10,7 +10,7 @@
 		<link rel="stylesheet" type="text/css" href="/app/libs/webix.css">
 		<link rel="stylesheet" type="text/css" href="/app/libs/jquery.nouislider.css">
 		<link rel="stylesheet" type="text/css" href="/app/libs/jquery.nouislider.pips.css">
-		<link rel="stylesheet" type="text/css" href="/app/styles/ui.css">
+		<link rel="stylesheet" type="text/css" href="/app/styles/generated/ui.css">
 		
 		<script src="/app/libs/jquery.js"></script>
 		<script src="/app/libs/jquery.mousewheel.min.js"></script>
@@ -21,13 +21,17 @@
 
 
 </head>
-<body class="mapping">
+<body>
 
+	<!-- LOL INLINE SVG BLOAT LOL -->
 	<div id="statusIcons">
-		<span class="error" id="soundCheck">
+		<span class="error statusIcon data-flash" id="midiCheck">
+			<svg xmlns="http://www.w3.org/2000/svg" version="1" width="455" height="455" viewBox="-9.302 -9.782 454.999 455"><path d="M19.197 217.218c0 109.631 88.876 198.503 198.499 198.503 109.626 0 198.5-88.872 198.5-198.503 0-109.624-88.872-198.503-198.5-198.503-109.623 0-198.499 88.879-198.499 198.503z" fill="#fff" stroke="#000" stroke-width="30"/><path d="M298.979 217.215c0 13.893 11.262 25.148 25.15 25.148 13.895 0 25.149-11.258 25.149-25.148 0-13.883-11.257-25.146-25.149-25.146-13.89.001-25.15 11.263-25.15 25.146zM86.112 217.215c0 13.893 11.262 25.148 25.151 25.148 13.894 0 25.151-11.258 25.151-25.148 0-13.883-11.257-25.146-25.151-25.146-13.889.001-25.151 11.263-25.151 25.146zM124.657 124.185c-9.82 9.82-9.82 25.746.005 35.566 9.821 9.826 25.74 9.826 35.566 0 9.814-9.815 9.82-25.741-.005-35.561-9.821-9.825-25.746-9.825-35.566-.005zM217.696 85.657c-13.888 0-25.15 11.262-25.145 25.15-.005 13.894 11.251 25.151 25.148 25.151 13.877 0 25.143-11.257 25.143-25.151 0-13.888-11.257-25.15-25.146-25.15zM310.726 124.202c-9.814-9.821-25.745-9.821-35.562.005-9.831 9.82-9.831 25.739-.005 35.565 9.815 9.815 25.74 9.821 35.562-.005 9.825-9.821 9.825-25.746.005-35.565z" stroke="#000" stroke-width="5" fill="none"/></svg>
+		</span>
+		<span class="error statusIcon" id="soundCheck">
 			<svg xmlns="http://www.w3.org/2000/svg" version="1" width="400pt" height="400pt" viewBox="0 0 75 75"><g stroke="#111" stroke-width="5"><path stroke-linejoin="round" fill="#111" d="M39.389 13.769l-17.154 14.837h-16.235v19.093h15.989l17.4 15.051v-48.981z"/><path id="path1" d="M48.128 49.03c1.929-3.096 3.062-6.739 3.062-10.653 0-3.978-1.164-7.674-3.147-10.8" stroke-linecap="round" fill="none"/><path d="M55.082 20.537c3.695 4.986 5.884 11.157 5.884 17.84 0 6.621-2.151 12.738-5.788 17.699" stroke-linecap="round" fill="none"/><path d="M61.71 62.611c5.267-6.666 8.418-15.08 8.418-24.233 0-9.217-3.192-17.682-8.519-24.368" stroke-linecap="round" fill="none"/></g></svg>
 		</span>
-		<span class="error" id="kinectCheck">
+		<span class="error statusIcon" id="kinectCheck">
 			<svg xmlns="http://www.w3.org/2000/svg" width="118" height="27"><defs><clipPath id="a"><path d="M0 88h200v-88h-200v88z"/></clipPath></defs><path d="M66.239 13.845c-2.503 0-4.532-2.027-4.532-4.532 0-2.503 2.029-4.533 4.532-4.533s4.532 2.03 4.532 4.533c0 2.505-2.029 4.532-4.532 4.532m-11.928 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m-23.218 0c-2.503 0-4.533-2.027-4.533-4.532 0-2.503 2.03-4.533 4.533-4.533 2.503 0 4.532 2.03 4.532 4.533 0 2.505-2.029 4.532-4.532 4.532m82.46-13.837h-109.099c-2.45 0-4.452 2.004-4.452 4.455v9.382c0 2.45 2.002 4.454 4.452 4.454h52.323v1.239c-.453.004-.903.052-1.273.191-1.272.478-10.02 3.657-10.337 5.248-.32 1.591.953 1.591 3.339 1.591h20.993000000000002c2.386 0 3.657 0 3.341-1.591-.319-1.591-9.065-4.771-10.339-5.248-.369-.139-.819-.187-1.273-.191v-1.239h52.323c2.448 0 4.454-2.004 4.454-4.454v-9.382c0-2.451-2.006-4.455-4.454-4.455" fill="#00669c" clip-path="url(#a)"/></svg>
 		</span>
 	</div>
@@ -45,10 +49,10 @@
 
 	<div class='tabs tabs_default'>
 		<ul class='horizontal'>
-			<li><a href="#tab-1" class="button" data-mappable>Effect List</a></li>
-			<li><a href="#tab-2" class="button" data-mappable>Effect Options</a></li>
-			<li><a href="#tab-3" class="button" data-mappable>Filters</a></li>
-			<li><a href="#tab-4" class="button" data-mappable>Calibration</a></li>
+			<li><a href="#tab-1" class="button" data-mappable data-midi-type="key">Effect List</a></li>
+			<li><a href="#tab-2" class="button" data-mappable data-midi-type="key">Effect Options</a></li>
+			<li><a href="#tab-3" class="button" data-mappable data-midi-type="key">Filters</a></li>
+			<li><a href="#tab-4" class="button" data-mappable data-midi-type="key">Calibration</a></li>
 		</ul>
 		<div id="tab-1" class="tabArea">
 			<div id="filesZone"></div>
@@ -64,9 +68,11 @@
 		</div>
 	</div>
 
-	<div class="button" id="toggleTesting">Toggle test images</div>
+	<div class="button-tray">
+		<div class="button" id="mapButton">MIDI Map</div>
+		<div class="button" id="toggleTesting">Toggle test images</div>
 
-
+	</div>
 
 	<!-- TEMPLATES CLONED BY JAVASCRIPT -->
 	<div id="templates" style="display:none">
@@ -75,16 +81,16 @@
 			<div class="effectParam">
 				<div class="title"><span></span></div>
 				<div class="slider">
-					<div class="range" min="0" max="100" step="1" value="0" data-mappable></div>
+					<div class="range" min="0" max="100" step="1" value="0" data-mappable data-midi-type="pot"></div>
 					<input type="number" class="rangeText" size="3">
 				</div>
 				<div class="mapKnob">
-					<input type="text" class="dial" value="0" data-min="-100" data-max="100" data-step="1" data-width="50" data-height="50" data-angleArc="250" data-angleOffset="-125" data-mappable>
+					<input type="text" class="dial" value="0" data-min="-100" data-max="100" data-step="1" data-width="50" data-height="50" data-angleArc="250" data-angleOffset="-125" data-mappable  data-midi-type="pot">
 				</div>
 			</div>
 		</div>
 		<div id="fileTemplate">
-			<li class="file"></li>
+			<li class="file" data-mappable data-midi-type="key"></li>
 		</div>
 		<div id="paletteTemplate">
 			<div class="palette" data-palette>

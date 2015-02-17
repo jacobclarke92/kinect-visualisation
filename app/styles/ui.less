@@ -1,3 +1,13 @@
+@mapping-color: #87ceeb;
+@mapping-waiting-color: #c7f464;
+@mapped-color: #f9d423;
+@button-color: #a0cac0;
+@button-active: darken(color(@button-color), 20%);
+
+@icon-active: @mapped-color;
+@icon-inactive: #d5ded9;
+@icon-data: darken(color(@icon-active), 20%);
+
 @font-face{
 	font-family:FontAwesome;
 	src:url(/app/fonts/fontawesome-webfont.eot);
@@ -8,12 +18,22 @@
 	font-style:normal
 }
 @-webkit-keyframes mappingBorder {
-		0% {
-			background-color: inherit;
-		}
-		100% {
-			background-color: #87ceeb;
-		}
+	0% { background-color: inherit }
+	100% { background-color: @mapping-color }
+}
+@-webkit-keyframes mappingWaitingBorder {
+	0% { background-color: inherit }
+	100% { background-color: @mapping-waiting-color }
+}
+@-webkit-keyframes dataFlash {
+	0% { 
+		fill: @icon-data;
+		stroke: @icon-data;
+	}
+	100% {
+		fill: @icon-active;
+		stroke: @icon-active;
+	}
 }
 
 html,body{
@@ -23,20 +43,48 @@ html,body{
 	margin: 0;
 }
 
+// body conditional stuff -- targets mapping elements
 body{
 	text-align: left;
 	background-color: white;
 	color: #333;
 	font-family: FontAwesome;
 
-	&.mapping{
-		 [data-mappable] {
+	&.mapping {
+		[data-mappable] {
+
 			border: 1px dashed #333;
 			box-sizing: border-box;
 			margin: -1px;
 			color: black;
-			-webkit-animation: mappingBorder 0.5s 0s infinite alternate;
-		 }
+
+			&:not([data-midi-linked]) {
+				-webkit-animation: mappingBorder 0.5s 0s infinite alternate;
+			}
+
+			&.waiting{
+				-webkit-animation: mappingWaitingBorder 0.2s 0s infinite alternate;
+			}
+		}
+		#mapButton{
+			border-bottom: 4px solid @button-active;
+			a {
+				background: @button-color;
+				color: white;
+			}
+		}
+
+		&.waiting [data-mappable]:not(.waiting) {
+			-webkit-animation: none;
+		}
+	}
+}
+[data-midi-linked] {
+	border: 1px solid @mapped-color;
+	&.file{
+		border: none;
+		border-left: 4px solid @mapped-color;
+		box-sizing: content-box;
 	}
 }
 
@@ -49,26 +97,40 @@ body{
 	text-align: left;
 }
 
+// status icon svg stuff
+.error svg path, .error svg g{
+	fill: @icon-inactive;
+	stroke: @icon-inactive;
+}
+
 #statusIcons {
 	float:right;
 }
 svg path, svg g{
-	fill: #ABFF96;
-	stroke: #ABFF96;
+	fill: @icon-active;
+	stroke: @icon-active;
 }
 #soundCheck svg{
 	width: 40px;
 	height: 40px;
 }
+#midiCheck svg{
+	width: 35px;
+	height: 35px;
+}
 #kinectCheck svg{
 	width: 120px;
 	height: 30px;
 }
-.error svg path, .error svg g{
-	fill: #FF9494;
-	stroke: #FF9494;
-	color: red !important;
+
+#midiCheck:not(.error) {
+	&.data-flash{
+		svg path, svg g{
+			-webkit-animation: dataFlash 0.3s 1;
+		}
+	}
 }
+
 
 #paletteZone{
 	text-align: center;
@@ -104,7 +166,7 @@ svg path, svg g{
 
 .button {
 	color: #fff;
-	background: #a0cac0;
+	background: @button-color;
 	display: inline-block;
 	font-size: 18px;
 	font-weight: 300;
@@ -112,7 +174,18 @@ svg path, svg g{
 	text-decoration: none;
 	transition: all 0.2s;
 	cursor: pointer;
+
+	&.active {
+		background: @button-color !important;
+		border-bottom: 4px solid @button-active !important;
+		a {
+			color: white !important;
+		}
+	}
 }
+
+
+
 
 .tabs {
 
@@ -150,9 +223,9 @@ svg path, svg g{
 			display: inline-block;
 			transition: all 0.2s;
 			&:hover{
-				border-bottom: 4px solid #68a697;
+				border-bottom: 4px solid @button-active;
 				a {
-					background: #a0cac0;
+					background: @button-color;
 					color: white;
 				}
 			}
@@ -160,13 +233,6 @@ svg path, svg g{
 	}
 }
 
-.active {
-	background: #a0cac0 !important;
-	border-bottom: 4px solid #68a697 !important;
-	a {
-		color: white !important;
-	}
-}
 
 .logo {
 	margin-top: -6px;
