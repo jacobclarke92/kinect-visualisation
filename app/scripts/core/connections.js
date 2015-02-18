@@ -66,7 +66,7 @@ function changeScript(script) {
 
   //clear mappings for current hash
   if(typeof mappings != 'object') mappings = {};
-  if(typeof mappings[hash] != 'object') mappings[hash] = [];
+  if(typeof mappings[hash] != 'object') mappings[hash] = {};
 
   //begin loading script
   requirejs(['/effects/effect_'+script+'.js'],function() {

@@ -48,10 +48,11 @@ window.onunload = function() {
 function createControls() {
 
   // at this stage the effect should have set all the standard values
-  if(!mappings[hash])  mappings[hash] = [];
+  if(!mappings[hash])  mappings[hash] = {};
 
   //handled by the UI functions 
-  uiPopup.generateEffectParams();
+  if(typeof uiPopup.generateEffectParams != 'undefined') uiPopup.generateEffectParams();
+  else console.log('ui function generateEffectParams not available yet...');
   console.info('controls updated');
 
 }
@@ -84,29 +85,4 @@ function updateCanvas() {
   });
 }
 
-
-
-function sliderDrag(slider, val) {
-  
-  if($('.noUi-handle',slider)) slider = $('.noUi-handle',slider);
-  else slider = $(slider);
-  var paramName = slider.attr('data-name');
-  var paramParent = slider.attr('data-parent');
-  console.log(paramParent,paramName,val);
-
-  if(window[paramName] == val) {
-    console.log('param is the same as stored');
-    return;
-  }else{
-    console.log('updating param ',paramName, val);
-  }
-
-  var tempHash = hash;
-  if(paramParent == 'params_calibration' || paramParent == 'params_filters') tempHash = 'controls';
-  window[paramName] = val;
-  mappings[tempHash][paramName] = val;
-
-  if(paramParent == 'calibrationZone') updateCanvas();
-
-}
 

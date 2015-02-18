@@ -1,14 +1,35 @@
 
-function processMidiData(byteArray) {
-  // console.log(byteArray);
-  
-  for(var i=0; i< w.mappings[w.hash].length; i++) {
-    if(w.mappings[w.hash].type == 'midi' && w.mappings[w.hash][i].cc == byteArray[1]) {
+var midiChangeTimeout = false;
 
-      w.mappings[w.hash][i].value = byteArray[2];
+//midi data has been received! 
+//if we've been waiting to map something then the data has already been routed to another fuction to handle that
+function processMidiData(byteArray) {
+
+  //try to find a matching CC value
+  $.each(w.mappings[w.hash],function(key, mapping) {
+
+    //is the effect param mapped with midi? and does the CC code match?
+    if(mapping.type == 'midi' && mapping.cc == byteArray[1]) {
+
+      //convert from midi value 0-127 to param's own min/max range
+      var mappedValue = map_range(byteArray[2], 0, 127, mapping.min, mapping.max);
+      console.log('updating ',mapping.name,' to ',byteArray[2],' = ', mappedValue);
+
+      //update the mapping value
+      w.mappings[w.hash][mapping.name].value = mappedValue;
+
+      //update the appropriate element
+      setElementValue(mapping.name, mappedValue);
+
+      //obviously don't save a cookie on every midi message, so just set a timeout and clear it on any overriding midi messages
+      if(midiChangeTimeout) clearTimeout(midiChangeTimeout);
+      midiChangeTimeout = setTimeout(function() {
+        w.saveCookie();
+      },2000);
 
     }
-  }
+
+  });
 
 }
 

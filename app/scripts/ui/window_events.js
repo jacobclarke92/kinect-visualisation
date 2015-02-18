@@ -13,7 +13,7 @@ window.onunload = function() {
 var curDrag = false;
 var offsetLeft = 0;
 
-window.onkeypress = function(e) {w.keyPressed(e)};
+window.onkeypress = function(e) {keyPressed(e)};
 
 function reinitStaticElement(elem) {
 	var el = $(elem),  
@@ -25,8 +25,35 @@ function reinitStaticElement(elem) {
 
 var jsonStream;
 var wasClosed = true;
+var logPopup = false;
+
+function openLogWindow() {
+	logPopup = window.open("/app/log.html", "Controls", 'width=524,height='+screen.height+',left=0,top=0');
+}
+
+//maybe do this kind of not worth it though
+function debug() {
+
+}
+debug.prototype = {
+	log: function() {
+
+	},
+	info: function() {
+
+	},
+	warn: function() {
+
+	},
+	error: function() {
+
+	}
+}
 
 function loaded() {
+
+	//open log window
+
 
 	// init resize and grab palettes if core has loaded them
 	updatePalettes();
@@ -121,6 +148,14 @@ function loaded() {
 	
 }
 
+
+function keyPressed(event) {
+
+  //number keys trigger effects
+  var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+  console.log('key pressed ',chCode);
+  
+}
 
 
 

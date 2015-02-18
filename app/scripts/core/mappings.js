@@ -14,43 +14,38 @@ var mappingCanvasControl = false;
 function setMapping(variable, minimum, maximum, _default) {
 
   // console.log(mappings);
-  var isSet = isMappingSet('name',variable);
+  var isSet = isMappingSet(variable);
 
   console.log('hash: '+hash+', key to set: '+variable, isSet);
-  if(isSet == -1) {
+  if(!isSet) {
 
     // createMapping(variable, minimum, maximum, _default);
-    mappings[hash].push({name: variable, min: minimum, max: maximum, value: _default, cc: -1} );
+    mappings[hash][variable] = {name: variable, min: minimum, max: maximum, value: _default, initValue: _default, cc: false, type: false, audioTriggerType: false, range: false, threshold: false};
     window[variable] = _default;
 
   }else{
 
-    console.log('setting window variable ~'+mappings[hash][isSet]['name']+'~ from mappings: '+mappings[hash][isSet]['value']);
-    window[variable] = mappings[hash][isSet]['value'];
+    console.log('setting window variable ~'+mappings[hash][variable]['name']+'~ from mappings: '+mappings[hash][variable]['value']);
+    window[variable] = mappings[hash][variable]['value'];
 
   }
 }
 
 
-function isMappingSet(key,val) {
+function isMappingSet(paramName) {
 
   if(Object.size(mappings) > 0) {
-    for(var i=0; i < mappings[hash].length; i++) {
-      // console.warn(mappings[hash][i][key]+' == '+val+'?');
-      if(mappings[hash][i][key] == val) return i;
-    }
-    if(typeof mappings['controls'] != 'undefined') {
-      for(var i=0; i < mappings['controls'].length; i++) {
-        // console.warn(mappings[hash][i][key]+' == '+val+'?');
-        if(mappings['controls'][i] && 
-        mappings['controls'][i][key] == val) {
-          mappingCanvasControl = true;
-          return i;
-        }
-      }
-    }
+    if(typeof mappings[hash] != 'undefined') $.each(mappings[hash], function(key, mapping) {
+      if(key == paramName) return true;
+    });
+    if(typeof mappings['filterParams'] != 'undefined') $.each(mappings['filterParams'], function(key, mapping) {
+      if(key == paramName) return true;
+    });
+    if(typeof mappings['calibrationParams'] != 'undefined') $.each(mappings['calibrationParams'], function(key, mapping) {
+      if(key == paramName) return true;
+    });
   }
-  return -1;
+  return false;
 
 }
 
@@ -73,22 +68,3 @@ function updateCC(hashy, id, val) {
 
 }
 
-
-function keyPressed(event) {
-
-  //number keys trigger effects
-  var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
-  if(chCode >= 48 && chCode <= 57) {
-    if(chCode == 48) chCode += 10;
-    var num = chCode-49;
-
-    if(num <= effects.length-1) {
-      console.info("loading from key: "+num);
-      changeScript(effects[num]);
-    }else{
-      console.log('key pressed is greater than number of effects');
-    }
-
-  }
-  // console.info ("The Unicode character code is: " + chCode);
-}

@@ -31,11 +31,18 @@ function loadCookie() {
   	var value = cookieArray[i].split('=')[1];
 
   	if(name == 'mappings' || name == ' mappings') {
+      // console.log(value);
+      // console.log(JSON.parse(value));
 
   		mappings = JSON.parse(value);
-  		for(var n=0; n<mappings.length; n++) {
-  			window[mappings[n]['name']] = mappings[n]['value'];
-  		}
+      $.each(mappings, function(key, effect) {
+
+        $.each(effect, function(paramKey,paramVal) {
+          if(!isNaN(parseFloat(paramVal))) effect[paramKey] = parseFloat(paramVal); // json makes numbers into strings??
+        })
+        console.log(key,effect);
+        window.mappings[key] = effect;
+      })
 
   	}else if(name == 'testImage') {
 
@@ -53,25 +60,10 @@ function loadCookie() {
       console.log('paletteID loaded!', value);
       paletteID = value;
 
-  	}else if(name == 'controls' || name == ' controls') {
+  	}
+  }
 
-      console.info('loading controls!');
-      var controls = JSON.parse(value);
-      for(var key in controls) {
-        window[key] = controls[key];
-        console.log(key+' = '+controls[key]);
-
-        if(key != 'mirror') $('#canvas'+capitaliseFirstLetter(key), uiPopup.document).val(controls[key]);
-        else{
-          if(mirror == 1) $('#canvasMirror', uiPopup.document).removeAttr('checked');
-
-        }
-      }
-      
-      updateCanvas();
-
-    }
-	}
+  updateCanvas();
   cookieLoaded = true;
 	console.info('cookie loaded!');
 
