@@ -58,6 +58,9 @@ function compileLess(path) {
 	    });
 	});
 }
+
+compileLess('./app/styles/ui.less');
+compileLess('./app/styles/core.less');
 if(devMode) {
 	var watcher = chokidar.watch('file', {
 	  ignored: /[\/\\]\./, persistent: true
@@ -69,8 +72,6 @@ if(devMode) {
 	});
 	watcher.add('./app/styles/*.less');
 
-	compileLess('./app/styles/ui.less');
-	compileLess('./app/styles/core.less');
 }
 
 if(!skipEffectsList) {
