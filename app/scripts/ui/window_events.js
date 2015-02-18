@@ -139,13 +139,18 @@ function loaded() {
 
 	// Init all the tab views
 	generateEffectsFiles();
-	generateEffectParams();
-	generateFilterParams();
-	generateCalibrationParams();
+	initAllParameters();
 
 	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
 	setTimeout(function() {linkMappableElements()},200);
 	
+}
+
+function initAllParameters() {
+
+	generateEffectParams();
+	generateFilterParams();
+	generateCalibrationParams();
 }
 
 
@@ -153,6 +158,11 @@ function keyPressed(event) {
 
   //number keys trigger effects
   var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+
+  // MMMMMMMMMMM
+  if(chCode == 77 || chCode == 77+32) {
+  	$('#mapMidiButton').trigger('click');
+  }
   console.log('key pressed ',chCode);
   
 }

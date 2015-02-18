@@ -30,6 +30,7 @@ function midiMappableElementClicked(e) {
 		//in this instance if a file element is selected it changes the effect script
 		if($(this).hasClass('file')) {
 			console.log('loading script ',$(this).attr('data-name'));
+			
 			w.changeScript($(this).attr('data-name'));
 		}
 
@@ -60,7 +61,7 @@ function receiveMappingData(midiData) {
 
 		var mapping;
 		//update the mapping details for the parameter
-		if(typeof w.mappings[w.hash][paramName] == 'undefined') mapping = {
+		if(isset( w.mappings[w.hash][paramName])) mapping = {
 			label: paramName.readable(), 
 			name: paramName, 
 			type: 'midi', 
@@ -140,8 +141,10 @@ function paramElementChanged(elem, value) {
 	// console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = elem.attr('data-name');
-	if(typeof w.mappings[w.hash][paramName] != 'undefined') {
+
+	if(isset(w.mappings[w.hash][paramName])) {
 		w.mappings[w.hash][paramName].value = value;
+		w[paramName] = value;
 	}else{
 		console.log('no mapping reference found for ',paramName);
 	}

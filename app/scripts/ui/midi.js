@@ -17,6 +17,7 @@ function processMidiData(byteArray) {
 
       //update the mapping value
       w.mappings[w.hash][mapping.name].value = mappedValue;
+      w[mapping.name] = mappedValue;
 
       //update the appropriate element
       setElementValue(mapping.name, mappedValue);

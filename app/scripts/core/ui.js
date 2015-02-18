@@ -51,9 +51,11 @@ function createControls() {
   if(!mappings[hash])  mappings[hash] = {};
 
   //handled by the UI functions 
-  if(typeof uiPopup.generateEffectParams != 'undefined') uiPopup.generateEffectParams();
-  else console.log('ui function generateEffectParams not available yet...');
-  console.info('controls updated');
+  if(isset(uiPopup.initAllParameters)) {
+    uiPopup.initAllParameters();
+    console.info('controls updated');
+  }else console.log('ui function generateEffectParams not available yet...');
+  
 
 }
 

@@ -23,10 +23,15 @@ function createSliders(sliderArray,target) {
 
     if($('#'+key).length == 0 && key.indexOf('_knob') == -1) {
 
+      //clone parameter template
       var template = $('#templates #paramTemplate').children().clone();
+      
+      //init basic variables that are required to init noUiSlider
       var step = Math.round(Math.abs(param.max-param.min + 1)/100);
-      var label = (typeof param.label != 'undefined') ? param.label : (typeof param.name != 'undefined') ? param.name.readable() : 'Undefined param name';
-      var cc = (typeof param.cc != 'undefined') ? param.cc : -1;
+      var label = (isset(param.label )) ? param.label : (isset(param.name )) ? param.name.readable() : 'Undefined param name';
+      var cc = (isset(param.cc )) ? param.cc : -1;
+      
+
       $('.title span',template).html(label);
       $('.slider .rangeText',template).attr({'id': param.name+'_text', 'data-name':param.name, value: param.value, min: param.min, max: param.max, step: step});
       $('.slider .range',template).noUiSlider({
@@ -43,9 +48,20 @@ function createSliders(sliderArray,target) {
         }
 
       });
+
+      //if slider has a CC value stored in cookies, display it as such
+      if(cc != -1) $('.slider .range .noUi-handle', template).attr('data-midi-linked','')
       $('.slider .range .noUi-handle', template).attr({'id': param.name, 'data-midi-mappable':'', 'data-midi-type':'pot', 'data-name':param.name, 'data-min':param.min, 'data-max':param.max, 'data-step':step, 'data-value':param.value,'data-cc':cc, 'data-parent':$(target).attr('id')});
-      // console.log(param);
-      $('.mapKnob input',template).attr({'id':param.name+'_knob', 'data-name': param.name+'_knob' });
+      
+      var knobID = param.name+'_knob';
+      
+      if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][knobID] )) {
+        //if param knob has a CC value stored in cookies, display it as such
+        console.log('knob mapping',w.mappings[w.hash][knobID]);
+        if(isset(w.mappings[w.hash][knobID]['cc'] ) && w.mappings[w.hash][knobID].cc != -1) $('.mapKnob input',template).attr('data-midi-linked','');
+        if(isset(w.mappings[w.hash][knobID]['value'] )) $('.mapKnob input',template).val(Math.round(w.mappings[w.hash][knobID].value));
+      }
+      $('.mapKnob input',template).attr({'id':knobID, 'data-name': param.name+'_knob' });
       target.append(template);
     }
     
@@ -115,12 +131,16 @@ function createSliders(sliderArray,target) {
 function generateEffectParams() {
   var effectsZone = $("#effectsZone");
   effectsZone.html('');
-  if(typeof w.mappings[w.hash] == 'undefined' || Object.size(w.mappings[w.hash]) == 0) {
+  if(!isset(w.mappings[w.hash]) || Object.size(w.mappings[w.hash]) == 0) {
     $("#effectsZone").html('<p>No parameters for current effect ... add some! :D</p>');
     return;
   }
-  console.log('effect mappings: ',w.mappings[w.hash]);
-  createSliders(w.mappings[w.hash], effectsZone);
+  var tempMappings = {};
+  $.each(w.mappings[w.hash],function(key,param) {
+    if(param.name.indexOf('calibration_') == -1 && param.name.indexOf('filter_') == -1) tempMappings[key] = param;
+  });
+  console.log('effect mappings: ',tempMappings);
+  createSliders(tempMappings, effectsZone);
   
 }
 
@@ -135,7 +155,11 @@ function generateFilterParams() {
     filter_blur: {label: 'Blur', name: 'filter_blur', min: 0, max: 100, value: 0}
   };
   $.each(filterParams,function(key,param) {
-    if(typeof w.mappings[w.hash] != 'undefined' && typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
+    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) {
+      filterParams[key] = w.mappings[w.hash][key];
+      //this just makes it so the titles don't contain 'Filter' when t
+      filterParams[key].label = (key.split('filter_').join('')).readable();
+    }
   })
   var filterZone = $('#filtersZone');
   filterZone.html('');
@@ -157,7 +181,7 @@ function generateCalibrationParams() {
     calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', min: 10, max: 2000, value: 800}
   };
   $.each(calibrationParams,function(key,param) {
-    if(typeof w.mappings[w.hash] != 'undefined' && typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
+    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) filterParams[key] = w.mappings[w.hash][key];
   })
   console.log(calibrationParams);
 

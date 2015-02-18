@@ -4,8 +4,7 @@
 
 * Get the node server working on windows / find a solution to stream [intrael](https://code.google.com/p/intrael/) seems very promising
 * Potentially switch from image streaming to raw depth data for higher depth precision than 0-255 [this](http://blog.mackerron.com/2012/02/03/depthcam-webkinect/) seems like a good solution
-
-* Improve MIDI mapping capabiities -- UI overhaul imminent
+* Implement exporting/importing of settings
 * Size stage to window size / fill to an aspect ratio, instead of 640x480
 * Beat detection / BPM punch in for more reliable audio cues?
 * Create a crossfade feature to blend between effects
@@ -13,7 +12,6 @@
 	* implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
 
 ### Future endeavours
-* Add hotkeys for controls window
 * Build a kaleidoscope openGL effect [refer to this](http://stackoverflow.com/questions/13739901/vertex-kaleidoscope-shader)
 * Pull a few new filter effects from the [DEV branch of PIXI](https://github.com/GoodBoyDigital/pixi.js/tree/dev/src/filters) such as bloom, tiltshift, shockwave
 * Implement a more robust method of getting outlines -- [blob detection](http://blog.acipo.com/blob-detection-js/)
