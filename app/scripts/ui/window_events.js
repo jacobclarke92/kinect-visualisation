@@ -13,23 +13,14 @@ window.onunload = function() {
 var curDrag = false;
 var offsetLeft = 0;
 
-function windowResize() {
-	
-	if(!$$('palettes')) return false;
-
-	offsetLeft = parseInt($('#frequencySelector').css('left'));
-	console.log(offsetLeft);
-	$$('palettes').resize();
-	$$('params').resize();
-}
-window.onresize = function() {windowResize()};
 window.onkeypress = function(e) {w.keyPressed(e)};
 
 function reinitStaticElement(elem) {
 	var el = $(elem),  
 	newone = el.clone(true);
 	el.before(newone);
-	$("#" + el.attr("id") + ":last").remove();
+	el.remove();
+	//$("#" + el.attr("id") + ":last").remove();
 }
 
 var jsonStream;
@@ -38,7 +29,6 @@ var wasClosed = true;
 function loaded() {
 
 	// init resize and grab palettes if core has loaded them
-	windowResize();
 	updatePalettes();
 
 	// update device status icons
@@ -62,19 +52,22 @@ function loaded() {
 	}, false);
 	jsonStream.addEventListener('message', function(e) {
 
+		//trick to retrigger css animation
 		reinitStaticElement($('#midiCheck'));
+
 		if(wasClosed) {
 			console.info("port reopened!");
 			$('#midiCheck').removeClass('error');
 			wasClosed = false;
 		}
 
+		//never cross streams lmao
 		if(e.data.substring(0,14) != 'data:image/png' ) {
 
 		  if($('body').hasClass('mapping waiting')) {
 			receiveMappingData(e.data.split(' '));
 		  }else{
-			// updateMappings(e.data.split(' '));
+			processMidiData(e.data.split(' '));
 		  }
 
 		}
@@ -87,10 +80,10 @@ function loaded() {
 		w.toggleTesting('image',false);
 	});
 
-	$('#mapButton').click(function() {
+	$('#mapMidiButton').click(function() {
 		if($('body').hasClass('mapping')) {
 			$('body').removeClass('mapping waiting');
-			$('[data-mappable].waiting').removeClass('waiting');
+			$('[data-midi-mappable].waiting').removeClass('waiting');
 		}else{
 			$('body').addClass('mapping');
 		}
@@ -114,8 +107,8 @@ function loaded() {
 		}
 	}); 
 	// Add mappable parameter to frequenecy range sliders
-	$('#freqRange .noUi-handle-lower').attr('data-mappable','').attr('data-midi-type','pot');
-	$('#freqRange .noUi-handle-upper').attr('data-mappable','').attr('data-midi-type','pot');
+	$('#freqRange .noUi-handle-lower').attr('data-midi-mappable','').attr('data-midi-type','pot');
+	$('#freqRange .noUi-handle-upper').attr('data-midi-mappable','').attr('data-midi-type','pot');
 
 	// Init all the tab views
 	generateEffectsFiles();
@@ -123,8 +116,9 @@ function loaded() {
 	generateFilterParams();
 	generateCalibrationParams();
 
-	// Init mappable elements
-	linkMappableElements();
+	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
+	setTimeout(function() {linkMappableElements()},200);
+	
 }
 
 

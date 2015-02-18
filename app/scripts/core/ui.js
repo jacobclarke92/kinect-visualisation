@@ -88,7 +88,8 @@ function updateCanvas() {
 
 function sliderDrag(slider, val) {
   
-  var slider = $(slider);
+  if($('.noUi-handle',slider)) slider = $('.noUi-handle',slider);
+  else slider = $(slider);
   var paramName = slider.attr('data-name');
   var paramParent = slider.attr('data-parent');
   console.log(paramParent,paramName,val);

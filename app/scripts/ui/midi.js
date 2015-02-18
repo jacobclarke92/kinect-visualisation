@@ -1,9 +1,21 @@
 
+function processMidiData(byteArray) {
+  // console.log(byteArray);
+  
+  for(var i=0; i< w.mappings[w.hash].length; i++) {
+    if(w.mappings[w.hash].type == 'midi' && w.mappings[w.hash][i].cc == byteArray[1]) {
+
+      w.mappings[w.hash][i].value = byteArray[2];
+
+    }
+  }
+
+}
+
+
+
 function updateMappings(byteArray) {
 
-  var tempHash = (mappingCanvasControl) ? 'controls' : hash;
-
-  //midi signal: command, CC, value
 
   //midi signal 176-191 = cc control from midi channel 1-16
   if(byteArray[0] >= 176 && byteArray[0] <= 191 && !prompting) {

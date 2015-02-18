@@ -10,7 +10,6 @@ function generateEffectsFiles() {
     filesZone.append(template);
   }
   filesZone.wrapInner('<ul class="fileGroup opened">');
-  $('#filesZone .file').bind('click',effectSelected);
 
 }
 
@@ -27,7 +26,7 @@ function createSliders(sliderArray,target) {
     var cc = (param.cc) ? param.cc : -1;
     $('.title span',template).html(label);
     $('.slider .rangeText',template).attr({'id': param.name+'_text', 'data-name':param.name, value: param.value, min: param.min, max: param.max, step: step});
-    $('.slider .range',template).attr({'id': param.name, 'data-name':param.name, 'data-min':param.min, 'data-max':param.max, 'data-step':step, 'data-value':param.value,'data-cc':cc, 'data-parent':$(target).attr('id')});
+    $('.slider .range',template).attr('id',param.name);
     $('.slider .range',template).noUiSlider({
       start: [param.value],
       step: step,
@@ -41,6 +40,7 @@ function createSliders(sliderArray,target) {
       }
 
     });
+    $('.slider .range .noUi-handle', template).attr({'id': param.name, 'data-midi-mappable':'', 'data-midi-type':'pot', 'data-name':param.name, 'data-min':param.min, 'data-max':param.max, 'data-step':step, 'data-value':param.value,'data-cc':cc, 'data-parent':$(target).attr('id')});
     console.log(param);
     $('.mapKnob input',template).attr({'name':param.name+'_knob'});
     target.append(template);
@@ -55,6 +55,7 @@ function createSliders(sliderArray,target) {
   //slider events
   $('.slider .range',target).on({
     slide: function() {
+      console.log('change',$(this).val());
       var val = $(this).val();
       if(val != false) {
         $('#'+this.id+'_text').val(val);

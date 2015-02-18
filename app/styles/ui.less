@@ -8,6 +8,8 @@
 @icon-inactive: #d5ded9;
 @icon-data: darken(color(@icon-active), 20%);
 
+@tray-height: 100px;
+
 @font-face{
 	font-family:FontAwesome;
 	src:url(/app/fonts/fontawesome-webfont.eot);
@@ -50,8 +52,10 @@ body{
 	color: #333;
 	font-family: FontAwesome;
 
+	padding-bottom: @tray-height;
+
 	&.mapping {
-		[data-mappable] {
+		[data-midi-mappable] {
 
 			border: 1px dashed #333;
 			box-sizing: border-box;
@@ -65,6 +69,10 @@ body{
 			&.waiting{
 				-webkit-animation: mappingWaitingBorder 0.2s 0s infinite alternate;
 			}
+			&.dial{
+				border: 1px dashed #333 !important;
+				box-sizing: content-box;
+			}
 		}
 		#mapButton{
 			border-bottom: 4px solid @button-active;
@@ -74,7 +82,7 @@ body{
 			}
 		}
 
-		&.waiting [data-mappable]:not(.waiting) {
+		&.waiting [data-midi-mappable]:not(.waiting) {
 			-webkit-animation: none;
 		}
 	}
@@ -86,6 +94,19 @@ body{
 		border-left: 4px solid @mapped-color;
 		box-sizing: content-box;
 	}
+	&.dial{
+		border: 1px solid @mapped-color !important;
+	}
+}
+.dial{
+	padding: 6px 1px !important;
+	margin-left: -40px !important;
+	margin-top: 9px !important;
+	border-radius: 20px;
+}
+
+input,textarea{
+	outline: none;
 }
 
 .right {
@@ -95,6 +116,12 @@ body{
 	display: inline-block;
 	vertical-align: top;
 	text-align: left;
+}
+
+.logo {
+	margin-top: -6px;
+	margin-right: 10px;
+	vertical-align: middle;
 }
 
 // status icon svg stuff
@@ -128,6 +155,24 @@ svg path, svg g{
 		svg path, svg g{
 			-webkit-animation: dataFlash 0.3s 1;
 		}
+	}
+}
+
+
+.nav-tray{
+	position: fixed;
+	bottom: 5px;
+	left: 0;
+	right: 0;
+	height: @tray-height;
+
+	.button-tray{
+
+		position: absolute;
+		bottom:0;
+		left:0;
+		
+
 	}
 }
 
@@ -231,13 +276,6 @@ svg path, svg g{
 			}
 		}
 	}
-}
-
-
-.logo {
-	margin-top: -6px;
-	margin-right: 10px;
-	vertical-align: middle;
 }
 
 

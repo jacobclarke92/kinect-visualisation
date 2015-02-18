@@ -12,7 +12,6 @@ requirejs(
 		'/app/scripts/core/mappings.js',
 		'/app/scripts/core/ui.js',
 		'/app/scripts/core/audio.js',
-		'/app/scripts/core/midi.js',
 		'/app/scripts/core/cookies.js',
 		'/app/scripts/core/colours.js',
 		'/app/scripts/core/pixi_functions.js'
