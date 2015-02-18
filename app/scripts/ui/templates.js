@@ -135,7 +135,7 @@ function generateFilterParams() {
     filter_blur: {label: 'Blur', name: 'filter_blur', min: 0, max: 100, value: 0}
   };
   $.each(filterParams,function(key,param) {
-    if(typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
+    if(typeof w.mappings[w.hash] != 'undefined' && typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
   })
   var filterZone = $('#filtersZone');
   filterZone.html('');
@@ -157,7 +157,7 @@ function generateCalibrationParams() {
     calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', min: 10, max: 2000, value: 800}
   };
   $.each(calibrationParams,function(key,param) {
-    if(typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
+    if(typeof w.mappings[w.hash] != 'undefined' && typeof w.mappings[w.hash][key] != 'undefined') filterParams[key] = w.mappings[w.hash][key];
   })
   console.log(calibrationParams);
 
