@@ -6,6 +6,7 @@ function generateEffectsFiles() {
   for(var i=0; i< effects.length; i++) {
     var template = $('#templates #fileTemplate').children().clone(true,true);
     $(template).attr('data-name',effects[i]);
+    $(template).attr('id',effects[i]);
     $(template).html('&#xf1c9; '+effects[i].readable());
     filesZone.append(template);
   }

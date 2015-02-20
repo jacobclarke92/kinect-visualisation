@@ -96,6 +96,7 @@ function getTopColours() {
 function paletteChange(colorID) {
 
 	console.log(colorID);
+	if(colorID.indexOf('palette_') > -1) colorID = colorID.split('palette_').join('');
 	
 	for(var i=0; i< palettes.length; i++) {
 		if(palettes[i].id == colorID) currentPalette = palettes[i];

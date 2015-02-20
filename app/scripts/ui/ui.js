@@ -3,8 +3,13 @@
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {
-	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked);
-	$('[data-midi-mappable]').bind('click',midiMappableElementClicked);
+	var counter = 0;
+
+	$('[data-midi-mappable]').each(function() {
+		counter ++;
+	});
+	console.log('ELEMENTS: ',counter);
+	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
 }
 
 //a midi-mappable element has been clicked
@@ -37,9 +42,38 @@ function midiMappableElementClicked(e) {
 	}
 }
 
+function isMappingSetForCC(cc, paramType) {
+	var results = [];
+	var searchArr;
+	if(paramType == 'pot') searchArr = w.mappings[w.hash];
+	else if(paramType == 'key') searchArr = w.mappings['midiButtons'];
+	else return false;
+	if(typeof searchArr == 'undefined') return false;
+	
+	$.each(searchArr,function(key,mapping) {
+		if(mapping.cc !== false && mapping.cc != -1 && mapping.cc == cc) results.push(mapping.name);
+	});
+
+	return (results.length > 0) ? results : false;
+}
+function removeMappingsByCC(cc) {
+	if(isset(w.mappings[w.hash])) $.each(w.mappings[w.hash],function(key,mapping) {
+		if(mapping.cc === cc) {
+			$('#'+mapping.name).removeAttr('data-midi-linked');
+			delete w.mappings[w.hash][key];
+		}
+	});
+	if(isset(w.mappings['midiButtons'])) $.each(w.mappings['midiButtons'],function(key,mapping) {
+		if(mapping.cc === cc) {
+			$('#'+mapping.name).removeAttr('data-midi-linked');
+			delete w.mappings['midiButtons'][key];
+		}
+	});
+}
+
 
 // this will be triggered from body class is 'mapping' and 'waiting'
-function receiveMappingData(midiData) {
+function receiveMappingData(midiData, externalOverride) {
 
 	// midiData
 	midiData[0].destring();
@@ -53,6 +87,7 @@ function receiveMappingData(midiData) {
 		return;
 	}
 	var paramName = (mappedElement.attr('name')) ? mappedElement.attr('name') : mappedElement.attr('data-name');
+	var paramType = mappedElement.attr('data-midi-type');
 
 	//detect whether a key or potentiometer was touched
 	var midiType = false;
@@ -60,39 +95,89 @@ function receiveMappingData(midiData) {
 	else if(midiData[0] >= 144 && midiData[0] <= 159) midiType = 'key';
 
 	//if the midi message type matches the elements allowed midi type then proceed
-	if(mappedElement.attr('data-midi-type') == midiType) {
+	if(paramType == midiType) {
 
-		console.log('compatible control type to match midi type!');
+		console.log('compatible control type to match midi type! --',midiType);
 
-		var mapping;
-		//update the mapping details for the parameter
-		if(!isset( w.mappings[w.hash][paramName])) mapping = {
-			label: paramName.readable(), 
-			name: paramName, 
-			type: 'midi', 
-			min: parseFloat(mappedElement.attr('data-min')),
-			max: parseFloat(mappedElement.attr('data-max')),
-			range: false, threshold: false, initValue: 0, value: 0};
-		else mapping = w.mappings[w.hash][paramName];
-		// if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
-		mapping.type = 'midi';
-		mapping.value = midiData[2];
-		mapping.cc = midiData[1];
+		if(typeof externalOverride == 'undefined') {
 
-		w.mappings[w.hash][paramName] = mapping;
+			var mappingOverride = isMappingSetForCC(midiData[1], paramType);
+			if(mappingOverride.length == 1 && mappingOverride[0] == paramName) mappingOverride = false;
+			if(mappingOverride) {
+				console.log('mapping override!');
+				$('body').addClass('disabled');
+				var readableList = mappingOverride;
+				for(var i=0; i<readableList.length; i++) readableList[i] = readableList[i].readable();
+				showAlert({
+					title: 'Mapping override',
+					message: 'Midi CC already set for '+readableList.join(', ')+'.<br>What would you like to do?',
+					buttons: [
+						{label: 'Keep '+readableList.join(', '), callback: function() {
+							console.log('keep original');
+							mappedElement.removeClass('waiting');
+							$('body').removeClass('disabled waiting');
+						}},
+						{label: 'Keep '+((mappingOverride.length > 1) ? 'all' : 'both'), callback: function() {
+							console.log('keep both');
+							receiveMappingData(midiData,true);
+							$('body').removeClass('disabled');
+						}},
+						{label: ((mappingOverride.length > 1) ? 'Only keep ' : 'Keep ')+paramName.readable(), callback: function() {
+							console.log('keep original');
+							removeMappingsByCC(midiData[1]);
+							receiveMappingData(midiData,true);
+							$('body').removeClass('disabled');
+						}}
+					]
+				});
+				return;
+			}
+		}
 
-		//store these changes
-		w.saveCookie();
+		if(midiType == 'pot') {
+			var mapping;
+			//update the mapping details for the parameter
+			if(!isset( w.mappings[w.hash][paramName])) mapping = {
+				label: paramName.readable(), 
+				name: paramName, 
+				type: 'midi', 
+				min: parseFloat(mappedElement.attr('data-min')),
+				max: parseFloat(mappedElement.attr('data-max')),
+				range: false, threshold: false, initValue: 0, value: 0};
+			else mapping = w.mappings[w.hash][paramName];
+			// if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
+			mapping.type = 'midi';
+			mapping.value = midiData[2];
+			mapping.cc = midiData[1];
+
+			w.mappings[w.hash][paramName] = mapping;
+
+			//if(mappedElement.hasClass('dial')) mappedElement.trigger('configure', {'fgColor':'#f9d423'}); 
+			//use this for audio mapping
+
+			
+		}else if(midiType == 'key') {
+			
+			if(!isset( w.mappings['midiButtons'])) w.mappings['midiButtons'] = {};
+			w.mappings['midiButtons'][paramName] = {
+				label: paramName.readable(),
+				name: paramName,
+				cc: midiData[1]
+			}
+			mappedElement.removeClass('waiting').attr('data-midi-linked','');
 
 
-		//if(mappedElement.hasClass('dial')) mappedElement.trigger('configure', {'fgColor':'#f9d423'}); 
-		//use this for audio mapping
 
-		//remove all mapping waiting states 
+		}
+
 		mappedElement.removeClass('waiting').attr('data-midi-linked','');
 		$('body').removeClass('waiting');
 
+		w.saveCookie();
+
 		console.log('Mapping made!',mappedElement,midiData);
+		//store changes to w.mappings
+		
 
 	}else{
 		console.log('incompatible control type to midi type!');
@@ -119,7 +204,8 @@ function updatePalettes() {
 
 		var palette = w.palettes[i];
 		var template = $('#templates #paletteTemplate').children().clone();
-		template.attr('data-id',palette.id);
+		template.attr('data-name','palette_'+palette.id);
+		template.attr('id','palette_'+palette.id);
 
 		$.each(palette.colors, function(index, value) {
 			$('.col'+index,template).css('background-color','#'+value.hex);
@@ -130,11 +216,11 @@ function updatePalettes() {
 	}
 
 	//bind colour palette clicks
-	$('[data-palette]').click(function() {
-		w.paletteChange($(this).attr('data-id'));
+	$('[data-palette]').bind('click',function() {
+		w.paletteChange($(this).attr('data-name'));
 		$('[data-palette]').removeClass('active');
 		$(this).addClass('active');
-	})
+	});
 
 }
 
@@ -190,4 +276,23 @@ function setElementValue(paramID, value) {
 }
 
 
-
+function deleteSelectedMapping() {
+	var mappedElement = $('[data-midi-mappable][data-midi-linked].waiting');
+  	if(mappedElement) {
+  		console.log('Deleting a mapping!');
+  		
+  		var paramName = mappedElement.attr('data-name');
+  		var paramType = mappedElement.attr('data-midi-type');
+  		if(paramType == 'pot') {
+  			if(isset(w.mappings[w.hash][paramName])) delete w.mappings[w.hash][paramName];
+  			mappedElement.removeAttr('data-midi-linked').removeClass('waiting');
+  			$('body').removeClass('waiting');
+  		}else if (paramType == 'key') {
+  			if(isset(w.mappings['midiButtons'][paramName])) delete w.mappings['midiButtons'][paramName];
+  			mappedElement.removeAttr('data-midi-linked').removeClass('waiting');
+  			$('body').removeClass('waiting');
+  		}
+  	}else{
+  		console.log('no mapping to delete');
+  	}
+}

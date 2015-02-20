@@ -48,10 +48,10 @@
 
 	<div class='tabs tabs_default'>
 		<ul class='horizontal'>
-			<li><a href="#tab-1" class="button" data-midi-mappable data-midi-type="key">Effect List</a></li>
-			<li><a href="#tab-2" class="button" data-midi-mappable data-midi-type="key">Effect Options</a></li>
-			<li><a href="#tab-3" class="button" data-midi-mappable data-midi-type="key">Filters</a></li>
-			<li><a href="#tab-4" class="button" data-midi-mappable data-midi-type="key">Calibration</a></li>
+			<li><a href="#tab-1" class="button" data-midi-mappable data-midi-type="key" data-name="tab_effectList" id="tab_effectList">Effect List</a></li>
+			<li><a href="#tab-2" class="button" data-midi-mappable data-midi-type="key" data-name="tab_effectOptions" id="tab_effectOptions">Effect Options</a></li>
+			<li><a href="#tab-3" class="button" data-midi-mappable data-midi-type="key" data-name="tab_filters" id="tab_filters">Filters</a></li>
+			<li><a href="#tab-4" class="button" data-midi-mappable data-midi-type="key" data-name="tab_calibration" id="tab_calibration">Calibration</a></li>
 		</ul>
 		<div id="tab-1" class="tabArea">
 			<div id="filesZone"></div>
@@ -108,10 +108,15 @@
 	</div>
 
 	<div id="alertWindow">
-		<div class="message"></div>
-		<div class="message"></div>
-		<button class="button button1"></button>
-		<button class="button button2"></button>
+		<div class="alertBox">
+			<div class="title"></div>
+			<div class="message"></div>
+			<div class="buttons">
+				<button class="button button1"></button>
+				<button class="button button2"></button>
+				<button class="button button3"></button>
+			</div>
+		</div>
 	</div>
 
 </body>

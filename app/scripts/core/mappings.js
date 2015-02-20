@@ -20,7 +20,7 @@ function setMapping(variable, minimum, maximum, _default) {
   if(!isSet) {
 
     // createMapping(variable, minimum, maximum, _default);
-    mappings[hash][variable] = {name: variable, min: minimum, max: maximum, value: _default, initValue: _default, cc: false, type: false, audioTriggerType: false, range: false, threshold: false};
+    mappings[hash][variable] = {name: variable, min: minimum, max: maximum, value: _default, initValue: _default, cc: -1, type: false, audioTriggerType: false, range: false, threshold: false};
     window[variable] = _default;
 
   }else{

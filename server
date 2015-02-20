@@ -148,48 +148,6 @@ if(!skipMidi) {
 
 	input.openPort(selectPort);
 
-	/*
-	
-	original code for npm web-midi-api that randomly stopped working throwing segmentation faults
-
-	function onsuccesscallback( access ) {
-		midi = access;
-		inputs = midi.inputs;
-		outputs = midi.outputs;
-		var portCount = inputs.size;
-		console.log(portCount+" MIDI PORTS AVAILABLE");
-		if(portCount != 0) {
-			if(portCount < selectPort) {
-				console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
-				selectPort = 0;
-			}
-
-			var devices = inputs.values();
-			// console.log(devices);
-			for(var i=0; i < devices._items.length; i++) {
-				console.log('port'+i+': '+devices._items[i].name);
-			}
-			console.log("Using port "+selectPort);
-			devices._items[selectPort].onmidimessage = onMidiIn;
-
-		}
-	}
-	function onerrorcallback( err ) {
-		console.log( "uh-oh midi-o! Something went wrong! Error code: " + err.code );
-	}
-	function onMidiIn(ev){
-		var arr = [];
-		for(var i=0; i<ev.data.length; i++) arr.push(ev.data[i]);//arr.push((ev.data[i]<16 ? '0' : '') + ev.data[i].toString(16));
-		clients.forEach(function(client) {
-			client.write('data: ' + arr.join(' ') + '\n\n');
-		});
-		console.log('MIDI:', arr.join(' '));
-	}
-
-	midi.requestMIDIAccess().then( onsuccesscallback, onerrorcallback );
-
-	*/
-
 }else{
 	console.log('Skipping midi setup');
 }
@@ -228,6 +186,7 @@ function stream(req, res) {
 		if (index != -1) {
 			clients.splice(index, 1);
 		}
+
 	});
 }
 

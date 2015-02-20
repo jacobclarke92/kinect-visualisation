@@ -11,10 +11,15 @@ function processMidiData(byteArray) {
   // console.log(byteArray);
 
   //try to find a matching CC value
-  $.each(w.mappings[w.hash],function(key, mapping) {
+  var midiType = false;
+  if(byteArray[0] >= 176 && byteArray[0] <= 191) midiType = 'pot';
+  else if(byteArray[0] >= 144 && byteArray[0] <= 159) midiType = 'key';
+
+  if(midiType == 'pot') $.each(w.mappings[w.hash],function(key, mapping) {
 
     //is the effect param mapped with midi? and does the CC code match?
     if(mapping.type == 'midi' && mapping.cc == byteArray[1]) {
+
 
       //convert from midi value 0-127 to param's own min/max range
       var mappedValue = map_range(byteArray[2], 0, 127, mapping.min, mapping.max);
@@ -35,6 +40,20 @@ function processMidiData(byteArray) {
 
     }
 
+  });
+  else if(midiType == 'key') $.each(w.mappings['midiButtons'],function(key, mapping) {
+    if(mapping.cc == byteArray[1]) {
+
+      var elem = $('#'+mapping.name+'[data-midi-mappable]');
+      console.log('midi key pressed for ',$(elem));
+      if(elem) {
+        $(elem).trigger('click');
+        if(elem.hasClass('.palette')) console.log('is palette');
+      }else{
+        console.log('elem ',mapping.name,' for CC ',mapping.cc,' not found!');
+      }
+
+    }
   });
 
 }

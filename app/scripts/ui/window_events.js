@@ -13,7 +13,7 @@ window.onunload = function() {
 var curDrag = false;
 var offsetLeft = 0;
 
-window.onkeypress = function(e) {keyPressed(e)};
+window.onkeyup = function(e) {keyPressed(e)};
 
 function reinitStaticElement(elem) {
 	var el = $(elem),  
@@ -79,6 +79,8 @@ function loaded() {
 	}, false);
 	jsonStream.addEventListener('message', function(e) {
 
+		if($('body').hasClass('disabled')) return;
+
 		//trick to retrigger css animation
 		reinitStaticElement($('#midiCheck'));
 
@@ -119,8 +121,6 @@ function loaded() {
 
 
 
-	// Init tab view
-	$('.tabs').tabslet();
 
 	// Init frequency range selectors
 	$('#freqRange').noUiSlider({
@@ -142,7 +142,31 @@ function loaded() {
 	initAllParameters();
 
 	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
-	setTimeout(function() {linkMappableElements()},200);
+	setTimeout(function() {
+		linkMappableElements();
+	},2000);
+
+
+	// Init tab view
+	$('.tabs').tabslet();
+
+	/*
+	//testing alert window
+	setTimeout(function() {
+		showAlert({
+			message:'hi', 
+			title: 'hello', 
+			buttons: [
+				{label: 'button1', callback: function() {
+					alert('button1');
+				}},
+				{label: 'button2', callback: function() {
+					alert('button2');
+				}}
+			]
+		});
+	},3000);
+	*/
 	
 }
 
@@ -155,9 +179,10 @@ function initAllParameters() {
 
 
 function keyPressed(event) {
+	// console.log(event);
 
   //number keys trigger effects
-  var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+  var chCode = ('which' in event) ? event.which : event.keyCode;
 
   // MMMMMMMMMMMAP key
   if(chCode == 77 || chCode == 77+32) {
@@ -165,20 +190,26 @@ function keyPressed(event) {
 
   //Key 1-4 toggle tabs
   }else if(chCode >= 49 && chCode <= 52) {
+  	$('body').blur();
   	$('.tabs>ul>li').removeClass('active');
+  	$('.tabs>ul>li>a').removeClass('active');
   	$('a[href="#tab-'+(chCode-48)+'"]').parent().addClass('active');
   	$('.tabArea').removeClass('active').hide();
   	$('#tab-'+(chCode-48)).show().addClass('active');
+  }else if(chCode == 8 && $('body').hasClass('mapping waiting')) {
+  	deleteSelectedMapping();
   }
   console.log('key pressed ',chCode);
   
 }
 
 function showAlert(config) {
+
+	console.log('showing alert');
 	var alertWindow = $('#alertWindow');
 	var dialog = $('#alertWindow .alertBox');
 
-	$('.button',dialog).show().unbind('click');
+	$('.button',dialog).show().unbind('click').addClass('hidden')
 
 
 	$('.title',dialog).html(config.title || '');
@@ -186,13 +217,14 @@ function showAlert(config) {
 	if(isset(config.message)) $('.message',dialog).html(config.message);
 	if(isset(config.buttons)) {
 		for(var i=0; i<config.buttons.length; i++) {
-			$('.button'+i,dialog).html(config.buttons[i].label || 'Okay').bind('click', function() {
-				config.buttons[i].callback();
-				alertWindow.removeClass('opened');
-			});
+			$('.button'+(i+1),dialog).html(config.buttons[i].label || 'Okay').bind('click', config.buttons[i].callback).removeClass('hidden');
 		}
+		$('.button:not(.hidden').click(closeAlert);
+		$('.button:not(.hidden').last().focus();
 	}
 
 	alertWindow.addClass('opened');
 }
-
+function closeAlert(e) {
+	$('#alertWindow').removeClass('opened');
+}

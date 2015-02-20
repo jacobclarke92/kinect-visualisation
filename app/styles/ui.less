@@ -237,8 +237,8 @@ svg path, svg g{
 }
 */
 
-/*
-.alertWindow{
+
+#alertWindow{
 
 	opacity: 0;
 	pointer-events: none;
@@ -252,39 +252,62 @@ svg path, svg g{
 	transition: all 0.3s;
 	-webkit-transition: all 0.3s;
 
-	perspective: 1300px;
-	-webkit-perspective: 1300px;
+	perspective: 1000;
+	-webkit-perspective: 1000;
 
 
 
 	.alertBox{
-		display: none;
+
+		position: absolute;
 		left: 50%;
 		top: 50%;
 
-		transform: translate(-50%, -50%);
-		-webkit-transform: translate(-50%, -50%);
-		transition: all 0.3s;
-		-webkit-transition: all 0.3s;
+		zoom: 2;
+		-webkit-zoom: 2;
+
 		transform-style: preserve-3d;
 		-webkit-transform-style: preserve-3d;
-		transform: rotateX(-70deg);
-		-webkit-transform: rotateX(-70deg);
-		// text-align: center;
+		transform: translate(-50%, -70%) rotateX(-70deg) scale(0.5);
+		-webkit-transform: translate(-50%, -70%) rotateX(-70deg) scale(0.5);
+
+		transition: all 0.3s;
+		-webkit-transition: all 0.3s;
+
 		max-width: 80%;
+		width: 100%;
 		padding: 20px;
 		background-color: white;
-		opacity: 0
+		opacity: 0;
 
 		.title{
 			font-size: 18px;
+			padding-bottom: 15px;
 		}
 		.message{
-			font-size: 14px;
+			font-size: 12px;
+			padding-bottom: 30px;
 		}
-		.button{
+		.buttons{
 			float: right;
+			text-align: center;
+			margin-left: -5px;
+			.button{
+				display: inline-block;
+				margin: 10px 0 0 10px;
+				font-size: 10px;
+				padding: 8px;
+				&.hidden{
+					display: none;
+				}
+				&:focus{
+					background: @button-color !important;
+					border-bottom: 4px solid @button-active !important;
+					outline: none;
+				}
+			}
 		}
+		
 		
 	}
 	&.opened{
@@ -295,12 +318,12 @@ svg path, svg g{
 
 		.alertBox{
 			opacity: 1;
-			transform: rotateX(0deg);
-			-webkit-transform: rotateX(0deg);
+			transform: translate(-50%, -50%) rotateX(0deg) scale(0.65);
+			-webkit-transform: translate(-50%, -50%) rotateX(0deg) scale(0.65);
 		}
 	}
 }
-*/
+
 
 .button {
 	color: #fff;
@@ -317,6 +340,7 @@ svg path, svg g{
 	&.active {
 		background: @button-color !important;
 		border-bottom: 4px solid @button-active !important;
+		outline: none;
 		a {
 			color: white !important;
 		}
@@ -354,19 +378,27 @@ svg path, svg g{
 			a{
 				color: #666;
 				background-color: #ccc;
+				border-bottom: 4px solid #E5E5E5;
+				&:hover{
+					border-bottom: 4px solid #E5E5E5 !important;
+					background: @button-color;
+					color: white;
+				}
 			}
 			
 			background: #eee;
-			border-bottom: 4px solid #E5E5E5;
 			margin-right: 10px;
 			display: inline-block;
 			transition: all 0.2s;
 			&:hover, &.active{
-				border-bottom: 4px solid @button-active;
 				a {
 					background: @button-color;
 					color: white;
+					
 				}
+			}
+			&.active a{
+				border-bottom: 4px solid @button-active !important;
 			}
 		}
 	}
