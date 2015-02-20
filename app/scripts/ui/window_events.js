@@ -159,9 +159,16 @@ function keyPressed(event) {
   //number keys trigger effects
   var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
 
-  // MMMMMMMMMMM
+  // MMMMMMMMMMMAP key
   if(chCode == 77 || chCode == 77+32) {
   	$('#mapMidiButton').trigger('click');
+
+  //Key 1-4 toggle tabs
+  }else if(chCode >= 49 && chCode <= 52) {
+  	$('.tabs>ul>li').removeClass('active');
+  	$('a[href="#tab-'+(chCode-48)+'"]').parent().addClass('active');
+  	$('.tabArea').removeClass('active').hide();
+  	$('#tab-'+(chCode-48)).show().addClass('active');
   }
   console.log('key pressed ',chCode);
   

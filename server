@@ -4,7 +4,7 @@ var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringS
 var http = require('http');
 var fs = require('fs');
 var url = require("url");
-var midi = require('web-midi-api');
+var midi = require('midi');
 var httpRequest = require('http-request');
 var chokidar = require('chokidar');
 var less = require('less');
@@ -16,6 +16,7 @@ var selectPort = 0;
 var quickStart = false;
 var skipColour = false;
 var skipMidi = false;
+var skipKinect = false;
 var skipEffectsList = false;
 var devMode = false;
 
@@ -37,6 +38,7 @@ if(process.argv.length > 2) {
 		else if(param.indexOf('-skipmidi') === 0) skipMidi = true;
 		else if(param.indexOf('-skipcolour') === 0) skipColour = true;
 		else if(param.indexOf('-skipeffectslist') === 0) skipMidi = true;
+		else if(param.indexOf('-skipkinect') === 0) skipKinect = true;
 		else if(param.indexOf('-devmode') === 0) devMode = true;
 	}
 }else{
@@ -126,6 +128,30 @@ var outputs;
 
 if(!skipMidi) {
 
+	var input = new midi.input();
+	var ports = input.getPortCount();
+	if(ports < selectPort) {
+		console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
+		selectPort = 0;
+	}
+	console.log(ports+" MIDI PORTS AVAILABLE");
+	for(var i=0; i<ports; i++) {
+		console.log('port'+i+': '+input.getPortName(i));
+	}
+
+	input.on('message', function(deltaTime, message) {
+		console.log('m:' + message + ' d:' + deltaTime);
+		clients.forEach(function(client) {
+			client.write('data: ' + message.join(' ') + '\n\n');
+		});
+	});
+
+	input.openPort(selectPort);
+
+	/*
+	
+	original code for npm web-midi-api that randomly stopped working throwing segmentation faults
+
 	function onsuccesscallback( access ) {
 		midi = access;
 		inputs = midi.inputs;
@@ -161,6 +187,8 @@ if(!skipMidi) {
 	}
 
 	midi.requestMIDIAccess().then( onsuccesscallback, onerrorcallback );
+
+	*/
 
 }else{
 	console.log('Skipping midi setup');
@@ -219,7 +247,7 @@ function serve(res, path, contentType) {
 
 function writeImage(image) {
 
-	console.log(image);
+	// console.log(image);
 	var uri = 'data:image/png;base64,' + image.toString('base64');
 
 	clients.forEach(function(client) {
@@ -235,7 +263,7 @@ function writeImage(image) {
 
 var urlRules = [
 
-	['/effects/','application/javascript'],
+	// ['/effects/','application/javascript'],
 	['.pde','text/processing'],
 	['.png','image/png'],
 	['.js','application/javascript'],
@@ -255,9 +283,9 @@ var server = http.createServer(function(req, res) {
 
 	var parsedURL = url.parse(req.url, true);
 	var pathname = parsedURL.pathname;
-	// console.log(pathname);
+	console.log(pathname);
 	
-	if (req.url == '/images' || pathname == '/app/midi.json') {
+	if ((req.url == '/images' && skipKinect == false) || pathname == '/app/midi.json') {
 		
 		stream(req, res, 'text/event-stream');
 
@@ -271,7 +299,6 @@ var server = http.createServer(function(req, res) {
 		}
 		if(!found) {
 			if(pathname == '/') serve(res, __dirname + '/app/index.html', 'text/html');
-			else res.end();
 		}
 	}
 

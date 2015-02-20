@@ -5,6 +5,11 @@ var midiChangeTimeout = false;
 //if we've been waiting to map something then the data has already been routed to another fuction to handle that
 function processMidiData(byteArray) {
 
+  byteArray[0] = parseInt(byteArray[0]);
+  byteArray[1] = parseInt(byteArray[1]);
+  byteArray[2] = parseInt(byteArray[2]);
+  // console.log(byteArray);
+
   //try to find a matching CC value
   $.each(w.mappings[w.hash],function(key, mapping) {
 
@@ -13,7 +18,7 @@ function processMidiData(byteArray) {
 
       //convert from midi value 0-127 to param's own min/max range
       var mappedValue = map_range(byteArray[2], 0, 127, mapping.min, mapping.max);
-      console.log('updating ',mapping.name,' to ',byteArray[2],' = ', mappedValue);
+      // console.log('updating ',mapping.name,' to ',byteArray[2],' = ', mappedValue);
 
       //update the mapping value
       w.mappings[w.hash][mapping.name].value = mappedValue;
