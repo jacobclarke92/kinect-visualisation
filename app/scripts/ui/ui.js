@@ -61,15 +61,15 @@ function receiveMappingData(midiData) {
 
 		var mapping;
 		//update the mapping details for the parameter
-		if(isset( w.mappings[w.hash][paramName])) mapping = {
+		if(!isset( w.mappings[w.hash][paramName])) mapping = {
 			label: paramName.readable(), 
 			name: paramName, 
 			type: 'midi', 
 			min: parseFloat(mappedElement.attr('data-min')),
 			max: parseFloat(mappedElement.attr('data-max')),
 			range: false, threshold: false, initValue: 0, value: 0};
-		else mapping = w.mappings[w.hash][mappedElement.attr('data-name')];
-
+		else mapping = w.mappings[w.hash][paramName];
+		// if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
 		mapping.type = 'midi';
 		mapping.value = midiData[2];
 		mapping.cc = midiData[1];
@@ -85,7 +85,7 @@ function receiveMappingData(midiData) {
 
 		//remove all mapping waiting states 
 		mappedElement.removeClass('waiting').attr('data-midi-linked','');
-		$('body').removeClass('waiting mapping');
+		$('body').removeClass('waiting');
 
 		console.log('Mapping made!',mappedElement,midiData);
 
@@ -142,12 +142,20 @@ function paramElementChanged(elem, value) {
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = elem.attr('data-name');
 
-	if(isset(w.mappings[w.hash][paramName])) {
-		w.mappings[w.hash][paramName].value = value;
-		w[paramName] = value;
-	}else{
-		console.log('no mapping reference found for ',paramName);
+	if(!isset(w.mappings[w.hash][paramName])) {
+		w.mappings[w.hash][paramName] = {
+			label: paramName.readable(), 
+			name: paramName, 
+			type: 'midi', 
+			min: parseFloat(elem.attr('data-min')),
+			max: parseFloat(elem.attr('data-max')),
+			range: false, threshold: false, initValue: 0, value: value
+		};
 	}
+	w.mappings[w.hash][paramName].value = value;
+	w[paramName] = value;
+
+	if(paramName.indexOf('calibration_') != -1) w.updateCanvas();
 
 }
 
@@ -160,14 +168,14 @@ function setElementValue(paramID, value) {
 		//it's a slider!
 		if(elem.hasClass('noUi-handle')) {
 
-			console.log('setting slider value .. supposedly');
+			// console.log('setting slider value .. supposedly');
 			$('#'+paramID+'_text').val(value);
 			$(elem).closest('.range').val(value);
 
 		//it's a pot!
 		}else if(elem.hasClass('dial')) {
 
-			console.log('setting dial value .. supposedly');
+			// console.log('setting dial value .. supposedly');
 			elem.val(value).trigger('change');
 		}
 

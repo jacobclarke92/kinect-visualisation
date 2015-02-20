@@ -69,7 +69,9 @@ function changeScript(script) {
   if(typeof mappings[hash] != 'object') mappings[hash] = {};
 
   //begin loading script
-  requirejs(['/effects/effect_'+script+'.js'],function() {
+  requirejs(['/effects/effect_'+script+'.js'],function(requiredEffect) {
+
+    console.log(requiredEffect);
 
     //check that the loaded file contained the actual effect object
     if(window['effect_'+script]) {

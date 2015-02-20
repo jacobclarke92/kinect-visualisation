@@ -181,7 +181,7 @@ function generateCalibrationParams() {
     calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', min: 10, max: 2000, value: 800}
   };
   $.each(calibrationParams,function(key,param) {
-    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) filterParams[key] = w.mappings[w.hash][key];
+    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) calibrationParams[key] = w.mappings[w.hash][key];
   })
   console.log(calibrationParams);
 
