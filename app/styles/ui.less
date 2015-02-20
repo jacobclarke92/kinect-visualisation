@@ -207,7 +207,100 @@ svg path, svg g{
 	width: 512px;
 	height: 200px;
 }
+/*
+.md-effect-9.md-modal {
+	-webkit-perspective: 1300px;
+	-moz-perspective: 1300px;
+	perspective: 1300px;
+}
 
+.md-effect-9 .md-content {
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-transform: rotateX(-70deg);
+	-moz-transform: rotateX(-70deg);
+	-ms-transform: rotateX(-70deg);
+	transform: rotateX(-70deg);
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+	opacity: 0;
+}
+
+.md-show.md-effect-9 .md-content {
+	-webkit-transform: rotateX(0deg);
+	-moz-transform: rotateX(0deg);
+	-ms-transform: rotateX(0deg);
+	transform: rotateX(0deg);
+	opacity: 1;
+}
+*/
+
+/*
+.alertWindow{
+
+	opacity: 0;
+	pointer-events: none;
+	background-color: rgba(0,0,0,0.5);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+
+	perspective: 1300px;
+	-webkit-perspective: 1300px;
+
+
+
+	.alertBox{
+		display: none;
+		left: 50%;
+		top: 50%;
+
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%, -50%);
+		transition: all 0.3s;
+		-webkit-transition: all 0.3s;
+		transform-style: preserve-3d;
+		-webkit-transform-style: preserve-3d;
+		transform: rotateX(-70deg);
+		-webkit-transform: rotateX(-70deg);
+		// text-align: center;
+		max-width: 80%;
+		padding: 20px;
+		background-color: white;
+		opacity: 0
+
+		.title{
+			font-size: 18px;
+		}
+		.message{
+			font-size: 14px;
+		}
+		.button{
+			float: right;
+		}
+		
+	}
+	&.opened{
+
+		pointer-events: auto;
+		display: inline-block;
+		opacity: 1;
+
+		.alertBox{
+			opacity: 1;
+			transform: rotateX(0deg);
+			-webkit-transform: rotateX(0deg);
+		}
+	}
+}
+*/
 
 .button {
 	color: #fff;
@@ -219,6 +312,7 @@ svg path, svg g{
 	text-decoration: none;
 	transition: all 0.2s;
 	cursor: pointer;
+	border: 0;
 
 	&.active {
 		background: @button-color !important;
@@ -267,7 +361,7 @@ svg path, svg g{
 			margin-right: 10px;
 			display: inline-block;
 			transition: all 0.2s;
-			&:hover{
+			&:hover, &:focus{
 				border-bottom: 4px solid @button-active;
 				a {
 					background: @button-color;
@@ -340,7 +434,7 @@ ul.fileGroup{
 		letter-spacing: 1px;
 		cursor: pointer;
 
-		&:hover{
+		&:hover, &:focus{
 			background-color: #c6e2df;
 		}
 

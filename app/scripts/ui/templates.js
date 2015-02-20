@@ -29,7 +29,7 @@ function createSliders(sliderArray,target) {
       //init basic variables that are required to init noUiSlider
       var step = Math.round(Math.abs(param.max-param.min + 1)/100);
       var label = (isset(param.label )) ? param.label : (isset(param.name )) ? param.name.readable() : 'Undefined param name';
-      var cc = (isset(param.cc )) ? param.cc : -1;
+      var cc = (isset(param.cc ) && param.cc != false) ? param.cc : -1;
       
 
       $('.title span',template).html(label);

@@ -30,7 +30,7 @@ function midiMappableElementClicked(e) {
 		//in this instance if a file element is selected it changes the effect script
 		if($(this).hasClass('file')) {
 			console.log('loading script ',$(this).attr('data-name'));
-			
+
 			w.changeScript($(this).attr('data-name'));
 		}
 
@@ -40,6 +40,11 @@ function midiMappableElementClicked(e) {
 
 // this will be triggered from body class is 'mapping' and 'waiting'
 function receiveMappingData(midiData) {
+
+	// midiData
+	midiData[0].destring();
+	midiData[1].destring();
+	midiData[2].destring();
 
 	//this should refer to only 1 element - the on waiting to be mapped
 	var mappedElement = $('[data-midi-mappable].waiting');

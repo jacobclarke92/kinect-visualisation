@@ -21,3 +21,9 @@ function map_range(value, start1, stop1, start2, stop2) {
 function isset(variable) {
 	return (typeof variable != 'undefined');
 }
+String.prototype.destring = function() {
+    var num = parseFloat(this);
+    if(!isNaN(num)) return num;
+    console.log('BAD STRING! can\'t parse ',this,' into a number');
+    return false;
+}

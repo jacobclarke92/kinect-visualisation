@@ -167,5 +167,25 @@ function keyPressed(event) {
   
 }
 
+function showAlert(config) {
+	var alertWindow = $('#alertWindow');
+	var dialog = $('#alertWindow .alertBox');
 
+	$('.button',dialog).show().unbind('click');
+
+
+	$('.title',dialog).html(config.title || '');
+	$('.message',dialog).html(config.message || '');
+	if(isset(config.message)) $('.message',dialog).html(config.message);
+	if(isset(config.buttons)) {
+		for(var i=0; i<config.buttons.length; i++) {
+			$('.button'+i,dialog).html(config.buttons[i].label || 'Okay').bind('click', function() {
+				config.buttons[i].callback();
+				alertWindow.removeClass('opened');
+			});
+		}
+	}
+
+	alertWindow.addClass('opened');
+}
 
