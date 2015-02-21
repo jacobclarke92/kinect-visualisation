@@ -8,13 +8,21 @@ function linkMappableElements() {
 	$('[data-midi-mappable]').each(function() {
 		counter ++;
 	});
-	console.log('ELEMENTS: ',counter);
+	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
 	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
+
+
+	$('[data-audio-mappable]').each(function() {
+		counter ++;
+	});
+	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
+	$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
+
 }
 
 //a midi-mappable element has been clicked
 function midiMappableElementClicked(e) {
-	console.log('mappablenp item clicked ',e.target);
+	console.log('midi mappable item clicked ',e.target);
 
 	//is waiting for an element to be selected
 	if($('body').hasClass('mapping')) {
@@ -39,6 +47,24 @@ function midiMappableElementClicked(e) {
 			w.changeScript($(this).attr('data-name'));
 		}
 
+	}
+}
+
+//a audio-mappable element has been clicked
+function audioMappableElementClicked(e) {
+	console.log('audio mappable item clicked ',e.target);
+	if($('body').hasClass('mappingAudio')) {
+
+		e.preventDefault();
+
+		//assign 'waiting for midi' state to selected element
+		$('[data-audio-mappable].waitingAudio').removeClass('waiting');
+		$(this).addClass('waitingAudio');
+		$('body').addClass('waitingAudio');
+		
+		e.preventDefault();
+		console.log('Now waiting for midi info for ',e.target);
+	
 	}
 }
 

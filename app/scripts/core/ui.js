@@ -2,6 +2,7 @@
 
 var frequencyBars;
 var freqBarsCanvas;
+var freqBarWidth = 1;
 
 
 uiPopup = false;
@@ -17,16 +18,19 @@ function openControls() {
     frequencyBars = $('#frequencyBars',uiPopup.document).get(0);
     freqBarsCanvas = frequencyBars.getContext('2d');
 
-    $('#leftSlider',uiPopup.document).css('left',soundRange[0]+'px');
-    $('#rightSlider',uiPopup.document).css('left',soundRange[1]+'px');
+    setFreqBarWidth();
 
-    if(typeof uiPopup.controlsLoaded != 'undefined') $('#openControlsToggle').hide();
+    $('#openControlsToggle').hide();
     if(typeof window.palettesHtml == 'string' && window.palettesHtml != '') $('#paletteZone',uiPopup.document).html(window.palettesHtml);
 
   	console.log('control window loaded now!');
 
 
   }
+}
+function setFreqBarWidth() {
+  if(isset(frequencyArray)) freqBarWidth = $(frequencyBars).width()/frequencyArray.length;
+  else setTimeout(setFreqBarWidth, 1000);
 }
 
 //reopen controls if they close

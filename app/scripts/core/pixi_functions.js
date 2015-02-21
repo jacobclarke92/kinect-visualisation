@@ -144,11 +144,18 @@ function animateFrame() {
   			for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
 	        	n++;
 	        	var barHeight = frequencyArray[i];
-	        	var barWidth = 20 - i;
+
+	        	//disperse the bars pseudo-logarithmically so bass frequencies are more visible
+	        	var barWidth = Math.floor(freqBarWidth*8 - i/4);
+
+	        	//var barWidth = 20 - i;
 	        	if(barWidth < 1) barWidth = 1;
 
+				// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
+			    if(x >= soundRange[0]/100*freqBarWidth*frequencyArray.length && x <= soundRange[1]/100*freqBarWidth*frequencyArray.length) {
 
-			    if(x >= soundRange[0] && x <= soundRange[1]) {
+			    	// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
+
 			    	freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
 			    	currentFreqRangeVolume += barHeight;
 			    	freqCount ++;
@@ -161,18 +168,21 @@ function animateFrame() {
 		}
     }
 
+    //display overall volume metre in ui
     if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
 	else $('#volumeBar',uiPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});
 
+	//GOT SCRIPT?
 	if(currentScript) {
 		
+		//does the script have its own custom initFrame function?
 		if(typeof currentScript.initFrame != 'undefined') currentScript.initFrame(currentScript);
 		else initFrame();
 
-
-
+		//draw dat shit
 		currentScript.draw();
 
+		//does the script have its own custom addFrame function?
 		if(typeof currentScript.addFrame != 'undefined') currentScript.addFrame();
 		else addFrame();
 	}
@@ -180,7 +190,7 @@ function animateFrame() {
 
 	//apply webgl filters
 
-	//if one is defined then they probably all are
+	//if one is defined then they probably all are hey
 	if(typeof filter_displacement != 'undefined') {
 		displacementFilter.scale.x = displacementFilter.scale.y = filter_displacement;
 		twistFilter.angle = filter_twist;

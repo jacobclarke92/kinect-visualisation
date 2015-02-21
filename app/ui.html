@@ -40,8 +40,22 @@
 	<div style="clear:both"></div>
 
 	<div id="frequencySelector">
-		<canvas id="frequencyBars" width="512" height="200"></canvas>
-		<div class="range" id="freqRange" min="0" max="100"></div>
+		<div class="leftOfSpectrum">
+			
+			<input type="text" class="dial gainKnob" value="0" data-name="global_gainKnob" data-min="-100" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-midi-type="pot">
+			<div class="mapLabel">Gain</div>
+
+			<div class="range" id="freqThresh" min="0" max="100" value="50"></div>
+
+			<div class="button doneAudioMapping">Done</div>
+
+		</div>
+		<div class="rightOfSpectrum">
+			<canvas id="frequencyBars"></canvas>
+			<div class="range" id="freqRange" min="0" max="100"></div>
+			<div class="mapLabel">[Not currently mapping an audio param]</div>
+		</div>
+		
 	</div>
 	<br>
 	<div id="paletteZone"></div>
@@ -88,7 +102,7 @@
 					<input type="number" class="rangeText" size="3">
 				</div>
 				<div class="mapKnob">
-					<input type="text" class="dial" value="0" data-min="-100" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable  data-midi-type="pot">
+					<input type="text" class="dial" value="0" data-min="-100" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-audio-mappable  data-midi-type="pot">
 				</div>
 			</div>
 		</div>

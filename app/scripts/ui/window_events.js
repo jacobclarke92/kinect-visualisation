@@ -15,6 +15,11 @@ var offsetLeft = 0;
 
 window.onkeyup = function(e) {keyPressed(e)};
 
+window.onresize = function(e) {
+	//update freq bar width in core upon resize so it draws accordingly
+	if(isset(w.frequencyArray)) w.freqBarWidth = $('#frequencyBars').width()/w.frequencyArray.length;
+}
+
 function reinitStaticElement(elem) {
 	var el = $(elem),  
 	newone = el.clone(true);
@@ -119,6 +124,15 @@ function loaded() {
 		console.log('toggling mapping');
 	});
 
+	$('#mapAudioButton').click(function() {
+		if($('body').hasClass('mappingAudio')) {
+			$('body').removeClass('mappingAudio waitingAudio');
+			$('[data-audio-mappable].waiting').removeClass('waiting');
+		}else{
+			$('body').addClass('mappingAudio');
+		}
+	});
+
 
 
 
@@ -133,9 +147,32 @@ function loaded() {
 			'max': [100]
 		}
 	}); 
+	$('#freqThresh').noUiSlider({
+		start: [50],
+		behaviour: 'drag',
+		orientation: 'vertical',
+		range: {
+			'min': [0],
+			'max': [100]
+		}
+	});
+	$('#freqRange').on({
+    	slide: function() {
+    		var val = $(this).val();
+    		w.soundRange = [parseFloat(val[0]),parseFloat(val[1])];
+    	}
+    });
+
+	$('.gainKnob.dial').knob({
+		'change': function (v) { 
+			paramElementChanged(this,v);
+		}
+	});
+
 	// Add mappable parameter to frequenecy range sliders
 	$('#freqRange .noUi-handle-lower').attr('data-midi-mappable','').attr('data-midi-type','pot');
 	$('#freqRange .noUi-handle-upper').attr('data-midi-mappable','').attr('data-midi-type','pot');
+	$('#freqThresh .noUi-handle').attr('data-midi-mappable','').attr('data-midi-type','pot');
 
 	// Init all the tab views
 	generateEffectsFiles();
@@ -185,9 +222,10 @@ function keyPressed(event) {
   var chCode = ('which' in event) ? event.which : event.keyCode;
 
   // MMMMMMMMMMMAP key
-  if(chCode == 77 || chCode == 77+32) {
+  if(chCode == 77) {
   	$('#mapMidiButton').trigger('click');
-
+  }else if(chCode == 65) {
+  	$('#mapAudioButton').trigger('click');
   //Key 1-4 toggle tabs
   }else if(chCode >= 49 && chCode <= 52) {
   	$('body').blur();

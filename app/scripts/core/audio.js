@@ -67,17 +67,6 @@ function setupAudioNodes(stream) {
         volume += Math.abs(amplitudeArray[i]-128);
       }
 
-      /*
-      if(showFrequencyData) {
-        if(!initedControlsFreq) {
-          console.log(frequencyArray.length);
-          var bars = '';
-          for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) bars += '<div class="frequencyBar"></div>';
-          $('#frequencyBars',uiPopup.document).html(bars);
-          initedControlsFreq = true;
-        }
-      }
-      */
   }
 
   sourceNode.connect(analyserNode);

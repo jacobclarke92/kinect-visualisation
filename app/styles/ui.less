@@ -1,5 +1,7 @@
 @mapping-color: #87ceeb;
 @mapping-waiting-color: #c7f464;
+@mapping-audio-color: #ff3d7f;
+@mapping-audio-waiting-color: #c7f464;
 @mapped-color: #f9d423;
 @button-color: #a0cac0;
 @button-active: darken(color(@button-color), 20%);
@@ -26,6 +28,14 @@
 @-webkit-keyframes mappingWaitingBorder {
 	0% { background-color: inherit }
 	100% { background-color: @mapping-waiting-color }
+}
+@-webkit-keyframes mappingAudioBorder {
+	0% { background-color: inherit }
+	100% { background-color: @mapping-audio-color }
+}
+@-webkit-keyframes mappingAudioWaitingBorder {
+	0% { background-color: inherit }
+	100% { background-color: @mapping-audio-waiting-color }
 }
 @-webkit-keyframes dataFlash {
 	0% { 
@@ -84,6 +94,41 @@ body{
 
 		&.waiting [data-midi-mappable]:not(.waiting) {
 			-webkit-animation: none;
+		}
+	}
+	&.mappingAudio{
+		[data-audio-mappable] {
+
+			border: 1px dashed #333;
+			box-sizing: border-box;
+			margin: -1px;
+			color: black;
+
+			&:not([data-midi-linked]) {
+				-webkit-animation: mappingAudioBorder 0.5s 0s infinite alternate;
+			}
+			&.waitingAudio{
+				-webkit-animation: mappingAudioWaitingBorder 0.2s 0s infinite alternate;
+			}
+			&.dial{
+				border: 1px dashed #333 !important;
+				box-sizing: content-box;
+			}
+
+		}
+	}
+	#frequencySelector{
+		.range, .button, .rightOfSpectrum>.mapLabel{
+			opacity: 0.3;
+			pointer-events: none;
+		}
+	}
+	&.mappingAudio.waitingAudio {
+		#frequencySelector{
+			.range, .button, .rightOfSpectrum>.mapLabel{
+				opacity: 1;
+				pointer-events: auto;
+			}
 		}
 	}
 }
@@ -199,43 +244,86 @@ svg path, svg g{
 	}
 }
 
-#volumeBar{
-	height: 10px;
-	background-color: #ccc !important;
-}
-#frequencyBars{
-	width: 512px;
-	height: 200px;
-}
-/*
-.md-effect-9.md-modal {
-	-webkit-perspective: 1300px;
-	-moz-perspective: 1300px;
-	perspective: 1300px;
+
+#frequencySelector {
+
+	#volumeBar{
+		height: 10px;
+		background-color: #ccc !important;
+	}
+	.leftOfSpectrum{
+		position: relative;
+		float: left;
+		width: 80px;
+		height: 200px;
+
+
+		#freqThresh{
+			position: absolute;
+			top: 0;
+			right: 8px;
+			height: 100%;
+		}
+		.dial.gainKnob{
+			position: relative;
+		}
+		.mapLabel{
+			position: absolute;
+			top: 32px;
+			left: 13px;
+		}
+		.doneAudioMapping{
+			position: absolute;
+			left:0;
+			top:200px;
+
+			padding: 12px;
+			font-size: 12px;
+
+		}
+	}
+	.rightOfSpectrum{
+		position: relative;
+		float:right;
+		width: ~'calc(100% - 80px)';
+		height: 260px;
+
+		#frequencyBars{
+			width: 100%;
+			height: 200px;
+		}
+		#freqRange{
+			margin-top: 8px;
+			.noUi-base .noUi-handle{
+				width: 12px;
+				
+				&.noUi-handle-lower{
+					left: -12px;
+				}
+				&.noUi-handle-upper{
+					left: 0px;
+				}
+				&:before{
+					left: 3px;
+				}
+				&:after{
+					left: 6px;
+				}
+			}
+		}
+
+	}
+	
+	.mapLabel{
+		position: relative;
+		float: left;
+		font-size: 10px;
+		margin-top: 8px;
+		display: inline-block;
+	}
+
 }
 
-.md-effect-9 .md-content {
-	-webkit-transform-style: preserve-3d;
-	-moz-transform-style: preserve-3d;
-	transform-style: preserve-3d;
-	-webkit-transform: rotateX(-70deg);
-	-moz-transform: rotateX(-70deg);
-	-ms-transform: rotateX(-70deg);
-	transform: rotateX(-70deg);
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	transition: all 0.3s;
-	opacity: 0;
-}
-
-.md-show.md-effect-9 .md-content {
-	-webkit-transform: rotateX(0deg);
-	-moz-transform: rotateX(0deg);
-	-ms-transform: rotateX(0deg);
-	transform: rotateX(0deg);
-	opacity: 1;
-}
-*/
 
 
 #alertWindow{
@@ -515,4 +603,11 @@ ul.fileGroup{
 		}
 	}
 
+}
+
+.noUi-target {
+	border-radius: 0 !important;
+	* {
+		border-radius: 0 !important;
+	}
 }
