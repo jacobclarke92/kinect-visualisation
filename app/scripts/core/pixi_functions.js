@@ -123,6 +123,9 @@ function addFrame() {
     stage.addChild(currentScript.screens[currentScript.screens.length-1]);
 }
 
+var weirdDivisionFixMin = 2.85;
+var weirdDivisionFixMax = 3.25;
+var weirdDivisionFixThresh = 1.5;
 function animateFrame() {
 
 	
@@ -151,19 +154,41 @@ function animateFrame() {
 	        	//var barWidth = 20 - i;
 	        	if(barWidth < 1) barWidth = 1;
 
+	        	var minX = soundRange[0]/100*freqCanvasWidth;
+	        	var maxX = soundRange[1]/100*freqCanvasWidth;
+	        	minX -= minX/weirdDivisionFixMin;
+	        	maxX -= maxX/weirdDivisionFixMax;
+
 				// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
-			    if(x >= soundRange[0]/100*freqBarWidth*frequencyArray.length && x <= soundRange[1]/100*freqBarWidth*frequencyArray.length) {
+			    if(currentlyMappingAudio && x+barWidth >= minX && x+barWidth <= maxX) {
 
 			    	// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
 
-			    	freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+			    	if(200-barHeight/2 < soundThresh*weirdDivisionFixThresh) freqBarsCanvas.fillStyle = 'rgb(50, ' + (barHeight+100) + ', 50)';
+			    	else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
 			    	currentFreqRangeVolume += barHeight;
 			    	freqCount ++;
 			    }else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
-			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);
+
+			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);	
+			    
 
 			    x += barWidth;
 	        }
+
+	        //draw guidelines while mapping
+	        if(currentlyMappingAudio) {
+	        	freqBarsCanvas.beginPath();
+				freqBarsCanvas.strokeStyle = 'rgb(255,255,255)'		;
+				freqBarsCanvas.moveTo(minX,200);
+				freqBarsCanvas.lineTo(minX,0);
+				freqBarsCanvas.moveTo(maxX,200);
+				freqBarsCanvas.lineTo(maxX,0);
+				freqBarsCanvas.moveTo(0,soundThresh*weirdDivisionFixThresh);
+				freqBarsCanvas.lineTo(freqCanvasWidth,soundThresh*weirdDivisionFixThresh);
+				freqBarsCanvas.stroke();
+			}
+
 	        currentFreqRangeVolume /= freqCount;
 		}
     }

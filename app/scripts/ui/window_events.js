@@ -17,7 +17,11 @@ window.onkeyup = function(e) {keyPressed(e)};
 
 window.onresize = function(e) {
 	//update freq bar width in core upon resize so it draws accordingly
-	if(isset(w.frequencyArray)) w.freqBarWidth = $('#frequencyBars').width()/w.frequencyArray.length;
+	if(isset(w.frequencyArray)) {
+		$('#frequencyBars').width();
+		w.freqCanvasWidth = $('#frequencyBars').width();
+		w.freqBarWidth = w.freqCanvasWidth/w.frequencyArray.length;
+	}
 }
 
 function reinitStaticElement(elem) {
@@ -126,6 +130,7 @@ function loaded() {
 
 	$('#mapAudioButton').click(function() {
 		if($('body').hasClass('mappingAudio')) {
+			w.currentlyMappingAudio = false;
 			$('body').removeClass('mappingAudio waitingAudio');
 			$('[data-audio-mappable].waiting').removeClass('waiting');
 		}else{
@@ -162,8 +167,19 @@ function loaded() {
     		w.soundRange = [parseFloat(val[0]),parseFloat(val[1])];
     	}
     });
+    $('#freqThresh').on({
+    	slide: function() {
+    		w.soundThresh = $(this).val();
+    	}
+    });
 
 	$('.gainKnob.dial').knob({
+		'change': function (v) { 
+			paramElementChanged(this,v);
+		}
+	});
+	$('.qFactorKnob.dial').knob({
+		// 'readOnly': true,
 		'change': function (v) { 
 			paramElementChanged(this,v);
 		}

@@ -43,9 +43,17 @@
 		<div class="leftOfSpectrum">
 			
 			<input type="text" class="dial gainKnob" value="0" data-name="global_gainKnob" data-min="-100" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-midi-type="pot">
-			<div class="mapLabel">Gain</div>
+			<div class="mapLabel gainLabel">Gain</div>
+			
+			<div style="position: relative; height: 90px;
+			width: 100%;"></div>
+			
+			<input type="text" class="dial qFactorKnob" value="0" data-name="global_qFactor" data-min="0" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-midi-type="pot">
+			<div class="mapLabel qFactorLabel">Q Factor</div>
 
-			<div class="range" id="freqThresh" min="0" max="100" value="50"></div>
+
+
+			<div class="range" id="freqThresh" min="0" max="200" value="100"></div>
 
 			<div class="button doneAudioMapping">Done</div>
 

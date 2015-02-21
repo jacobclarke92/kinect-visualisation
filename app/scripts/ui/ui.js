@@ -61,6 +61,8 @@ function audioMappableElementClicked(e) {
 		$('[data-audio-mappable].waitingAudio').removeClass('waiting');
 		$(this).addClass('waitingAudio');
 		$('body').addClass('waitingAudio');
+
+		w.currentlyMappingAudio = true;
 		
 		e.preventDefault();
 		console.log('Now waiting for midi info for ',e.target);

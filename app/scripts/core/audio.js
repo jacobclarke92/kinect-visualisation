@@ -12,7 +12,7 @@ var volume = 0;
 var gotSound = false;
 var showFrequencyData = true;
 var showFrequencyDataSkip = 1;
-var soundRange = [0,512];
+var soundRange = [0,177];
 var currentFreqRangeVolume;
 
 

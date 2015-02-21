@@ -3,6 +3,9 @@
 var frequencyBars;
 var freqBarsCanvas;
 var freqBarWidth = 1;
+var freqCanvasWidth = 444;
+var currentlyMappingAudio = false;
+var soundThresh = 100;
 
 
 uiPopup = false;
@@ -29,8 +32,10 @@ function openControls() {
   }
 }
 function setFreqBarWidth() {
-  if(isset(frequencyArray)) freqBarWidth = $(frequencyBars).width()/frequencyArray.length;
-  else setTimeout(setFreqBarWidth, 1000);
+  if(isset(frequencyArray)) {
+    freqCanvasWidth = $(frequencyBars).width()
+    freqBarWidth = freqCanvasWidth/frequencyArray.length;
+  }else setTimeout(setFreqBarWidth, 1000);
 }
 
 //reopen controls if they close

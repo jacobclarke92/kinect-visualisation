@@ -118,14 +118,14 @@ body{
 		}
 	}
 	#frequencySelector{
-		.range, .button, .rightOfSpectrum>.mapLabel{
+		.range, .button, .rightOfSpectrum>.mapLabel, .qFactorKnob, .qFactorLabel{
 			opacity: 0.3;
 			pointer-events: none;
 		}
 	}
 	&.mappingAudio.waitingAudio {
 		#frequencySelector{
-			.range, .button, .rightOfSpectrum>.mapLabel{
+			.range, .button, .rightOfSpectrum>.mapLabel, .qFactorKnob, .qFactorLabel{
 				opacity: 1;
 				pointer-events: auto;
 			}
@@ -267,10 +267,19 @@ svg path, svg g{
 		.dial.gainKnob{
 			position: relative;
 		}
-		.mapLabel{
+		.dial.qFactorKnob{
+			position: relative;
+		}
+		.mapLabel.gainLabel{
 			position: absolute;
 			top: 32px;
 			left: 13px;
+			margin-bottom: 20px;
+		}
+		.mapLabel.qFactorLabel{
+			position: absolute;
+			top: 175px;
+			left: 5px;
 		}
 		.doneAudioMapping{
 			position: absolute;
