@@ -242,7 +242,7 @@ var server = http.createServer(function(req, res) {
 
 	var parsedURL = url.parse(req.url, true);
 	var pathname = parsedURL.pathname;
-	console.log(pathname);
+	// console.log(pathname);
 	
 	if ((req.url == '/images' && skipKinect == false) || pathname == '/app/midi.json') {
 		

@@ -137,12 +137,14 @@ function animateFrame() {
 			var n=0;
 
 			freqBarsCanvas.fillStyle = 'rgb(0, 0, 0)';
-  			freqBarsCanvas.fillRect(0, 0, 512, 200);
+  			freqBarsCanvas.fillRect(0, 0, freqCanvasWidth, 200);
 
   			currentFreqRangeVolume = 0;
   			var freqCount = 0;
 
   			var x = 0;
+
+  			var currentAudioMapping = 0;
 
   			for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
 	        	n++;
@@ -173,7 +175,55 @@ function animateFrame() {
 			    freqBarsCanvas.fillRect(x, 200-barHeight/2, barWidth, barHeight/2);	
 			    
 
+			    if(audioMappings.length > 0) {
+			    	for(var n=0; n< audioMappings.length; n++) {
+				    	minX = audioMappings[n].audio.range[0]/100*freqCanvasWidth;
+			        	maxX = audioMappings[n].audio.range[1]/100*freqCanvasWidth;
+			        	minX -= minX/weirdDivisionFixMin;
+			        	maxX -= maxX/weirdDivisionFixMax;
+				    	if( x+barWidth >= minX  && x+barWidth <= maxX) {
+				    		if(!isset(audioMappings[n].audio.freqCount)) {
+				    			audioMappings[n].audio.freqCount = 0;
+				    			audioMappings[n].audio.rangeLevel = 0;
+				    			audioMappings[n].audio.minX = minX
+				    		}
+				    		if(200-barHeight/2 < audioMappings[n].audio.soundThresh*weirdDivisionFixThresh) {
+					    		audioMappings[n].audio.freqCount ++;
+					    		audioMappings[n].audio.rangeLevel += barHeight;
+					    	}
+
+				    	}else if(x > maxX && isset(audioMappings[n].audio.freqCount) && !isset(audioMappings[n].audio.maxX)) audioMappings[n].audio.maxX = maxX;
+				    }
+			    }
+
+
+
 			    x += barWidth;
+	        }
+	        for(var n=0; n< audioMappings.length; n++) {
+
+	        	audioMappings[n].audio.averageLevel = audioMappings[n].audio.rangeLevel/audioMappings[n].audio.freqCount;
+	        	var difference = audioMappings[n].audio.averageLevel - audioMappings[n].audio.soundThresh;
+	        	// difference = (difference < 0) ? 0 : difference;
+
+	        	if(difference > 0) {
+		        	freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(difference/300)+')';
+	  				freqBarsCanvas.fillRect(audioMappings[n].audio.minX, 0, audioMappings[n].audio.maxX, 200);
+	  			}
+
+  				freqBarsCanvas.beginPath();
+  				freqBarsCanvas.strokeStyle = 'rgb(255,255,255)';
+  				freqBarsCanvas.moveTo(audioMappings[n].audio.minX, 200-audioMappings[n].audio.soundThresh);
+  				freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, 200-audioMappings[n].audio.soundThresh);
+  				freqBarsCanvas.stroke();
+  				freqBarsCanvas.beginPath();
+  				freqBarsCanvas.strokeStyle = 'rgb(80,80,255)';
+  				freqBarsCanvas.moveTo(audioMappings[n].audio.minX, 200-audioMappings[n].audio.averageLevel);
+  				freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, 200-audioMappings[n].audio.averageLevel);
+
+
+  				audioMappings[n].audio.freqCount = undefined;
+
 	        }
 
 	        //draw guidelines while mapping

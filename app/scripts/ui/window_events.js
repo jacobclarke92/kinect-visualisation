@@ -138,6 +138,12 @@ function loaded() {
 		}
 	});
 
+	$('.doneAudioMapping').click(function(e) {
+		console.log('done button pressed');
+		mappingAudioDone(e);
+	});
+
+
 
 
 
@@ -186,9 +192,9 @@ function loaded() {
 	});
 
 	// Add mappable parameter to frequenecy range sliders
-	$('#freqRange .noUi-handle-lower').attr('data-midi-mappable','').attr('data-midi-type','pot');
-	$('#freqRange .noUi-handle-upper').attr('data-midi-mappable','').attr('data-midi-type','pot');
-	$('#freqThresh .noUi-handle').attr('data-midi-mappable','').attr('data-midi-type','pot');
+	$('#freqRange .noUi-handle-lower').attr({'data-name': 'global_audioRangeLower', 'data-midi-mappable':'','data-midi-type': 'pot'});
+	$('#freqRange .noUi-handle-upper').attr({'data-name': 'global_audioRangeUpper', 'data-midi-mappable':'','data-midi-type': 'pot'});
+	$('#freqThresh .noUi-handle').attr({'data-name': 'global_audioThresh', 'data-midi-mappable':'','data-midi-type': 'pot'});
 
 	// Init all the tab views
 	generateEffectsFiles();
@@ -197,29 +203,12 @@ function loaded() {
 	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
 	setTimeout(function() {
 		linkMappableElements();
+		refreshAudioMappings();
 	},2000);
 
 
 	// Init tab view
 	$('.tabs').tabslet();
-
-	/*
-	//testing alert window
-	setTimeout(function() {
-		showAlert({
-			message:'hi', 
-			title: 'hello', 
-			buttons: [
-				{label: 'button1', callback: function() {
-					alert('button1');
-				}},
-				{label: 'button2', callback: function() {
-					alert('button2');
-				}}
-			]
-		});
-	},3000);
-	*/
 	
 }
 
@@ -228,6 +217,7 @@ function initAllParameters() {
 	generateEffectParams();
 	generateFilterParams();
 	generateCalibrationParams();
+
 }
 
 

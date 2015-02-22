@@ -14,6 +14,7 @@ var showFrequencyData = true;
 var showFrequencyDataSkip = 1;
 var soundRange = [0,177];
 var currentFreqRangeVolume;
+var audioMappings = [];
 
 
 

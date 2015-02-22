@@ -11,18 +11,18 @@ function linkMappableElements() {
 	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
 	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
 
-
+	counter = 0;
 	$('[data-audio-mappable]').each(function() {
 		counter ++;
 	});
-	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
+	console.log('AUDIO MAPPABLE ELEMENTS: ',counter);
 	$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
 
 }
 
 //a midi-mappable element has been clicked
 function midiMappableElementClicked(e) {
-	console.log('midi mappable item clicked ',e.target);
+	console.log('midi mappable item clicked ');//,e.target);
 
 	//is waiting for an element to be selected
 	if($('body').hasClass('mapping')) {
@@ -52,7 +52,7 @@ function midiMappableElementClicked(e) {
 
 //a audio-mappable element has been clicked
 function audioMappableElementClicked(e) {
-	console.log('audio mappable item clicked ',e.target);
+	console.log('audio mappable item clicked ');//,e.target);
 	if($('body').hasClass('mappingAudio')) {
 
 		e.preventDefault();
@@ -68,6 +68,99 @@ function audioMappableElementClicked(e) {
 		console.log('Now waiting for midi info for ',e.target);
 	
 	}
+}
+
+//mapping audio done button pressed
+function mappingAudioDone(e) {
+	if($('body').hasClass('mappingAudio waitingAudio')) {
+		console.log('confirming audio mapping');
+		var elem = $('[data-audio-mappable].waitingAudio');
+		if(elem) {
+
+			$('body').addClass('disabled');
+			showAlert({
+				title: 'Audio mapping behavior',
+				message: 'Average is good for broader ranges whereas trigger is good for small ranges, e.g. a kick.',
+				buttons: [
+					{label: 'Cancel', callback: function() { 
+						$('body').removeClass('disabled');
+					}},
+					{label: 'Average', callback: function() { saveAudioMapping('average', elem) }},
+					{label: 'Trigger', callback: function() { saveAudioMapping('trigger', elem) }}
+				]
+			});
+
+		}else{
+			console.log('no audio mappable element selected??');
+		}
+
+	}else{
+		console.log("body doesn't have classes: mappingAudio waitingAudio");
+	}
+}
+
+function saveAudioMapping(mappingType, elem) {
+
+	if(!mappingType || !elem) return;
+
+	console.log('saving audio '+mappingType+' mapping, elem: ',elem);
+	var paramName = (elem.attr('name')) ? elem.attr('name') : elem.attr('data-name');
+
+	if(!isset( w.mappings[w.hash][paramName])) mapping = {
+		label: paramName.readable(), 
+		name: paramName, 
+		audio: false,
+		midi: {
+			min: -100,
+			max: 100,
+			initValue: 0, 
+			value: 0,
+			cc: -1
+		},
+		audio: {}
+	};
+	else mapping = w.mappings[w.hash][paramName];
+	// if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
+	if(!mapping.audio) {
+		console.log('audio object for mapping ',elem,' was undefined');
+		mapping.audio = {};
+	}
+	mapping.audio.range = w.soundRange;
+	mapping.audio.soundThresh = w.soundThresh;
+	mapping.audio.type = mappingType;
+
+	w.mappings[w.hash][paramName] = mapping;
+	w.saveCookie();
+
+	elem.attr('data-audio-linked','');
+	elem.removeClass('waitingAudio');
+	$('body').removeClass('waitingAudio');
+
+
+	refreshAudioMappings();
+
+}
+
+function refreshAudioMappings() {
+	w.audioMappings = [];
+	$.each(w.mappings,function(keyGroup, mappingGroup) {
+		$.each(mappingGroup,function(key,mapping) {
+			if(mapping.audio) {
+				w.audioMappings.push(mapping);
+			}
+		});
+	});
+	console.log(w.audioMappings);
+	//sort audio mappings by their starting range point
+	w.audioMappings.sort(function(a,b) {
+		if (a.audio.range[0] < b.audio.range[0]) return -1;
+		if (a.audio.range[1] > b.audio.range[0]) return 1;
+		return 0;
+	});
+	console.log(w.audioMappings);
+}
+function compare(a,b) {
+ 
 }
 
 function isMappingSetForCC(cc, paramType) {
@@ -130,6 +223,7 @@ function receiveMappingData(midiData, externalOverride) {
 		if(typeof externalOverride == 'undefined') {
 
 			var mappingOverride = isMappingSetForCC(midiData[1], paramType);
+			//don't ask to override element that's already selected
 			if(mappingOverride.length == 1 && mappingOverride[0] == paramName) mappingOverride = false;
 			if(mappingOverride) {
 				console.log('mapping override!');
@@ -147,12 +241,14 @@ function receiveMappingData(midiData, externalOverride) {
 						}},
 						{label: 'Keep '+((mappingOverride.length > 1) ? 'all' : 'both'), callback: function() {
 							console.log('keep both');
+							//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
 							receiveMappingData(midiData,true);
 							$('body').removeClass('disabled');
 						}},
 						{label: ((mappingOverride.length > 1) ? 'Only keep ' : 'Keep ')+paramName.readable(), callback: function() {
 							console.log('keep original');
 							removeMappingsByCC(midiData[1]);
+							//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
 							receiveMappingData(midiData,true);
 							$('body').removeClass('disabled');
 						}}
@@ -259,7 +355,9 @@ function paramElementChanged(elem, value) {
 
 	// console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
-	var paramName = elem.attr('data-name');
+	var paramName = elem.attr('data-name') || elem.attr('id');
+
+	if(!isset(paramName)) console.log('paramName is unknown for ',elem);
 
 	if(!isset(w.mappings[w.hash][paramName])) {
 		w.mappings[w.hash][paramName] = {

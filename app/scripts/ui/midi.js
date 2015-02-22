@@ -26,7 +26,7 @@ function processMidiData(byteArray) {
       // console.log('updating ',mapping.name,' to ',byteArray[2],' = ', mappedValue);
 
       //update the mapping value
-      w.mappings[w.hash][mapping.name].value = mappedValue;
+      w.mappings[w.hash][mapping.name]['midi'].value = mappedValue;
       w[mapping.name] = mappedValue;
 
       //update the appropriate element
