@@ -16,8 +16,6 @@ effect_circles1 = {
       }
     }
 
-    if(gotSound) processAudio();  
-
   },
 
   makeShape: function() {

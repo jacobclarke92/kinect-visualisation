@@ -128,8 +128,6 @@ var weirdDivisionFixMax = 3.25;
 var weirdDivisionFixThresh = 1.5;
 function animateFrame() {
 
-	processAudio();
-
     //display overall volume metre in ui
     if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
 	else $('#volumeBar',uiPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});

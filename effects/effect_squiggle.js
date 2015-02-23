@@ -24,8 +24,6 @@ effect_squiggle = {
       }
     }
 
-    if(gotSound) processAudio();
-
   },
 
   drawLines: function() {

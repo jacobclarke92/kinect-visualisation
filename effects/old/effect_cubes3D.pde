@@ -47,8 +47,4 @@ void draw() {
 			}
 		}	
 	}
-
-
-	if(gotSound) processAudio();
-	
 }

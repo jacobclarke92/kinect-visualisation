@@ -155,8 +155,5 @@ void draw() {
 		}
 		if(!spawned) spawned = true;
 	}
-
-
-	if(gotSound) processAudio();
 	
 }

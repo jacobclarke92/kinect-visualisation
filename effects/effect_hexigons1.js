@@ -27,8 +27,6 @@ effect_hexigons1 = {
 
 	draw: function() {
 
-		if(gotSound) processAudio();
-
 		if(kickVolume > this.lastKickVolume) {
 
 			this.lastKickVolume = kickVolume;
