@@ -221,8 +221,6 @@ function writeImage(image) {
 }
 
 var urlRules = [
-
-	// ['/effects/','application/javascript'],
 	['.pde','text/processing'],
 	['.png','image/png'],
 	['.js','application/javascript'],

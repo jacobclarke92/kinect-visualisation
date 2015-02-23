@@ -123,10 +123,9 @@ function addFrame() {
     stage.addChild(currentScript.screens[currentScript.screens.length-1]);
 }
 
-var weirdDivisionFixMin = 2.85;
-var weirdDivisionFixMax = 3.25;
-var weirdDivisionFixThresh = 1.5;
 function animateFrame() {
+
+	processAudio();
 
     //display overall volume metre in ui
     if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});

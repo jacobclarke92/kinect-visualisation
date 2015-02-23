@@ -18,8 +18,11 @@ window.onkeyup = function(e) {keyPressed(e)};
 window.onresize = function(e) {
 	//update freq bar width in core upon resize so it draws accordingly
 	if(isset(w.frequencyArray)) {
-		$('#frequencyBars').width();
-		w.freqCanvasWidth = $('#frequencyBars').width();
+		// var width = $('#rightOfSpectrum').width();
+		w.freqCanvasWidth = $('.rightOfSpectrum').width();
+		console.log($('.rightOfSpectrum').width());
+		$('#frequencyBars').attr('width', w.freqCanvasWidth);
+		$('#frequencyBars').attr('height', 200);
 		w.freqBarWidth = w.freqCanvasWidth/w.frequencyArray.length;
 	}
 }
@@ -175,18 +178,20 @@ function loaded() {
     });
     $('#freqThresh').on({
     	slide: function() {
-    		w.soundThresh = $(this).val();
+    		w.soundThresh = parseFloat($(this).val());
     	}
     });
-
-	$('.gainKnob.dial').knob({
-		'change': function (v) { 
-			paramElementChanged(this,v);
+    console.log($('.dial.gainKnob'));
+	$('.dial.gainKnob').knob({
+		release: function (v) { 
+			console.log(typeof v,v);
+			w.gainAmount = v/100;
 		}
 	});
 	$('.qFactorKnob.dial').knob({
 		// 'readOnly': true,
-		'change': function (v) { 
+		release: function (v) { 
+			console.log(v);
 			paramElementChanged(this,v);
 		}
 	});

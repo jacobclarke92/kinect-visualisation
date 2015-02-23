@@ -16,12 +16,11 @@ var soundRange = [0,177];
 var currentFreqRangeVolume;
 var audioMappings = [];
 
-
-
 var session = {
 	audio: true,
 	video: false
 };
+
 var recordRTC = null;
 navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
@@ -79,17 +78,20 @@ function setupAudioNodes(stream) {
 
 
 var kickVolume = 0;
-
+var gainAmount = 1;
 
 var bass;
 var bassLastVal = 0;
 var bassCoolOff = 5;
 var bassCount = 0;
 
+
+var threshMultiplier = 2;
+
 function processAudio() {
 
 	if(gotSound && showFrequencyData && typeof frequencyArray != 'undefined' && typeof frequencyArray.length != 'undefined') {
-		
+
 		if(freqBarsCanvas) {
 
 			var n=0;
@@ -106,7 +108,7 @@ function processAudio() {
 
 			for(var i=0; i<frequencyArray.length; i+= showFrequencyDataSkip) {
 				n++;
-				var barHeight = frequencyArray[i];
+				var barHeight = frequencyArray[i]*gainAmount;
 
 				//disperse the bars pseudo-logarithmically so bass frequencies are more visible
 				var barWidth = Math.floor(freqBarWidth*8 - i/4);
@@ -116,15 +118,13 @@ function processAudio() {
 
 				var minX = soundRange[0]/100*freqCanvasWidth;
 				var maxX = soundRange[1]/100*freqCanvasWidth;
-				minX -= minX/weirdDivisionFixMin;
-				maxX -= maxX/weirdDivisionFixMax;
 
 				// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
 				if(currentlyMappingAudio && x+barWidth >= minX && x+barWidth <= maxX) {
 
 					// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
 
-					if(200-barHeight/2 < soundThresh*weirdDivisionFixThresh) freqBarsCanvas.fillStyle = 'rgb(50, ' + (barHeight+100) + ', 50)';
+					if(200-barHeight/2 < soundThresh*threshMultiplier) freqBarsCanvas.fillStyle = 'rgb(50, ' + (barHeight+100) + ', 50)';
 					else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
 					currentFreqRangeVolume += barHeight;
 					freqCount ++;
@@ -134,21 +134,26 @@ function processAudio() {
 				
 
 				if(audioMappings.length > 0) {
+					// console.log(audioMappings.length);
 					for(var n=0; n< audioMappings.length; n++) {
 						minX = audioMappings[n].audio.range[0]/100*freqCanvasWidth;
-							maxX = audioMappings[n].audio.range[1]/100*freqCanvasWidth;
-							minX -= minX/weirdDivisionFixMin;
-							maxX -= maxX/weirdDivisionFixMax;
+						maxX = audioMappings[n].audio.range[1]/100*freqCanvasWidth;
 						if( x+barWidth >= minX  && x+barWidth <= maxX) {
 							if(!isset(audioMappings[n].audio.freqCount)) {
 								audioMappings[n].audio.freqCount = 0;
+								audioMappings[n].audio.peakCount = 0;
+								audioMappings[n].audio.peakLevel = 0;
 								audioMappings[n].audio.rangeLevel = 0;
-								audioMappings[n].audio.minX = minX
+								audioMappings[n].audio.rangePeak = 0;
+								audioMappings[n].audio.minX = minX;
 							}
-							if(200-barHeight/2 < audioMappings[n].audio.soundThresh*weirdDivisionFixThresh) {
+							if(200-barHeight/2 < audioMappings[n].audio.soundThresh*threshMultiplier) {
+								if(barHeight > audioMappings[n].audio.rangePeak) audioMappings[n].audio.rangePeak = barHeight;
+								audioMappings[n].audio.peakLevel += barHeight;
 								audioMappings[n].audio.freqCount ++;
-								audioMappings[n].audio.rangeLevel += barHeight;
 							}
+							audioMappings[n].audio.freqCount ++;
+							audioMappings[n].audio.rangeLevel += barHeight;
 
 						}else if(x > maxX && isset(audioMappings[n].audio.freqCount) && !isset(audioMappings[n].audio.maxX)) audioMappings[n].audio.maxX = maxX;
 					}
@@ -160,41 +165,45 @@ function processAudio() {
 			}
 
 			for(var n=0; n< audioMappings.length; n++) {
+				var audioParam = audioMappings[n].audio;
+				if(isset(audioParam.rangeLevel) && isset(audioParam.freqCount)) {
+					var averageLevel = audioMappings[n].audio.rangeLevel/(audioMappings[n].audio.peakCount);
+					var difference = audioMappings[n].audio.averageLevel - audioMappings[n].audio.soundThresh;
+					
+					if(difference > 0) {
+						console.log(audioParam.rangeLevel, audioParam.freqCount);
+						freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(difference/300)+')';
+						freqBarsCanvas.fillRect(audioMappings[n].audio.minX, 0, audioMappings[n].audio.maxX, 200);
+					}
 
-				audioMappings[n].audio.averageLevel = audioMappings[n].audio.rangeLevel/audioMappings[n].audio.freqCount;
-				var difference = audioMappings[n].audio.averageLevel - audioMappings[n].audio.soundThresh;
-				// difference = (difference < 0) ? 0 : difference;
+					freqBarsCanvas.beginPath();
+					freqBarsCanvas.strokeStyle = 'rgb(255,255,255)';
+					freqBarsCanvas.moveTo(audioMappings[n].audio.minX, audioMappings[n].audio.soundThresh*threshMultiplier);
+					freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, audioMappings[n].audio.soundThresh*threshMultiplier);
+					freqBarsCanvas.stroke();
+					freqBarsCanvas.strokeStyle = 'rgb(80,80,255)';
+					freqBarsCanvas.moveTo(audioMappings[n].audio.minX, 200-audioMappings[n].audio.averageLevel);
+					freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, 200-audioMappings[n].audio.averageLevel);
 
-				if(difference > 0) {
-					freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(difference/300)+')';
-					freqBarsCanvas.fillRect(audioMappings[n].audio.minX, 0, audioMappings[n].audio.maxX, 200);
+
+					audioMappings[n].audio.freqCount = undefined;
+				}else{
+					conole.log(audioParam.rangeLevel, audioParam.freqCount);
 				}
-
-				freqBarsCanvas.beginPath();
-				freqBarsCanvas.strokeStyle = 'rgb(255,255,255)';
-				freqBarsCanvas.moveTo(audioMappings[n].audio.minX, 200-audioMappings[n].audio.soundThresh);
-				freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, 200-audioMappings[n].audio.soundThresh);
-				freqBarsCanvas.stroke();
-				freqBarsCanvas.beginPath();
-				freqBarsCanvas.strokeStyle = 'rgb(80,80,255)';
-				freqBarsCanvas.moveTo(audioMappings[n].audio.minX, 200-audioMappings[n].audio.averageLevel);
-				freqBarsCanvas.lineTo(audioMappings[n].audio.maxX, 200-audioMappings[n].audio.averageLevel);
-
-
-				audioMappings[n].audio.freqCount = undefined;
 
 			}
 
 			//draw guidelines while mapping
 			if(currentlyMappingAudio) {
+
 				freqBarsCanvas.beginPath();
 				freqBarsCanvas.strokeStyle = 'rgb(255,255,255)'   ;
 				freqBarsCanvas.moveTo(minX,200);
 				freqBarsCanvas.lineTo(minX,0);
 				freqBarsCanvas.moveTo(maxX,200);
 				freqBarsCanvas.lineTo(maxX,0);
-				freqBarsCanvas.moveTo(0,soundThresh*weirdDivisionFixThresh);
-				freqBarsCanvas.lineTo(freqCanvasWidth,soundThresh*weirdDivisionFixThresh);
+				freqBarsCanvas.moveTo(0,soundThresh*threshMultiplier);
+				freqBarsCanvas.lineTo(freqCanvasWidth,soundThresh*threshMultiplier);
 				freqBarsCanvas.stroke();
 			}
 
@@ -216,7 +225,7 @@ function processAudio() {
 	if(counter > 380) counter = 380;
 	counter = 4;
 
-	for(var i=0; i<counter; i++) bass += frequencyArray[i];
+	for(var i=0; i<counter; i++) bass += frequencyArray[i]*gainAmount;
 
 	bassCount ++;
 	if(bassCount > bassCoolOff && bass > 850 && bass-bassLastVal > 60) {

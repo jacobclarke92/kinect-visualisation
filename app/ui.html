@@ -42,7 +42,7 @@
 	<div id="frequencySelector">
 		<div class="leftOfSpectrum">
 			
-			<input type="text" class="dial gainKnob" value="0" data-name="global_gainKnob" data-min="-100" data-max="100" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-midi-type="pot">
+			<input type="text" class="dial gainKnob" value="100" data-name="global_gainKnob" data-min="25" data-max="200" data-step="1" data-width="48" data-height="48" data-angleArc="250" data-angleOffset="-125" data-midi-mappable data-midi-type="pot">
 			<div class="mapLabel gainLabel">Gain</div>
 			
 			<div style="position: relative; height: 90px;
@@ -59,7 +59,7 @@
 
 		</div>
 		<div class="rightOfSpectrum">
-			<canvas id="frequencyBars"></canvas>
+			<canvas id="frequencyBars" width="444" height="200"></canvas>
 			<div class="range" id="freqRange" min="0" max="100"></div>
 			<div class="mapLabel">[Not currently mapping an audio param]</div>
 		</div>
