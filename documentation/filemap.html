@@ -9,7 +9,7 @@
 
 <h2>File tree</h2>
 
-<button class="expand-all">Expand/collapse all</button>
+<button class="expand-all expanded">Expand/collapse all</button>
 
 <ul>
 	<li>app/ </li>
@@ -75,21 +75,20 @@
 		<li>*.js <span>Your bloody effects hey</span></li>
 	</ul>
 	<li>source/ <span>Original C files that /launcher was compiled from</span></li>
-	<li>KinectVisualisation.touchosc <span>TouchOSC template for the app</span></li>
-	<li>launcher <span><a href="https://github.com/sstephenson/kinect">launcher script</a> that streams kinect data via node ... not sure exactly how it works</span></li>
+	<li>KinectVisualisation.touchosc <span><a href="http://hexler.net/software/touchosc">TouchOSC template</a> for the app</span></li>
+	<li class="file">launcher <span><a href="https://github.com/sstephenson/kinect">launcher script</a> that streams kinect data via node ... not sure exactly how it works</span></li>
+	<li class="file">launcher-ascii<span>acts as a test file for getting kinect images -- renders kinect image as ascii art in terminal</li>
+	<li>package.json <span>Contains npm dependencies</li>
+	<li>palettes.xml <span>XML file downloaded from colourlovers.com</span></li>
+	<li class="file">server <span>The node server file that takes kienct stream and midi data, and passes them onto the app</span></li>
 </ul>
 
 <script src="../app/libs/jquery.js"></script>
 <script>
 $(document).ready(function() {
 	$('li:contains("/ ")').addClass('folder expanded').click(function() {
-		if($(this).hasClass('expanded')) {
-			$(this).removeClass('expanded');
-			$(this).next('ul').slideUp();
-		}else{
-			$(this).addClass('expanded');
-			$(this).next('ul').slideDown();
-		}
+		if($(this).next().prop('tagName') == 'UL') $(this).next().slideToggle();
+		$(this).toggleClass('expanded');
 	});
 	$('li:contains(".js ")').addClass('file js');
 	$('li:contains(".less ")').addClass('file less');
@@ -99,9 +98,14 @@ $(document).ready(function() {
 	$('li:contains(".touchosc ")').addClass('file');
 
 	$('.expand-all').click(function() {
+		var expanded = $(this).hasClass('expanded');
 		$('.folder').each(function() {
-			$(this).next('ul').slideToggle();
+			if($(this).next().prop('tagName') == 'UL') {
+				if(expanded) $(this).next().slideUp();
+				else $(this).next().slideDown();
+			}
 		});
+		$(this).toggleClass('expanded');
 	});
 
 });
