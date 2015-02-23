@@ -1,5 +1,12 @@
 #TODO
 
+### Programming stuff
+
+* When drawing spectrum canvas, actually set the canvas' width dynamically, rather than with css, this will solve the issue of not being able to calculate draw positioning correctly.
+* audioMappings global variable currently exists, gets updated and generally works. Hook this into all the parameters and display some kind of visual feedback for how to audio is affecting it. Make this affect 
+* Work out why node server begins to hang after about 3 refreshes of the page
+
+
 ### Immediate, concerning functionality
 
 * Get the node server working on windows / find a solution to stream [intrael](https://code.google.com/p/intrael/) seems very promising
@@ -8,8 +15,6 @@
 * Size stage to window size / fill to an aspect ratio, instead of 640x480
 * Beat detection / BPM punch in for more reliable audio cues?
 * Create a crossfade feature to blend between effects
-* Expand upon audio/FFT anaysis
-	* implement a way to map frequency ranges to other variables -- similar to how VJ program Resolume works
 
 ### Future endeavours
 * Build a kaleidoscope openGL effect [refer to this](http://stackoverflow.com/questions/13739901/vertex-kaleidoscope-shader)
