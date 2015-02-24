@@ -132,14 +132,18 @@ function receiveMappingData(midiData, externalOverride) {
         label: paramName.readable(), 
         name: paramName, 
         type: 'midi', 
-        min: parseFloat(mappedElement.attr('data-min')),
-        max: parseFloat(mappedElement.attr('data-max')),
-        range: false, threshold: false, initValue: 0, value: 0};
+        midi: {
+          min: parseFloat(mappedElement.attr('data-min')),
+          max: parseFloat(mappedElement.attr('data-max')),
+        },
+        audio: flase
+      };
       else mapping = w.mappings[w.hash][paramName];
       // if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
-      mapping.type = 'midi';
-      mapping.value = midiData[2];
-      mapping.cc = midiData[1];
+      mapping.midi.value = midiData[2];
+      mapping.midi.initValue = midiData[2];
+      mapping.midi.postValue = midiData[2];
+      mapping.midi.cc = midiData[1];
 
       w.mappings[w.hash][paramName] = mapping;
 
@@ -153,7 +157,11 @@ function receiveMappingData(midiData, externalOverride) {
       w.mappings['midiButtons'][paramName] = {
         label: paramName.readable(),
         name: paramName,
-        cc: midiData[1]
+        type: 'midi',
+        midi: {
+          cc: midiData[1],
+        },
+        audio: false
       }
       mappedElement.removeClass('waiting').attr('data-midi-linked','');
 

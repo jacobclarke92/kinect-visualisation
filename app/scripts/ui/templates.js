@@ -69,7 +69,7 @@ function createSliders(sliderArray,target) {
   });
 
   $('.mapKnob .dial',target).knob({
-    'change': function (v) { 
+    'release': function (v) { 
       paramElementChanged(this,v);
     }
   });
@@ -160,6 +160,22 @@ function generateFilterParams() {
       filterParams[key] = w.mappings[w.hash][key];
       //this just makes it so the titles don't contain 'Filter' when t
       filterParams[key].label = (key.split('filter_').join('')).readable();
+    }else{
+      if(!isset(w.mappings[w.hash])) w.mappings[w.hash] = {};
+      w.mappings[w.hash][key] = {
+        label: param.label,
+        name: param.name,
+        type: false,
+        midi: {
+          value: 0,
+          initValue: 0,
+          postValue: 0,
+          min: param.midi.min,
+          max: param.midi.max,
+          cc: -1
+        },
+        audio: false
+      }
     }
   })
   var filterZone = $('#filtersZone');

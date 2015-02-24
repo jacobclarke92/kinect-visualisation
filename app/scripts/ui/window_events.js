@@ -165,6 +165,7 @@ function loaded() {
 		start: [50],
 		behaviour: 'drag',
 		orientation: 'vertical',
+		direction: 'rtl',
 		range: {
 			'min': [0],
 			'max': [100]
@@ -222,6 +223,7 @@ function initAllParameters() {
 	generateEffectParams();
 	generateFilterParams();
 	generateCalibrationParams();
+	refreshAudioMappings();
 
 }
 

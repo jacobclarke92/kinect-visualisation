@@ -114,6 +114,7 @@ function saveAudioMapping(mappingType, elem) {
 			min: -100,
 			max: 100,
 			initValue: 0, 
+			postValue: 0,
 			value: 0,
 			cc: -1
 		},
@@ -128,8 +129,12 @@ function saveAudioMapping(mappingType, elem) {
 	mapping.audio.range = w.soundRange;
 	mapping.audio.soundThresh = w.soundThresh;
 	mapping.audio.type = mappingType;
+	mapping.audio.coolOff = 0;
+	mapping.audio.triggerValue = 0;
+	mapping.audio.lastAverageLevel = 0;
 
 	w.mappings[w.hash][paramName] = mapping;
+	
 	w.saveCookie();
 
 	elem.attr('data-audio-linked','');
@@ -143,13 +148,17 @@ function saveAudioMapping(mappingType, elem) {
 
 function refreshAudioMappings() {
 	w.audioMappings = [];
-	$.each(w.mappings,function(keyGroup, mappingGroup) {
-		$.each(mappingGroup,function(key,mapping) {
+	if(!isset(w.mappings[w.hash])) {
+		console.log('mappings for hash not set yet, cant refresh audio mappings');
+		return false;
+	}
+	// $.each(w.mappings[w.hash],function(keyGroup, mappingGroup) {
+		$.each(w.mappings[w.hash],function(key,mapping) {
 			if(mapping.audio) {
 				w.audioMappings.push(mapping);
 			}
 		});
-	});
+	// });
 	console.log(w.audioMappings);
 	//sort audio mappings by their starting range point
 	w.audioMappings.sort(function(a,b) {
@@ -232,13 +241,13 @@ function updatePalettes() {
 
 function paramElementChanged(elem, value) {
 
-	if(!$(elem).hasClass('.noUi-handle')) elem = $('.noUi-handle',elem);
-	else elem = $(elem);
+	if(elem.$) elem = elem.$; // is knob
+	else if(!$(elem).hasClass('.noUi-handle')) elem = $('.noUi-handle',elem); //is slider
+	else elem = $(elem); //or otherwise...
 
 	// console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = elem.attr('data-name') || elem.attr('id');
-
 	if(!isset(paramName)) console.log('paramName is unknown for ',elem);
 
 	if(!isset(w.mappings[w.hash][paramName])) {
@@ -246,12 +255,17 @@ function paramElementChanged(elem, value) {
 			label: paramName.readable(), 
 			name: paramName, 
 			type: 'midi', 
-			min: parseFloat(elem.attr('data-min')),
-			max: parseFloat(elem.attr('data-max')),
-			range: false, threshold: false, initValue: 0, value: value
+			midi: {
+				min: parseFloat(elem.attr('data-min')),
+				max: parseFloat(elem.attr('data-max')),
+				value: value,
+				initValue: value,
+				cc: -1
+			},
+			audio: false
 		};
 	}
-	w.mappings[w.hash][paramName].value = value;
+	w.mappings[w.hash][paramName].midi.value = value;
 	w[paramName] = value;
 
 	if(paramName.indexOf('calibration_') != -1) w.updateCanvas();

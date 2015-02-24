@@ -56,7 +56,10 @@ window.onunload = function() {
 
 function createControls() {
 
+
+
   // at this stage the effect should have set all the standard values
+  audioMappings = [];
   if(!mappings[hash])  mappings[hash] = {};
 
   //handled by the UI functions 

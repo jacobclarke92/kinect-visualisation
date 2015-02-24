@@ -4,6 +4,7 @@ effect_test_visuals = {
 
 	init: function() {
     	setMapping('spawnAmount', 1, 50, 10);
+    	setMapping('shapeSize', 1, 200, 100);
 		setMapping('trailAmount', 0, 1, 0.2);
 	},
 
@@ -28,6 +29,7 @@ Particle = {
 		this.shape.x = Math.round(Math.random()*640);
 		this.shape.y = Math.round(Math.random()*480);
 		this.shape.alpha = 0;
+		this.shape.scale.x = this.shape.scale.y = shapeSize/100;
 
 		this.color = randomPaletteColour();
 		this.size = Math.round(Math.random()*200)+20;
