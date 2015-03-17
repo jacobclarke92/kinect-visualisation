@@ -92,24 +92,25 @@ function loaded() {
 	jsonStream.addEventListener('message', function(e) {
 
 		if($('body').hasClass('disabled')) return;
-
-		//trick to retrigger css animation
-		reinitStaticElement($('#midiCheck'));
-
-		if(wasClosed) {
-			console.info("port reopened!");
-			$('#midiCheck').removeClass('error');
-			wasClosed = false;
-		}
-
+		
 		//never cross streams lmao
+		// console.log(e.data.substring(0,14));
 		if(e.data.substring(0,14) != 'data:image/png' ) {
 
-		  if($('body').hasClass('mapping waiting')) {
-			receiveMappingData(e.data.split(' '));
-		  }else{
-			processMidiData(e.data.split(' '));
-		  }
+			//trick to retrigger css animation
+			reinitStaticElement($('#midiCheck'));
+
+			if(wasClosed) {
+				console.info("port reopened!");
+				$('#midiCheck').removeClass('error');
+				wasClosed = false;
+			}
+
+			if($('body').hasClass('mapping waiting')) {
+				receiveMappingData(e.data.split(' '));
+			}else{
+				processMidiData(e.data.split(' '));
+			}
 
 		}
 

@@ -97,7 +97,7 @@
             // rowData = rowData.data;
             for(i=MarchingSquares.cL*4; i<rowData.length - MarchingSquares.cR*4; i+=4){
                 // console.log(rowData[i+2]);
-                if(rowData[i+2] > depthThreshold && rowData[i+2] < 255){
+                if(rowData[i+2] > calibration_depthThreshold && rowData[i+2] < 255){
 
                     var pts = MarchingSquares.walkPerimeter(i/4,y);
                     if(pts.length >= MarchingSquares.minPoints) return pts;
@@ -186,10 +186,10 @@
     MarchingSquares.step = function(index, data, width4){
         
 
-        MarchingSquares.upLeft = data[index + 2] > depthThreshold;
-        MarchingSquares.upRight = data[index + 6] > depthThreshold;
-        MarchingSquares.downLeft = data[index + width4 + 2] > depthThreshold;
-        MarchingSquares.downRight = data[index + width4 + 6] > depthThreshold;
+        MarchingSquares.upLeft = data[index + 2] > calibration_depthThreshold;
+        MarchingSquares.upRight = data[index + 6] > calibration_depthThreshold;
+        MarchingSquares.downLeft = data[index + width4 + 2] > calibration_depthThreshold;
+        MarchingSquares.downRight = data[index + width4 + 6] > calibration_depthThreshold;
 
         // Store our previous step
         MarchingSquares.previousStep = MarchingSquares.nextStep;

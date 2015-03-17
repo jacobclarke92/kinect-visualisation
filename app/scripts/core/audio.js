@@ -132,7 +132,7 @@ function processAudio() {
 					freqCount ++;
 				}else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
 
-				freqBarsCanvas.fillRect(x, 200-barHeight, barWidth, barHeight); 
+				freqBarsCanvas.fillRect(Math.round(x), Math.round(200-barHeight), Math.round(barWidth), Math.round(barHeight)); 
 				
 
 				if(audioMappings.length > 0) {
@@ -223,7 +223,7 @@ function processAudio() {
 								if(isset(audioMappings[n].audio.triggerValue) && audioMappings[n].audio.triggerValue != 0) {
 									audioMappings[n].audio.triggerValue /= audioTriggerFadeRate;
 									if(Math.round(audioMappings[n].audio.triggerValue) == 0) audioMappings[n].audio.triggerValue = 0;
-									console.log('postmidi: ',mappings[hash][paramName].midi.postValue);
+									// console.log('postmidi: ',mappings[hash][paramName].midi.postValue);
 									window[paramName] = mappings[hash][paramName].midi.postValue;
 								}
 							}else{
@@ -236,19 +236,17 @@ function processAudio() {
 
 					freqBarsCanvas.beginPath();
 					freqBarsCanvas.strokeStyle = 'rgb(255,255,255)';
-					freqBarsCanvas.moveTo(param.audio.minX, 200-param.audio.soundThresh*threshMultiplier);
-					freqBarsCanvas.lineTo(param.audio.maxX, 200-param.audio.soundThresh*threshMultiplier);
+					freqBarsCanvas.moveTo(param.audio.minX, Math.round(200-param.audio.soundThresh*threshMultiplier));
+					freqBarsCanvas.lineTo(param.audio.maxX, Math.round(200-param.audio.soundThresh*threshMultiplier));
 					freqBarsCanvas.stroke();
 
 					freqBarsCanvas.beginPath();
 					freqBarsCanvas.strokeStyle = 'rgb(80,80,255)';
-					freqBarsCanvas.moveTo(param.audio.minX, 200-averageLevel);
-					freqBarsCanvas.lineTo(param.audio.maxX, 200-averageLevel);
+					freqBarsCanvas.moveTo(param.audio.minX, Math.round(200-averageLevel));
+					freqBarsCanvas.lineTo(param.audio.maxX, Math.round(200-averageLevel));
 					freqBarsCanvas.stroke();
-
-					// console.log(audioParam)
-
 					audioMappings[n].audio.freqCount = undefined;
+
 				}else{
 					conole.log(param.audio.rangeLevel, param.audio.freqCount);
 				}
@@ -273,32 +271,4 @@ function processAudio() {
 		}
 	}
 
-
-
-
-
-	/* OLD CODE THAT WILL SOON BE DELETED */
-	/*
-	if(typeof frequencyArray == 'undefined') return false;
-
-	//never really gets over 1000
-	bass = 0;
-	var counter = frequencyArray.length;
-	if(counter > 380) counter = 380;
-	counter = 4;
-
-	for(var i=0; i<counter; i++) bass += frequencyArray[i]*gainAmount;
-
-	bassCount ++;
-	if(bassCount > bassCoolOff && bass > 850 && bass-bassLastVal > 60) {
-
-		// console.log('kick');
-		bassCount = 0;
-
-		kickVolume = bass;
-
-	}
-	bassLastVal = bass;
-	kickVolume = (kickVolume < 0) ? 0 : kickVolume-100;
-	*/
 }
