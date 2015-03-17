@@ -1,9 +1,15 @@
 function FindBlobs(src) {
 
-  var xSize = src.width,
-      ySize = src.height,
-      srcPixels = src.data,
-      x, y, pos;
+  var xSize = src.width || 320;
+  var ySize = src.height || 240;
+  var srcPixels = src.data;
+  var x, y, pos;
+
+  // console.log(xSize, ySize);
+  // console.log(srcPixels.length+' pixel data bits');
+  var midPt = Math.round(xSize*(ySize/2) + xSize/2);
+  console.log('mid point',srcPixels[midPt*4],srcPixels[midPt*4+1],srcPixels[midPt*4+2],srcPixels[midPt*4+3]);
+  // console.log(srcPixels);
 
   // This will hold the indecies of the regions we find
   var blobMap = [];
@@ -38,10 +44,11 @@ function FindBlobs(src) {
       for( x=1; x<xSize-1; x++){
 
         pos = (y*xSize+x)*4;
+        // pos = (y*xSize+x);
 
         // We're only looking at the alpha channel in this case but you can
         // use more complicated heuristics
-        isVisible = (srcPixels[pos+3] > 127);
+        isVisible = (srcPixels[pos+2] > calibration_depthThreshold);
 
         if( isVisible ){
 
