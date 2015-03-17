@@ -12,6 +12,11 @@ var timeoutTimer = 0;
 var intervalCheck = 100; //ms
 hash = false;
 
+var websocket;
+require(['../../node_modules/websocket-stream'], function (_websocket) {
+    websocket = _websocket;
+});
+
 
 var inited = false;
 
@@ -113,8 +118,8 @@ function changeScript(script) {
 
 var pixels = false;
 var rawImage = false;
-var canvasWidth = 320;
-var canvasHeight = 240;
+var canvasWidth = 640;
+var canvasHeight = 480;
 var processingInstance = false;
 
 
@@ -131,6 +136,8 @@ outlineArray = [];
 var image;
 var imageLoaded = false;
 var gotKinect = false;
+
+var socket;
 
 function run() {
 
@@ -166,6 +173,26 @@ function run() {
 
 	}else{
 
+		socket = websocket('ws://localhost:5600');
+		socket.on('data', function (data) {
+
+  			var bytearray = new Uint8Array(data);
+  			rawImage = bufferContext.getImageData(0,0, width, height);
+			var imgdatalen = rawImage.data.length;
+
+			for(var i = 0; i < imgdatalen/4; i ++) {
+
+				var depth = (bytearray[2*i]+bytearray[2*i+1]*255)/5;
+				imgdata.data[4*i] = depth;
+				imgdata.data[4*i+1] = depth;
+				imgdata.data[4*i+2] = depth;
+				imgdata.data[4*i+3] = 255;
+
+			}
+			pixels = rawImage.data;
+
+		});
+/*
 		image.onload = function() {
 
 			// console.log("TEST IMAGE LOADED");
@@ -180,6 +207,7 @@ function run() {
 			// console.log(pixels[midPt*4+2]);
 
 		}
+		*/
 
 		window.imageEventSource = new EventSource('/images');
 		window.imageEventSource.addEventListener('message', function(event) {

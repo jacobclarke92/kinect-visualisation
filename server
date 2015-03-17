@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 
-var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
-var http = require('http');
+//util modules
+// var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
+var app = require('http');
 var fs = require('fs');
-var url = require("url");
-var midi = require('midi');
 var httpRequest = require('http-request');
+var url = require("url");
+var BufferStream = require('bufferstream');
+var WebSocketServer = require('ws').Server;
+var websocket = require('websocket-stream');
+
+//app specific modules
+var midi = require('midi');
+var keypress = require('keypress');
+var kinect = require('kinect');
+
+//compilation modules
 var chokidar = require('chokidar');
 var less = require('less');
 
@@ -21,6 +31,7 @@ var skipEffectsList = false;
 var devMode = false;
 
 
+app.globalAgent.maxSockets = 500;
 
 var log = console.log.bind(console);
 
@@ -50,7 +61,7 @@ function compileLess(path) {
 	var fpath = path.replace(/\\/g, '/');
 	var fname = fpath.substring(fpath.lastIndexOf('/')+1, fpath.lastIndexOf('.'));
 	fpath = 'app/styles/generated/'+fname+'.css';
-	fs.readFile(path,function(error,data){
+	fs.readFile(path,function(error,data) {
 	    data = data.toString();
 	    // console.log(data);
 	    less.render(data, function (e, css) {
@@ -169,6 +180,10 @@ if(!skipColour) {
 
 
 
+
+
+
+
 //start doing stream data stuff
 var id = 0;
 
@@ -190,63 +205,32 @@ function stream(req, res) {
 	});
 }
 
-
-function serve(res, path, contentType) {
-	fs.readFile(path, function(err, data) {
-		if (err) {
-			res.writeHead(500, {'Content-Type': 'text/plain'});
-			res.write('500 Error');
-		} else {
-			res.writeHead(200, {'Content-Type': contentType});
-			res.write(data);
-		}
-		res.end();
-	});
-}
-
-function writeImage(image) {
-
-	// console.log(image);
-	var uri = 'data:image/png;base64,' + image.toString('base64');
-
-	clients.forEach(function(client) {
-		client.write('id: ' + id + '\n');
-		//client.write('fft: ' + JSON.stringify(fftLevels) + '\n');
-		client.write('data: ' + uri + '\n\n');  
-
-		//fftLevels = new Array(2048);
-	});
-
-	id++;
-}
-
-var urlRules = [
-	['.pde','text/processing'],
-	['.png','image/png'],
-	['.js','application/javascript'],
-	['.html','text/html'],
-	['.css','text/css'],
-	['.json','text/event-stream'],
-	['.xml','text/xml'],
-
-	['.svg','image/svg+xml'],
-	['.ttf','application/x-font-ttf'],
-	['.otf','application/x-font-opentype'],
-	['.woff','application/x-font-woff'],
-	['.eot','application/vnd.ms-fontobject']
-];
-
-var server = http.createServer(function(req, res) {
+var appServer = app.createServer(function(req, res) {
 
 	var parsedURL = url.parse(req.url, true);
 	var pathname = parsedURL.pathname;
 	// console.log(pathname);
+
+	var reqURL = __dirname + req.url;
+	if(pathname == '/') reqURL = __dirname + '/app/index.html';
 	
-	if ((req.url == '/images' && skipKinect == false) || pathname == '/app/midi.json') {
+	if (pathname == '/app/midi.json') {
 		
 		stream(req, res, 'text/event-stream');
+		console.log('midi stream requested');
 
 	} else {
+
+		fs.readFile(reqURL, function (err, data) {
+			if (err) {
+				res.writeHead(500);
+				return res.end('Error loading ' +reqURL);
+				console.log('Error loading ' +reqURL);
+			}
+			res.writeHead(200);
+			res.end(data);
+		});
+		/*
 		var found = false;
 		for(var i=0; i< urlRules.length; i++) {
 			if (req.url.indexOf(urlRules[i][0]) > -1) {
@@ -255,18 +239,89 @@ var server = http.createServer(function(req, res) {
 			}
 		}
 		if(!found) {
-			if(pathname == '/') serve(res, __dirname + '/app/index.html', 'text/html');
+			 serve(res, __dirname + '/app/index.html', 'text/html');
 		}
+		*/
 	}
 
 });
+
+
+// ~~			   ~~ //
+// ~~ kinect stuff ~~ //
+// ~~ 			   ~~ //
+
+//init camera controls
+var wss;
+var kstream = new BufferStream();
+var kcontext;
+
+if(!skipKinect) {
+
+	wss = new WebSocketServer({server: appServer});
+
+	//init socket stream
+	wss.on('connection', function(ws) {
+		var stream = websocket(ws);
+		kstream.pipe(stream);
+		console.log("connection made");
+		ws.on('close', function() {
+			stream.writable = false;
+			console.log('closed socket');
+		});
+
+	});
+
+	kcontext = kinect();
+	
+	//init kinect depth data stream
+	kcontext.resume();
+	kcontext.start('depth');
+
+	kcontext.on('depth', function (buf) {
+	  kstream.write(buf);
+	});
+
+	//init terminal kinect controls
+	var kinectAngle = 0;
+	updateKinectAngle(0);
+
+	keypress(process.stdin);
+	process.stdin.on('keypress', function (ch, key) {
+
+	  if(key.name == 'up') updateKinectAngle(1);
+	  else if(key.name == 'down') updateKinectAngle(-1);
+
+	  if (key && key.ctrl && key.name == 'c') process.exit(0);//process.stdin.pause(); // die gracefully
+	});
+	process.stdin.setRawMode(true);
+	process.stdin.resume();
+
+
+}
+
+function updateKinectAngle(amt) {
+  if(kinectAngle+amt <= 15 && kinectAngle+amt >= -15) {
+    kinectAngle += amt;
+    for(var i = -15, str=''; i < 15; i ++) str += (i == kinectAngle) ? '|' : '-';
+    console.log('adjusting tilt: '+str);
+    // console.log(kcontext);
+    kcontext.tilt(kinectAngle);
+  }
+}
+
+
+
+
 function startServer() {
 	process.stdin.resume();
-	process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
-	server.listen(5600);
+	appServer.listen(5600);
 
 	console.log('Node server started!'); 
 }
+
+
+
 
 if(quickStart) startServer();
 else{
