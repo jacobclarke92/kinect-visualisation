@@ -295,6 +295,8 @@ var kcontext;
 
 if(!skipKinect) {
 
+	console.log('Initialising kinect!');
+
 	kstream = new BufferStream();
 
 	wss = new WebSocketServer({server: appServer});

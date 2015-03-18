@@ -88,7 +88,7 @@ function getTopColours() {
 					}
 				}
 
-			},2500);
+			},6000);
 
 		}
 	});

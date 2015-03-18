@@ -129,8 +129,8 @@ this.gotKinect = false;
 this.waiting = false;
 
 var bufferCanvas = document.createElement('canvas');
-var width = bufferCanvas.width = canvasWidth;
-var height = bufferCanvas.height = canvasHeight;
+var width = bufferCanvas.width = this.canvasWidth;
+var height = bufferCanvas.height = this.canvasHeight;
 var bufferCanvasContext = bufferCanvas.getContext('2d');
 var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
@@ -149,13 +149,13 @@ this.run = function() {
 
 	if(testingImage) {
 
-		image.onload = function() {
+		this.image.onload = function() {
 
-			bufferCanvasContext.drawImage(image, 0, 0);
-			rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
+			bufferCanvasContext.drawImage(this.image, 0, 0);
+			this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
 			this.pixels = rawImage.data;
 
-			if(this.testingImage) console.log('test image loaded',pixels.length);
+			if(this.testingImage) console.log('test image loaded',this.pixels.length);
 
 			if (!this.waiting && window.worker) {
 
@@ -168,8 +168,8 @@ this.run = function() {
 
 		};
 
-		console.log('changing src to '+testImageURL);
-		image.src = testImageURL;
+		console.log('changing src to '+this.testImageURL);
+		this.image.src = this.testImageURL;
 
 	}else if(!websocket) {
 
@@ -177,26 +177,32 @@ this.run = function() {
 
 	}else{
 
+		// this.image = document.createElement("img");
+
 		socket = websocket('ws://localhost:5600');
 		socket.on('data', function (data) {
 
   			var bytearray = new Uint8Array(data);
-  			rawImage = bufferCanvasContext.getImageData(0,0, width, height);
-			var imgdatalen = rawImage.data.length;
+  			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
+			var imgdatalen = window.rawImage.data.length;
 
 			for(var i = 0; i < imgdatalen/4; i ++) {
 
 				var depth = (bytearray[2*i]+bytearray[2*i+1]*255)/5;
-				imgdata.data[4*i] = depth;
-				imgdata.data[4*i+1] = depth;
-				imgdata.data[4*i+2] = depth;
-				imgdata.data[4*i+3] = 255;
+				window.rawImage.data[4*i] = depth;
+				window.rawImage.data[4*i+1] = depth;
+				window.rawImage.data[4*i+2] = depth;
+				window.rawImage.data[4*i+3] = 255;
 
 			}
 
-			this.image.src = bufferCanvas.toDataURL("image/png");
+			bufferCanvasContext.putImageData(window.rawImage,0,0);
+			
+			// console.log('image src = ',bufferCanvas.toDataURL("image/png"));
+			
+			window.image.src = bufferCanvas.toDataURL("image/png");
 
-			this.pixels = rawImage.data;
+			window.pixels = window.rawImage.data;
 
 		});
 /*
@@ -216,6 +222,7 @@ this.run = function() {
 		}
 		*/
 
+		/*
 		window.imageEventSource = new EventSource('/images');
 		window.imageEventSource.addEventListener('message', function(event) {
 			if(event.data.substring(0,14) == 'data:image/png' ) {
@@ -243,7 +250,8 @@ this.run = function() {
 			}
 		});
 
-		// startWorker();
+		startWorker();
+		*/
 	}
 
 	
