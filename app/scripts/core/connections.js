@@ -1,40 +1,42 @@
-var testingImage = false;
-var testingSound = false;
-var testImageURL = '';
-var currentTestImage = 1;
-var currentScriptString = false;
+(function () {
+
+console.log('running connections.js');
+
+this.testingImage = false;
+this.testingSound = false;
+this.testImageURL = '';
+this.currentTestImage = 1;
+this.currentScriptString = false;
 
 
-var loadedScript = false;
-var loadChecker;
-var timeout = 3000; //ms
-var timeoutTimer = 0;
-var intervalCheck = 100; //ms
-hash = false;
+this.loadedScript = false;
+this.loadChecker;
+this.timeout = 3000; //ms
+this.timeoutTimer = 0;
+this.intervalCheck = 100; //ms
+this.hash = false;
 
-var websocket;
-require(['../../node_modules/websocket-stream'], function (_websocket) {
-    websocket = _websocket;
-});
+//for this to work it must be compiled with browserify which is done automatically with -devmode
+var websocket = require('../../../node_modules/websocket-stream');
 
 
-var inited = false;
+this.inited = false;
 
 
-function startPage(fallback) {
+this.startPage = function(fallback) {
 
-	hash = window.location.hash;
+	this.hash = window.location.hash;
 
 	loadCookie();
 	
 	if(hash){
-		hash = hash.substr(1,hash.length-1);
+		this.hash = this.hash.substr(1,this.hash.length-1);
 
 		//console.log('hash: '+hash);
 		//console.log(_.indexOf(effects,hash));
 
-		if(_.indexOf(effects,hash) > -1) {
-			changeScript(hash);
+		if(_.indexOf(effects,this.hash) > -1) {
+			changeScript(this.hash);
 		}else{
 			changeScript(fallback);
 		}
@@ -45,33 +47,33 @@ function startPage(fallback) {
 
 
 	if(testingImage) {
-		randomizeImage(true);
+		thisrandomizeImage(true);
 		run();
 	}
 
 
 }
 
-function changeScript(script) {
+this.changeScript = function(script) {
 
 	//remove instance of previous script
-	if(currentScriptString && currentScriptString != script) {
-		delete window['effect_'+currentScriptString];
+	if(this.currentScriptString && this.currentScriptString != script) {
+		delete window['effect_'+this.currentScriptString];
 	}
-	currentScriptString = script;
+	this.currentScriptString = script;
 
 	//clear stage
-	clearStage();
-	loadedScript = false;
+	this.clearStage();
+	this.loadedScript = false;
 
 	//change window hash to new script
 	console.info('loading ~'+script+'~');
 	window.location.href = '/#'+script;
-	hash = script;
+	this.hash = script;
 
 	//clear mappings for current hash
-	if(typeof mappings != 'object') mappings = {};
-	if(typeof mappings[hash] != 'object') mappings[hash] = {};
+	if(typeof mappings != 'object') this.mappings = {};
+	if(typeof mappings[hash] != 'object') this.mappings[hash] = {};
 
 	//begin loading script
 	requirejs(['/effects/effect_'+script+'.js'],function() {
@@ -79,35 +81,35 @@ function changeScript(script) {
 		//check that the loaded file contained the actual effect object
 		if(window['effect_'+script]) {
 
-			currentScript = window['effect_'+script];
+			this.currentScript = window['effect_'+script];
 			
 			//always run init before anything else -- this sets up mapping controls
 			if(typeof currentScript.init != 'undefined') currentScript.init();
 			else trailAmount = 1;
 
 			if(typeof currentScript.screens == 'undefined') {
-				currentScript.screens = [];
-				currentScript.graphics = false;
+				this.currentScript.screens = [];
+				this.currentScript.graphics = false;
 			}
 
 			//creates the mapping controls for the effect
-			createControls();
+			this.createControls();
 
 			//begin animation frame
 			console.info('Script loaded! ',currentScript);
-			loadedScript = true;
-			requestAnimFrame(animateFrame);
+			this.loadedScript = true;
+			this.requestAnimFrame(animateFrame);
 
 		}else{
 			console.warn('Loaded script but incorrectly named or something');
 		}
 	});
 	
-	$('.changeScript',uiPopup.document).removeClass('active');
-	$('#'+script, uiPopup.document).addClass('active');
+	$('.changeScript',this.uiPopup.document).removeClass('active');
+	$('#'+script, this.uiPopup.document).addClass('active');
 
-	if(!inited) {
-				inited = true;
+	if(!this.inited) {
+				this.inited = true;
 				//THIS CAN ONLY BE RUN ONCE OR ELSE MAX LAG (due to listener double-ups)
 				run();
 		}
@@ -116,34 +118,32 @@ function changeScript(script) {
 
 
 
-var pixels = false;
-var rawImage = false;
-var canvasWidth = 640;
-var canvasHeight = 480;
-var processingInstance = false;
+this.pixels = false;
+this.rawImage = false;
+this.canvasWidth = 640;
+this.canvasHeight = 480;
+this.processingInstance = false;
+this.image = false;
+this.imageLoaded = false;
+this.gotKinect = false;
+this.waiting = false;
 
+var bufferCanvas = document.createElement('canvas');
+var width = bufferCanvas.width = canvasWidth;
+var height = bufferCanvas.height = canvasHeight;
+var bufferCanvasContext = bufferCanvas.getContext('2d');
+var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
+this.outlineArray = [];
 
-var waiting = false;
-var buffer = document.createElement('canvas');
-var width = buffer.width = canvasWidth;
-var height = buffer.height = canvasHeight;
-var bufferContext = buffer.getContext('2d');
-var bufferData = bufferContext.createImageData(width, height);
-
-outlineArray = [];
-
-var image;
-var imageLoaded = false;
-var gotKinect = false;
 
 var socket;
 
-function run() {
+this.run = function() {
 
 	console.log('running core -- should only occur once');
 
-	image = new Image();
+	this.image = new Image();
 	var showDepth = true;
 	
 
@@ -151,19 +151,19 @@ function run() {
 
 		image.onload = function() {
 
-			bufferContext.drawImage(image, 0, 0);
-			rawImage = bufferContext.getImageData(0, 0, width, height);
-			pixels = rawImage.data;
+			bufferCanvasContext.drawImage(image, 0, 0);
+			rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
+			this.pixels = rawImage.data;
 
-			if(testingImage) console.log('test image loaded',pixels.length);
+			if(this.testingImage) console.log('test image loaded',pixels.length);
 
-			if (!waiting && window.worker) {
+			if (!this.waiting && window.worker) {
 
 				console.log('image loaded sending to post service');
 
 				//calibration_depthThreshold and calibration_depthRange are delcared in mappings.js and are controlled in popup
-				window.worker.postMessage([pixels, calibration_depthThreshold, calibration_depthRange]);
-				waiting = true;
+				window.worker.postMessage([this.pixels, this.calibration_depthThreshold, this.calibration_depthRange]);
+				this.waiting = true;
 			}
 
 		};
@@ -171,13 +171,17 @@ function run() {
 		console.log('changing src to '+testImageURL);
 		image.src = testImageURL;
 
+	}else if(!websocket) {
+
+		console.warn('Web Socket not inited wtf! run -devmode');
+
 	}else{
 
 		socket = websocket('ws://localhost:5600');
 		socket.on('data', function (data) {
 
   			var bytearray = new Uint8Array(data);
-  			rawImage = bufferContext.getImageData(0,0, width, height);
+  			rawImage = bufferCanvasContext.getImageData(0,0, width, height);
 			var imgdatalen = rawImage.data.length;
 
 			for(var i = 0; i < imgdatalen/4; i ++) {
@@ -189,7 +193,10 @@ function run() {
 				imgdata.data[4*i+3] = 255;
 
 			}
-			pixels = rawImage.data;
+
+			this.image.src = bufferCanvas.toDataURL("image/png");
+
+			this.pixels = rawImage.data;
 
 		});
 /*
@@ -197,8 +204,8 @@ function run() {
 
 			// console.log("TEST IMAGE LOADED");
 
-			bufferContext.drawImage(image, 0, 0);
-			rawImage = bufferContext.getImageData(0, 0, width, height);
+			bufferCanvasContext.drawImage(image, 0, 0);
+			rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
 			pixels = rawImage.data;
 
 			imageLoaded = image;
@@ -213,12 +220,12 @@ function run() {
 		window.imageEventSource.addEventListener('message', function(event) {
 			if(event.data.substring(0,14) == 'data:image/png' ) {
 				
-				image.src = event.data;
-				if(testingImage) gotImage = true;
-				if(pixels && hash.indexOf('outline') > -1) {
+				this.image.src = event.data;
+				if(this.testingImage) this.gotImage = true;
+				if(this.pixels && this.hash.indexOf('outline') > -1) {
 
 					//generate array of outline points, second parameter is smoothing
-					outlineArray = MarchingSquares.getBlobOutlinePointsFromImage(pixels, 3, 20);
+					this.outlineArray = this.MarchingSquares.getBlobOutlinePointsFromImage(this.pixels, 3, 20);
 
 					var blobs = FindBlobs(rawImage);
 
@@ -228,10 +235,10 @@ function run() {
 
 				}
 
-				if(!gotKinect) {
+				if(!this.gotKinect) {
 				 console.log(event);
-				 gotKinect = true;
-				 $('#kinectCheck',uiPopup.document).removeClass('error');
+				 this.gotKinect = true;
+				 $('#kinectCheck', this.uiPopup.document).removeClass('error');
 				}
 			}
 		});
@@ -252,15 +259,15 @@ function startWorker() {
 	}
 
 	//create window worker
-	window.worker = createWorker(process, 320, 240, hash);
+	window.worker = createWorker(process, 320, 240, this.hash);
 	window.worker.addEventListener('message', function(event) {
 
-		if(testingImage) console.log('test image received from worker', event);
-		waiting = false;
-		gotImage = true;
+		if(this.testingImage) console.log('test image received from worker', event);
+		this.waiting = false;
+		this.gotImage = true;
 
 		var eventCopy = event;
-		eventCopy.width = canvasWidth;
+		eventCopy.width = this.canvasWidth;
 
 		var blobs = FindBlobs(event);
 
@@ -314,3 +321,5 @@ function process(width, height, hash) {
 	});
 	
 }
+
+}.call(window));

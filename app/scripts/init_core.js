@@ -9,7 +9,7 @@ requirejs(
 		'/app/scripts/helpers/polygon_math.js',
 		'/app/scripts/helpers/find_blobs.js',
 
-		'/app/scripts/core/connections.js',
+		'/app/scripts/core/connections_built.js',
 		'/app/scripts/core/mappings.js',
 		'/app/scripts/core/ui.js',
 		'/app/scripts/core/audio.js',
