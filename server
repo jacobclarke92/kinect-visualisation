@@ -10,6 +10,10 @@ var BufferStream = require('bufferstream');
 var WebSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
 
+var sys = require('sys')
+var exec = require('child_process').exec;
+var child;
+
 //app specific modules
 var midi = require('midi');
 var keypress = require('keypress');
@@ -72,18 +76,35 @@ function compileLess(path) {
 	});
 }
 
+function compileScript() {
+	console.log('Browserifying connections.js');
+	child = exec("browserify ./app/scripts/core/connections.js -o ./app/scripts/core/connections_built.js", function (error, stdout, stderr) {
+		sys.print('stdout: ' + stdout);
+		sys.print('stderr: ' + stderr);
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		}
+	});
+}
+
 compileLess('./app/styles/ui.less');
 compileLess('./app/styles/core.less');
+compileScript();
 if(devMode) {
-	var watcher = chokidar.watch('file', {
+
+	var lessWatcher = chokidar.watch('file', {
 	  ignored: /[\/\\]\./, persistent: true
 	});
-	watcher.on('change', function(path, stats) {
-
+	lessWatcher.on('change', function(path, stats) {
 		compileLess(path);
-
 	});
-	watcher.add('./app/styles/*.less');
+	lessWatcher.add('./app/styles/*.less');
+
+	var scriptWatcher = chokidar.watch('file', {persistent: true});
+	scriptWatcher.on('change', function(path, stats) {
+		compileScript();
+	});
+	scriptWatcher.add('./app/scripts/core/connections.js');
 
 }
 
@@ -182,6 +203,21 @@ if(!skipColour) {
 
 
 
+var urlRules = [
+	['.pde','text/processing'],
+	['.png','image/png'],
+	['.js','application/javascript'],
+	['.html','text/html'],
+	['.css','text/css'],
+	['.json','text/event-stream'],
+	['.xml','text/xml'],
+
+	['.svg','image/svg+xml'],
+	['.ttf','application/x-font-ttf'],
+	['.otf','application/x-font-opentype'],
+	['.woff','application/x-font-woff'],
+	['.eot','application/vnd.ms-fontobject']
+];
 
 
 //start doing stream data stuff
@@ -220,27 +256,27 @@ var appServer = app.createServer(function(req, res) {
 		console.log('midi stream requested');
 
 	} else {
-
+		var mimeType = false;
+		for(var i=0; i< urlRules.length; i++) {
+			if (reqURL.indexOf(urlRules[i][0]) > -1) {
+				mimeType = urlRules[i][1];
+				i = urlRules.length;
+			}
+		}
+		if(!mimeType) mimeType = 'text/plain';
 		fs.readFile(reqURL, function (err, data) {
 			if (err) {
 				res.writeHead(500);
 				return res.end('Error loading ' +reqURL);
 				console.log('Error loading ' +reqURL);
 			}
-			res.writeHead(200);
+			res.writeHead(200,{
+				'Content-Type': mimeType
+			});
 			res.end(data);
 		});
 		/*
-		var found = false;
-		for(var i=0; i< urlRules.length; i++) {
-			if (req.url.indexOf(urlRules[i][0]) > -1) {
-				serve(res, __dirname + req.url, urlRules[i][1]);
-				found = true;
-			}
-		}
-		if(!found) {
-			 serve(res, __dirname + '/app/index.html', 'text/html');
-		}
+		
 		*/
 	}
 
@@ -252,11 +288,14 @@ var appServer = app.createServer(function(req, res) {
 // ~~ 			   ~~ //
 
 //init camera controls
+
 var wss;
-var kstream = new BufferStream();
+var kstream;
 var kcontext;
 
 if(!skipKinect) {
+
+	kstream = new BufferStream();
 
 	wss = new WebSocketServer({server: appServer});
 

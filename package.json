@@ -4,6 +4,7 @@
     "url": "https://github.com/jacobclarke92/kinect-visualisation"
   },
   "dependencies": {
+    "browserify": "^9.0.3",
     "buffer-stream": "0.0.1",
     "bufferstream": "^0.6.2",
     "chokidar": "^1.0.0-rc3",
