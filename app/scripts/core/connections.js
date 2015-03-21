@@ -182,7 +182,14 @@ this.run = function() {
 		socket = websocket('ws://localhost:5600');
 		socket.on('data', function (data) {
 
+			console.log('received image'); return;
+
   			var bytearray = new Uint8Array(data);
+
+  			// var b64encoded = btoa(String.fromCharCode.apply(null, bytearray));
+
+
+  			
   			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
 			var imgdatalen = window.rawImage.data.length;
 
@@ -199,8 +206,14 @@ this.run = function() {
 			bufferCanvasContext.putImageData(window.rawImage,0,0);
 			
 			// console.log('image src = ',bufferCanvas.toDataURL("image/png"));
+			// var b64encoded = bufferCanvas.toDataURL("image/png");
 			
-			window.image.src = bufferCanvas.toDataURL("image/png");
+			var b64encoded = bufferCanvas.toDataURL("image/png");
+			// window.image.src = b64encoded;
+			window.image.src = b64encoded;
+			document.getElementById('testImage').src = b64encoded;
+
+			console.log(b64encoded);
 
 			window.pixels = window.rawImage.data;
 

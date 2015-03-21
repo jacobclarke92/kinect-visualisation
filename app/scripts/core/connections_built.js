@@ -2,10 +2,6 @@
 (function () {
 
 console.log('running connections.js');
-console.log(window);
-console.log(document);
-
-_this = this; // for use in callbacks
 
 this.testingImage = false;
 this.testingSound = false;
@@ -148,13 +144,11 @@ this.run = function() {
 
 	console.log('running core -- should only occur once');
 
-	
+	this.image = new Image();
 	var showDepth = true;
 	
 
 	if(testingImage) {
-
-		this.image = new Image();
 
 		this.image.onload = function() {
 
@@ -185,12 +179,18 @@ this.run = function() {
 	}else{
 
 		// this.image = document.createElement("img");
-		this.image = new Image();
 
 		socket = websocket('ws://localhost:5600');
 		socket.on('data', function (data) {
 
+			console.log('received image'); return;
+
   			var bytearray = new Uint8Array(data);
+
+  			// var b64encoded = btoa(String.fromCharCode.apply(null, bytearray));
+
+
+  			
   			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
 			var imgdatalen = window.rawImage.data.length;
 
@@ -207,8 +207,14 @@ this.run = function() {
 			bufferCanvasContext.putImageData(window.rawImage,0,0);
 			
 			// console.log('image src = ',bufferCanvas.toDataURL("image/png"));
+			// var b64encoded = bufferCanvas.toDataURL("image/png");
 			
-			window.image.src = bufferCanvas.toDataURL("image/png");
+			var b64encoded = bufferCanvas.toDataURL("image/png");
+			// window.image.src = b64encoded;
+			window.image.src = b64encoded;
+			document.getElementById('testImage').src = b64encoded;
+
+			console.log(b64encoded);
 
 			window.pixels = window.rawImage.data;
 
