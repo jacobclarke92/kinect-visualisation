@@ -1,7 +1,7 @@
 effect_circles1 = {
 
   init: function() {
-    setMapping('volumeDivider', 400, 100, 150);
+    setMapping('volumeDivider', 100, 400, 150);
     setMapping('maxPointDist', 10, 200, 20);
     setMapping('lineThickness', 1, 50, 2);
     setMapping('trailAmount', 0, 1, 0.2); //51 works well
@@ -63,7 +63,7 @@ effect_circles1 = {
 
     this.graphics.lineStyle(lineThickness, randomPaletteColour(), alf);
 
-    this.graphics.drawCircle(xPos3*2, yPos3*2, diameter/2 + additionalSize);
+    this.graphics.drawCircle(tX( xPos3 ), tY( yPos3 ), tV( diameter/2 + additionalSize ));
 
   }
 

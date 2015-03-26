@@ -69,9 +69,9 @@ effect_triangles1 = {
 		var xPos3 = (rand3 % 320);
 
 		// this.graphics.triangle(xPos1,yPos1,xPos2,yPos2,xPos3,yPos3);
-		this.graphics.moveTo(xPos1*2,yPos1*2);
-		this.graphics.lineTo(xPos2*2,yPos2*2);
-		this.graphics.lineTo(xPos3*2,yPos3*2);
+		this.graphics.moveTo(tX( xPos1 ), tY( yPos1 ));
+		this.graphics.lineTo(tX( xPos2 ), tY( yPos2 ));
+		this.graphics.lineTo(tX( xPos3 ), tY( yPos3 ));
 		// this.graphics.lineTo(xPos1,yPos1);
 
 		this.graphics.endFill();

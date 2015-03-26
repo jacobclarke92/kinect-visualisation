@@ -6,7 +6,7 @@ effect_test_visuals = {
 	particles: [],
 
 	init: function() {
-    	setMapping('spawnAmount', 1, 50, 10);
+    	setMapping('spawnAmount', 1, 10, 1);
     	setMapping('shapeSize', 1, 200, 100);
 		setMapping('trailAmount', 0, 1, 0.2);
 	},
@@ -29,13 +29,13 @@ Particle = {
 	init: function() {
 		this.shape = new PIXI.Graphics();
 		this.shape.pivot.x = this.shape.pivot.y = 0;
-		this.shape.x = Math.round(Math.random()*640);
-		this.shape.y = Math.round(Math.random()*480);
+		this.shape.x = tX( Math.round(Math.random()*320) );
+		this.shape.y = tY( Math.round(Math.random()*240) );
 		this.shape.alpha = 0;
 		this.shape.scale.x = this.shape.scale.y = shapeSize/100;
 
 		this.color = randomPaletteColour();
-		this.size = Math.round(Math.random()*200)+20;
+		this.size = tV( Math.round(Math.random()*200)+20 );
 
 		this.shape.beginFill(this.color);
 		switch(Math.floor(Math.random()*3)) {

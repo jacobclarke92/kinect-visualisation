@@ -37,8 +37,8 @@ effect_outline2 = {
 						// New color is difference between pixel and left neighbor
 						var diffLeft = Math.abs(pix - leftPix);
 						if(diffLeft > 0 && this.lastDiff > 0) {
-							this.graphics.moveTo(this.lastX*2,this.lastY*2);
-							this.graphics.lineTo(x*2,y*2);
+							this.graphics.moveTo(tX( this.lastX ), tY( this.lastY ));
+							this.graphics.lineTo(tX( x ), tY( y ));
 						}
 
 

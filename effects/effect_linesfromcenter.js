@@ -77,8 +77,8 @@ effect_linesfromcenter = {
           // maybeLog(outlineArray[i][0]+", "+outlineArray[i][1]);
 
           
-          if(i == 1) this.graphics.moveTo(outlineArray[i][0]*2, outlineArray[i][1]*2);
-          else this.graphics.lineTo(outlineArray[i][0]*2, outlineArray[i][1]*2);
+          if(i == 1) this.graphics.moveTo(tX( outlineArray[i][0] ), tY( outlineArray[i][1]));
+          else this.graphics.lineTo(tX( outlineArray[i][0] ), tY( outlineArray[i][1] ));
           
         }
         

@@ -9,7 +9,7 @@ effect_triangles2 = {
 
 
 	init: function() {
-		setMapping('volumeDivider', 400, 100, 150);
+		setMapping('volumeDivider', 100, 400, 150);
 		setMapping('trailAmount', 0, 1, 0.2); //51 works well
 	},
 	
@@ -63,9 +63,9 @@ effect_triangles2 = {
 		var yPos3 = Math.floor(rand3/320);
 		var xPos3 = (rand3 % 320);
 
-		this.graphics.moveTo(xPos1*2,yPos1*2);
-		this.graphics.lineTo(xPos2*2,yPos2*2);
-		this.graphics.lineTo(xPos3*2,yPos3*2);
+		this.graphics.moveTo(tX( xPos1 ), tY( yPos1 ));
+		this.graphics.lineTo(tX( xPos2 ), tY( yPos2 ));
+		this.graphics.lineTo(tX( xPos3 ), tY( yPos3 ));
 
 		this.graphics.endFill();
 

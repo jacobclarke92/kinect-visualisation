@@ -11,8 +11,8 @@ effect_depth_image = {
 			img.alpha = 1;
 			img.x = 0;
 			img.y = 0;
-			img.scale.x = 2;
-			img.scale.y = 2;
+			img.scale.x = sizeRatio;
+			img.scale.y = sizeRatio;
 			stage.addChild(img);
 		}
 	}

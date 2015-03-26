@@ -37,8 +37,8 @@ effect_outline1 = {
 					var diffLeft = Math.abs(pix - leftPix);
 
 					if(diffLeft > 0 && this.lastDiff > 0 && pixelInRange(pix)) {
-						this.graphics.moveTo(this.lastX*2, this.lastY*2);
-						this.graphics.lineTo(x*2, y*2);
+						this.graphics.moveTo(tX( this.lastX ), tY( this.lastY ));
+						this.graphics.lineTo(tX( x ), tY( y ));
 						// line(this.lastX,this.lastY,x,y);
 					}
 

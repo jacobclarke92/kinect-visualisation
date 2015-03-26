@@ -45,8 +45,8 @@ effect_lines1 = {
 
     this.graphics.lineStyle(lineThickness, randomPaletteColour(), 1);
 
-    this.graphics.moveTo(this.lastX*2, this.lastY*2);
-    this.graphics.lineTo(xPos*2, yPos*2);
+    this.graphics.moveTo(tX( this.lastX ), tY( this.lastY ));
+    this.graphics.lineTo(tX( xPos ), tY( yPos ));
 
     this.lastX = xPos;
     this.lastY = yPos;

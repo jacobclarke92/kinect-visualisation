@@ -9,7 +9,7 @@ effect_squiggle = {
 
 
   init: function() {
-    setMapping('volumeDivider', 400, 100, 150);
+    setMapping('volumeDivider', 100, 400, 150);
     setMapping('maxPointDist', 10, 200, 20);
     setMapping('lineThickness', 1, 50, 2);
     setMapping('trailAmount', 0, 1, 0.2);
@@ -68,8 +68,8 @@ effect_squiggle = {
 
     this.graphics.lineStyle(lineThickness, randomPaletteColour(), alf);
 
-    this.graphics.moveTo(xPos1*2, yPos1*2);
-    this.graphics.lineTo(xPos2*2, yPos2*2);
+    this.graphics.moveTo(tX( xPos1 ), tY( yPos1 ));
+    this.graphics.lineTo(tX( xPos2 ), tY( yPos2 ));
 
   }
 }

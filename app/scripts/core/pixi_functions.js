@@ -30,11 +30,75 @@ window.filter_invert = 0;
 window.filter_rgbSplit = 0;
 window.filter_twist = 0;
 
+
+var startDrawX = 0;
+var startDrawY = 0;
+var endDrawX = winW;
+var endDrawY = winH;
+
+
+var sizeRatio = 1;
+
+function getWindowSize() {
+
+	winW = $(window).width();
+	winH = $(window).height();
+
+	renderer.resize(winW,winH);
+
+	if(winW/winH > 4/3) {
+		//viewport is wider
+		startDrawY = 0;
+		endDrawY = winH;
+
+		var offsetSize = 640/(480/winH);
+
+		sizeRatio = winH/240;
+
+		startDrawX = Math.round( (winW-offsetSize)/2 );
+		endDrawX = Math.round( winW - (winW-offsetSize)/2 );
+
+	}else{
+		//viewport is taller
+		startDrawX = 0;
+		endDrawX = winW;
+
+		var offsetSize = 480/(640/winW);
+
+		sizeRatio = winW/320;
+
+		startDrawY = Math.round( (winH-offsetSize)/2 );
+		endDrawY = Math.round( winH - (winH-offsetSize)/2 );
+	}
+
+
+
+	// console.log(startDrawX,endDrawX,startDrawY,endDrawY);
+
+}
+
+function tX(xVal) {
+	return startDrawX + xVal*sizeRatio;
+}
+function tY(yVal) {
+	return startDrawY + yVal*sizeRatio;
+}
+function tV(val) {
+	return val*sizeRatio;
+}
+
 function initPIXI() {
+
+	$(window).unbind('resize').bind('resize',function () {
+		getWindowSize();
+	});
+
 	stage = new PIXI.Stage(0x000000);
 	renderer = PIXI.autoDetectRenderer(winW, winH, {antialias: true});
 	renderer.view.className = "effectsRenderer";
 	renderer.view.style.display = "block";
+
+	getWindowSize();
 
 	document.getElementById('contentZone').appendChild(renderer.view);
 

@@ -7,20 +7,8 @@ effect_triangulation1 = {
     setMapping('trailAmount', 0, 1, 1);
   },
 
-
-
-
-  // var fftSkip = 1;
-
-
-  // ArrayList<Particle> particles = new ArrayList();
-
   spawned: false,
   particles: [],
-
-
-
-
 
   draw: function() {
 
@@ -41,8 +29,6 @@ effect_triangulation1 = {
         //once particles have been created, moderate their numbers in accordance to the maxParticles variable
         if(this.particles.length-1 > maxParticles) {
           for(var i=0; i < (this.particles.length-1)-maxParticles; i ++) {
-            // console.log(i,this.particles[i].index);
-            // this.particles.splice(this.particles[i].index,1);
             this.particles[i].die = true;
           }
         }else if(this.particles.length-1 < maxParticles) {
@@ -51,7 +37,6 @@ effect_triangulation1 = {
 
 
       }
-      // console.log(volume);
 
       for(var i=0; i < this.particles.length; i++) {
         var p1 = this.particles[i];
@@ -66,18 +51,12 @@ effect_triangulation1 = {
           // maybeLog(maxPointDist+", "+(maxPointDist + kickVolume/10));
 
           if (distance < maxPointDist + kickVolume/30 /**(volume/800)*/) {
-            //within minimum distance range
             
             this.graphics.lineStyle(2, 0xFFFFFF, op/2/255);
           
-            this.graphics.moveTo(p1.x*2, p1.y*2) ;
-            this.graphics.lineTo(p2.x*2, p2.y*2) ;
+            this.graphics.moveTo(tX( p1.x ), tY( p1.y )) ;
+            this.graphics.lineTo(tX( p2.x ), tY( p2.y )) ;
 
-          }else{
-            // this.graphics.lineStyle(2, 0xFFFFFF, op/255);
-          
-            // this.graphics.moveTo(p1.x*2, p1.y*2) ;
-            // this.graphics.lineTo(p2.x*2, p2.y*2) ;
           }
         }
 

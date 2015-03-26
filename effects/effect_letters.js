@@ -58,7 +58,7 @@ effect_letters = {
 		this.particles.push( jQuery.extend(true, {}, Particle) );
 
 		// maybeLog(this.particles[this.particles.length-1]);
-		this.particles[this.particles.length-1].init(xPos1*2, yPos1*2, rand1);
+		this.particles[this.particles.length-1].init(xPos1, yPos1, rand1);
 
   }
 
@@ -79,8 +79,8 @@ Particle = {
 
     	this.letter = new PIXI.Text(letter, { font: size+"px sans-serif", fill: "white", align: "left" });
     	// console.log(this.letter);
-    	this.letter.x = _x;
-    	this.letter.y = _y;
+    	this.letter.x = tX( _x );
+    	this.letter.y = tY( _y );
     	this.letter.alpha = 0;
     	stage.addChild(this.letter);
 

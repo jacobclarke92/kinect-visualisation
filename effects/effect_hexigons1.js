@@ -56,7 +56,7 @@ effect_hexigons1 = {
 	drawPolygon: function(sides,centerX,centerY,radius) {
 		this.graphics.moveTo(centerX  + radius*Math.cos(0), centerY + radius*Math.sin(0));
 		for(var i=1; i< sides+1; i++) {
-			this.graphics.lineTo(centerX + radius*Math.cos(i*2*Math.PI / sides), centerY + radius*Math.sin(i*2*Math.PI / sides));
+			this.graphics.lineTo(tX( centerX + radius*Math.cos(i*2*Math.PI / sides) ), tY( centerY + radius*Math.sin(i*2*Math.PI / sides )));
 		}
 	}
 
