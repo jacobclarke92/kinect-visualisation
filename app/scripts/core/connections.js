@@ -2,10 +2,11 @@
 
 console.log('running connections.js');
 
+_this = this;
+
 this.testingImage = false;
 this.testingSound = false;
 this.testImageURL = '';
-this.currentTestImage = 1;
 this.currentScriptString = false;
 
 
@@ -120,8 +121,8 @@ this.changeScript = function(script) {
 
 this.pixels = false;
 this.rawImage = false;
-this.canvasWidth = 640;
-this.canvasHeight = 480;
+this.canvasWidth = 320;
+this.canvasHeight = 240;
 this.processingInstance = false;
 this.image = false;
 this.imageLoaded = false;
@@ -143,7 +144,7 @@ this.run = function() {
 
 	console.log('running core -- should only occur once');
 
-	this.image = new Image();
+	_this.image = new Image();
 	var showDepth = true;
 	
 
@@ -151,25 +152,31 @@ this.run = function() {
 
 		this.image.onload = function() {
 
-			bufferCanvasContext.drawImage(this.image, 0, 0);
-			this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
-			this.pixels = rawImage.data;
+			bufferCanvasContext.drawImage(this, 0, 0);
+			_this.rawImage = false;
+			_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
+			window.pixels = _this.rawImage.data;
 
-			if(this.testingImage) console.log('test image loaded',this.pixels.length);
+			if(_this.testingImage) console.log('test image loaded',_this.pixels.length);
 
-			if (!this.waiting && window.worker) {
+			if (!_this.waiting && window.worker) {
 
 				console.log('image loaded sending to post service');
 
 				//calibration_depthThreshold and calibration_depthRange are delcared in mappings.js and are controlled in popup
-				window.worker.postMessage([this.pixels, this.calibration_depthThreshold, this.calibration_depthRange]);
-				this.waiting = true;
+				window.worker.postMessage([_this.pixels, _this.calibration_depthThreshold, _this.calibration_depthRange]);
+				_this.waiting = true;
 			}
+
+			_this.imageLoaded = this;
 
 		};
 
-		console.log('changing src to '+this.testImageURL);
-		this.image.src = this.testImageURL;
+		console.log('changing src to '+_this.testImageURL);
+		_this.imageLoaded = false;
+		window.pixels = [];
+		_this.image.src = _this.testImageURL;
+		document.getElementById('testImage').src = _this.testImageURL;
 
 	}else if(!websocket) {
 
@@ -262,9 +269,9 @@ this.run = function() {
 				}
 			}
 		});
-
-		startWorker();
 		*/
+		startWorker();
+		
 	}
 
 	
@@ -283,17 +290,17 @@ function startWorker() {
 	window.worker = createWorker(process, 320, 240, this.hash);
 	window.worker.addEventListener('message', function(event) {
 
-		if(this.testingImage) console.log('test image received from worker', event);
-		this.waiting = false;
-		this.gotImage = true;
+		if(_this.testingImage) console.log('test image received from worker', event);
+		_this.waiting = false;
+		_this.gotImage = true;
 
 		var eventCopy = event;
-		eventCopy.width = this.canvasWidth;
+		eventCopy.width = _this.canvasWidth;
 
 		var blobs = FindBlobs(event);
 
-		// console.log(blobs.length+' outline points');
-		console.log(blobs);
+		console.log(blobs.length+' outlines');
+		// console.log(blobs);
 
 	});
 }

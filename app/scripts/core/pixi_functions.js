@@ -61,7 +61,6 @@ function rangeAdjustedPixel(val) {
 
 }
 function pixelInRange(val) {
-	if(!gotKinect) return true; // mostly for debugging
 	return (val > calibration_depthThreshold && val < calibration_depthThreshold+calibration_depthRange) ? true : false;
 }
 function dist(x1,y1,x2,y2) {

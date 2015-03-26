@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 //util modules
-// var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
+var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
 var app = require('http');
 var fs = require('fs');
 var httpRequest = require('http-request');
@@ -255,6 +255,11 @@ var appServer = app.createServer(function(req, res) {
 		stream(req, res, 'text/event-stream');
 		console.log('midi stream requested');
 
+	// }else if (pathname == '/images') {
+
+	// 	stream(req, res, 'text/event-stream');
+	// 	console.log('kinect stream requested');		
+
 	} else {
 		var mimeType = false;
 		for(var i=0; i< urlRules.length; i++) {
@@ -352,10 +357,28 @@ function updateKinectAngle(amt) {
 }
 
 
+var id = 0;
+function writeImage(image) {
+
+	// console.log(image);
+	var uri = 'data:image/png;base64,' + image.toString('base64');
+
+	clients.forEach(function(client) {
+		client.write('id: ' + id + '\n');
+		//client.write('fft: ' + JSON.stringify(fftLevels) + '\n');
+		client.write('data: ' + uri + '\n\n');  
+
+		//fftLevels = new Array(2048);
+	});
+
+	id++;
+}
+
 
 
 function startServer() {
 	process.stdin.resume();
+	process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
 	appServer.listen(5600);
 
 	console.log('Node server started!'); 
