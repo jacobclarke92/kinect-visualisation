@@ -3,7 +3,7 @@ effect_outline2 = {
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
 		setMapping('pixelResolution', 1, 10, 3);
-		setMapping('trailAmount', 0, 100, 50);
+		setMapping('trailAmount', 0, 1, 0.8);
 
 	},
 

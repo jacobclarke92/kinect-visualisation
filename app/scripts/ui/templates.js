@@ -188,7 +188,7 @@ function generateFilterParams() {
 function generateCalibrationParams() {
   var calibrationParams = {
      //{label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:sliderChange}}
-    calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 200, value: 0}},
+    calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 254, value: 0}},
     calibration_depthRange: {label: 'Depth Range', name: 'calibration_depthRange', midi: {min: 1, max: 55, value: 0}},
     calibration_zoom: {label: 'Zoom', name: 'calibration_zoom', midi: {min: 0.2, max: 4.0, step: 0.1, value: 0}},
     calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -200, max: 200, value: 0}},

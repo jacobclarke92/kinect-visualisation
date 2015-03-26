@@ -17,7 +17,7 @@ effect_outline3 = {
   init: function() {
     setMapping('lineThickness', 1, 50, 2);
     setMapping('scaleAmount', 0, 1, 0.05);
-    setMapping('trailAmount', 0, 1, 0.2);
+    setMapping('trailAmount', 0, 1, 0.8);
   },
 
   //overriding function for enterframe init

@@ -16,7 +16,7 @@ effect_hexigons1 = {
 	defineHexigonGrid: function() {
 		this.hexigons = [];
 		for(var x=0; x < 320/shapeSize; x ++) {
-			for(var y=1; y <= 480/shapeSize; y++) {
+			for(var y=1; y <= (240 +  100)/shapeSize; y++) {
 			// for(var y=0; y < 240/shapeSize; y ++) {
 				this.hexigons.push( jQuery.extend(true, {}, Hexigon) );
 				this.hexigons[this.hexigons.length-1].init(x,y)
@@ -82,7 +82,7 @@ Hexigon = {
 
 	draw: function() {
 
-		var rowLength = Math.floor(480/shapeSize);
+		var rowLength = Math.floor((240 +  100)/shapeSize);
 		var tempSize = shapeSize+this.triggerAmount;
 
 		this.drawX = this.x*shapeSize*3 + ((this.y % 2 == 0) ? shapeSize*1.5 : 0);

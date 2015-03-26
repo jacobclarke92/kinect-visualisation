@@ -7,7 +7,7 @@ effect_letters = {
     	setMapping('maxParticles', 10, 1000, 150);
     	setMapping('letterSize', 5, 100, 20);
     	setMapping('sizeVariation', 0.05, 1.0, 0.5);
-    	// setMapping('trailAmount', 0, 100, 50);
+    	setMapping('trailAmount', 0, 100, 50);
     	setMapping('lifespan', 50, 500, 50);
 	},
 	draw:function() {
@@ -75,7 +75,7 @@ Particle = {
 
     	var letter = letters[Math.floor(Math.random()*letters.length)];
     	letter = (Math.random() > 0.5) ? letter.toUpperCase() : letter;
-    	var size = Math.ceil( letterSize*(Math.random()*sizeVariation) );
+    	var size = Math.ceil( tV( letterSize*(Math.random()*sizeVariation) ) );
 
     	this.letter = new PIXI.Text(letter, { font: size+"px sans-serif", fill: "white", align: "left" });
     	// console.log(this.letter);
