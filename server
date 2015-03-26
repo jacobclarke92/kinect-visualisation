@@ -255,10 +255,10 @@ var appServer = app.createServer(function(req, res) {
 		stream(req, res, 'text/event-stream');
 		console.log('midi stream requested');
 
-	// }else if (pathname == '/images') {
+	}else if (pathname == '/images') {
 
-	// 	stream(req, res, 'text/event-stream');
-	// 	console.log('kinect stream requested');		
+		stream(req, res, 'text/event-stream');
+		console.log('kinect stream requested');		
 
 	} else {
 		var mimeType = false;
@@ -298,7 +298,7 @@ var wss;
 var kstream;
 var kcontext;
 
-if(!skipKinect) {
+if(!skipKinect && 1 == 0) {
 
 	console.log('Initialising kinect!');
 
@@ -357,21 +357,19 @@ function updateKinectAngle(amt) {
 }
 
 
-var id = 0;
+var id2 = 0;
 function writeImage(image) {
 
-	// console.log(image);
+	console.log('writing image');
+
 	var uri = 'data:image/png;base64,' + image.toString('base64');
 
 	clients.forEach(function(client) {
-		client.write('id: ' + id + '\n');
-		//client.write('fft: ' + JSON.stringify(fftLevels) + '\n');
-		client.write('data: ' + uri + '\n\n');  
-
-		//fftLevels = new Array(2048);
+		client.write('id: ' + id2 + '\n');
+		client.write('data: ' + uri + '\n\n');
 	});
 
-	id++;
+	id2++;
 }
 
 

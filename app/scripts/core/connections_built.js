@@ -180,6 +180,9 @@ this.outlineArray = [];
 
 
 var socket;
+var attemptingToUseSocketLol = false;
+
+
 
 this.run = function() {
 
@@ -231,93 +234,98 @@ this.run = function() {
 
 		// this.image = document.createElement("img");
 
-		socket = websocket('ws://localhost:5600');
-		socket.on('data', function (data) {
+		if(attemptingToUseSocketLol) {
 
-			console.log('received image'); return;
+			socket = websocket('ws://localhost:5600');
+			socket.on('data', function (data) {
 
-  			var bytearray = new Uint8Array(data);
+				console.log('received image'); return;
 
-  			// var b64encoded = btoa(String.fromCharCode.apply(null, bytearray));
+	  			var bytearray = new Uint8Array(data);
+
+	  			// var b64encoded = btoa(String.fromCharCode.apply(null, bytearray));
 
 
-  			
-  			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
-			var imgdatalen = window.rawImage.data.length;
+	  			
+	  			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
+				var imgdatalen = window.rawImage.data.length;
 
-			for(var i = 0; i < imgdatalen/4; i ++) {
+				for(var i = 0; i < imgdatalen/4; i ++) {
 
-				var depth = (bytearray[2*i]+bytearray[2*i+1]*255)/5;
-				window.rawImage.data[4*i] = depth;
-				window.rawImage.data[4*i+1] = depth;
-				window.rawImage.data[4*i+2] = depth;
-				window.rawImage.data[4*i+3] = 255;
+					var depth = (bytearray[2*i]+bytearray[2*i+1]*255)/5;
+					window.rawImage.data[4*i] = depth;
+					window.rawImage.data[4*i+1] = depth;
+					window.rawImage.data[4*i+2] = depth;
+					window.rawImage.data[4*i+3] = 255;
+
+				}
+
+				bufferCanvasContext.putImageData(window.rawImage,0,0);
+				
+				// console.log('image src = ',bufferCanvas.toDataURL("image/png"));
+				// var b64encoded = bufferCanvas.toDataURL("image/png");
+				
+				var b64encoded = bufferCanvas.toDataURL("image/png");
+				// window.image.src = b64encoded;
+				window.image.src = b64encoded;
+				document.getElementById('testImage').src = b64encoded;
+
+				console.log(b64encoded);
+
+				window.pixels = window.rawImage.data;
+
+			});
+
+		}else{
+
+			console.warn('setting up old eventsource method');
+
+			image.onload = function() {
+
+				// console.log("TEST IMAGE LOADED");
+
+				bufferCanvasContext.drawImage(this, 0, 0);
+				_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
+				_this.pixels = _this.rawImage.data;
+
+				_this.imageLoaded = _this.image;
+
+				// var midPt = width*(height/2) + width/2;
+				// console.log(pixels[midPt*4+2]);
 
 			}
+			if(this.imageEventSource) {
+				this.imageEventSource.removeEventListener('message');
+				this.imageEventSource = false;
+			}
+			this.imageEventSource = new EventSource('/images');
+			this.imageEventSource.addEventListener('message', function(event) {
 
-			bufferCanvasContext.putImageData(window.rawImage,0,0);
-			
-			// console.log('image src = ',bufferCanvas.toDataURL("image/png"));
-			// var b64encoded = bufferCanvas.toDataURL("image/png");
-			
-			var b64encoded = bufferCanvas.toDataURL("image/png");
-			// window.image.src = b64encoded;
-			window.image.src = b64encoded;
-			document.getElementById('testImage').src = b64encoded;
+				console.log('got image');
+				if(event.data.substring(0,14) == 'data:image/png' ) {
+					
+					_this.image.src = event.data;
+					if(_this.pixels && _this.hash.indexOf('outline') > -1) {
 
-			console.log(b64encoded);
+						//generate array of outline points, second parameter is smoothing
+						_this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
 
-			window.pixels = window.rawImage.data;
+						var blobs = FindBlobs(rawImage);
+					}
 
-		});
-/*
-		image.onload = function() {
+					if(!_this.gotKinect) {
+						 console.log(event);
+						 _this.gotKinect = true;
+						 $('#kinectCheck', _this.uiPopup.document).removeClass('error');
+					}
+				}
+			});
 
-			// console.log("TEST IMAGE LOADED");
-
-			bufferCanvasContext.drawImage(image, 0, 0);
-			rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
-			pixels = rawImage.data;
-
-			imageLoaded = image;
-
-			// var midPt = width*(height/2) + width/2;
-			// console.log(pixels[midPt*4+2]);
 
 		}
-		*/
-
-		/*
-		window.imageEventSource = new EventSource('/images');
-		window.imageEventSource.addEventListener('message', function(event) {
-			if(event.data.substring(0,14) == 'data:image/png' ) {
-				
-				this.image.src = event.data;
-				if(this.testingImage) this.gotImage = true;
-				if(this.pixels && this.hash.indexOf('outline') > -1) {
-
-					//generate array of outline points, second parameter is smoothing
-					this.outlineArray = this.MarchingSquares.getBlobOutlinePointsFromImage(this.pixels, 3, 20);
-
-					var blobs = FindBlobs(rawImage);
-
-					// if(Math.round(Math.random()*1000) < 1) {
-					// console.log(blobs);
-					// }
-
-				}
-
-				if(!this.gotKinect) {
-				 console.log(event);
-				 this.gotKinect = true;
-				 $('#kinectCheck', this.uiPopup.document).removeClass('error');
-				}
-			}
-		});
-		*/
-		startWorker();
-		
 	}
+	
+	startWorker();
 
 	
 }
