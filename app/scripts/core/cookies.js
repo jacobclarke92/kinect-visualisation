@@ -92,7 +92,7 @@ function toggleTesting(thing, elem) {
   console.info('toggling test '+thing);
   if(thing == 'image') {
     testingImage = !testingImage;
-    randomizeImage(true);
+    randomizeImage(false);
     run();
   }else if(thing == 'sound') {
     testingSound = !testingSound;
@@ -102,15 +102,16 @@ function toggleTesting(thing, elem) {
 
 
 
-var testImages = 5;
+var currentTestImage = 0;
+var testImages = 2;
 var randomInterval = false;
 function randomizeImage(intervalChange) {
 
   console.log('changing test image');
 
 
-  var rand = Math.round(Math.random()*(testImages-1))+1;
-  while(rand == currentTestImage && testImages > 1) rand = Math.round(Math.random()*(testImages-1))+1;
+  var rand = Math.ceil(Math.random()*(testImages-1));
+  while(rand == currentTestImage && testImages > 1) rand = Math.ceil(Math.random()*(testImages-1));
 
   currentTestImage = rand;
   testImageURL = '/app/img/test'+currentTestImage+'.png';
