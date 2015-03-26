@@ -12,9 +12,9 @@ effect_triangles1 = {
 	breakLoop: 500,
 
 	init: function() {
-		setMapping('volumeDivider', 400, 100, 150);
+		setMapping('volumeDivider', 100, 400, 150);
 		setMapping('maxPointDist', 10, 200, 20);
-		setMapping('trailAmount', 0, 0.5, 0.2); //51 works well
+		setMapping('trailAmount', 0, 0.5, 0.2);
 	},
 	
 
@@ -27,34 +27,35 @@ effect_triangles1 = {
 		  }
 		}
 
+
 	},
 
 	makeShape: function() {
 
 		var count = 0;
 
-		var rand1 = Math.floor(Math.random()*(320*240));
-		while(!pixelInRange(pixels[rand1*4 + 2]) && ++count < this.breakLoop) rand1 = Math.floor(Math.random()*(320*240));
+		var rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
+		while(!pixelInRange(pixels[rand1*4 + 3]) && ++count < this.breakLoop) rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
 
 
 		if(count >= this.breakLoop) return false;
 		else count = 0;
 
-		var rand2 = Math.floor(Math.random()*(320*240));
-		while((!pixelInRange(pixels[rand2*4 + 2]) || comparePts(rand2,rand1) > maxPointDist) && ++count < this.breakLoop) rand2 = Math.floor(Math.random()*(320*240));
+		var rand2 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
+		while((!pixelInRange(pixels[rand2*4 + 3]) || comparePts(rand2,rand1) > maxPointDist) && ++count < this.breakLoop) rand2 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
 
 		if(count >= this.breakLoop) return false;
 		else count = 0;
 
-		var rand3 = Math.floor(Math.random()*(320*240));
-		while((!pixelInRange(pixels[rand3*4 + 2]) || comparePts(rand3,rand1) > maxPointDist) && ++count < this.breakLoop) rand3 = Math.floor(Math.random()*(320*240));
+		var rand3 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
+		while((!pixelInRange(pixels[rand3*4 + 3]) || comparePts(rand3,rand1) > maxPointDist) && ++count < this.breakLoop) rand3 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
 		
 		if(count >= this.breakLoop) return false;
 		else count = 0;
 
 		var mean = Math.round((rand1+rand2+rand3)/3);
 		var alf = 1;
-		alf = rangeAdjustedPixel(pixels[mean*4 +2])/255;
+		alf = rangeAdjustedPixel(pixels[mean*4 + 3])/255;
 
 		this.graphics.beginFill(randomPaletteColour(), alf);
 

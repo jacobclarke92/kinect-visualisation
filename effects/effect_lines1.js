@@ -1,54 +1,55 @@
 effect_lines1 = {
   
-  int loopSize = 100;
+  lastX: 0,
+  lastY: 0,
 
 
-  int lineSpacing = 20;
-  int lastX = 0;
-  int lastY = 0;
+  breakLoop: 50,
 
+  init: function() {
+    setMapping('volumeDivider', 100, 5000, 150);
+    setMapping('maxPointDist', 2, 100, 20);
+    setMapping('lineThickness', 1, 30, 1);
+    setMapping('trailAmount', 0, 1, 0.5);
+  },
 
-  void draw() {
+  draw: function() {
 
-    fill(0,51);
-    rect(0,0,winW,winH);
-    scale(2);
 
 
     if(gotImage) {
       // image(img,0,0);
-      for(int i=0; i<loopSize; i ++) {
-        drawLines();
+      for(var i=0; i<volume/volumeDivider; i ++) {
+        this.drawLines();
       }
     }
 
 
-  }
+  },
 
 
-  void drawLines() {
+  drawLines: function() {
 
-    // console.log(img.pixels.length);
-    int randPix = Math.floor(Math.random()*(320*240));
 
-    while(imageData[randPix] == 0) randPix = int(random(0,img.pixels.length-1));
+    var count = 0;
 
-    int pixel = imageData[randPix];
+    var rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
 
-    int yPos = floor(randPix/320);
-    int xPos = (randPix % 320);
-
-    if(window.currentPalette) {
-      int colNum = int(random(0,window.currentPalette.colors.length));
-      var col = window.currentPalette.colors[colNum].rgb;
-      stroke(col[0],col[1],col[2]);
-    }else{
-      stroke(255);
+    while((!pixelInRange(pixels[rand1*4 + 3]) || comparePts(this.lastX + this.lastY*canvasWidth, rand1) < maxPointDist)
+          && ++count < this.breakLoop) {
+      rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
     }
-    line(xPos, yPos, lastX, lastY);
 
-    lastX = xPos;
-    lastY = yPos;
+    var yPos = Math.floor(rand1/canvasWidth);
+    var xPos = (rand1 % canvasWidth);
+
+    this.graphics.lineStyle(lineThickness, randomPaletteColour(), 1);
+
+    this.graphics.moveTo(this.lastX*2, this.lastY*2);
+    this.graphics.lineTo(xPos*2, yPos*2);
+
+    this.lastX = xPos;
+    this.lastY = yPos;
 
 
   }
