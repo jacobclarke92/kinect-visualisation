@@ -85,17 +85,14 @@ function updateCanvas() {
   //console.log(calibration_mirrored,calibration_rotateX,calibration_rotateY,calibration_offsetX,calibration_offsetY);
 
   var transform = 'scaleX('+calibration_mirrored+') rotateX('+calibration_rotateX+'deg) rotateY('+calibration_rotateY+'deg)';
-      transform += ' translate('+calibration_offsetX+'px,'+calibration_offsetY+'px)';
   $('.effectsRenderer,#processingCanvas3D').css({
-    'zoom': calibration_zoom,
     'transform': transform
   });
 
   var h = 480*calibration_zoom;
   $('#contentZone').css({
     'perspective-origin': '50% '+(h/2),
-    'perspective': calibration_perspective+'px',
-    'padding-bottom': calibration_offsetY+'px'
+    'perspective': calibration_perspective+'px'
   });
 }
 

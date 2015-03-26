@@ -191,11 +191,11 @@ function generateCalibrationParams() {
     calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 254, value: 0}},
     calibration_depthRange: {label: 'Depth Range', name: 'calibration_depthRange', midi: {min: 1, max: 55, value: 0}},
     calibration_zoom: {label: 'Zoom', name: 'calibration_zoom', midi: {min: 0.2, max: 4.0, step: 0.1, value: 0}},
-    calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -200, max: 200, value: 0}},
-    calibration_offsetY: {label: 'Offset Y', name: 'calibration_offsetY', midi: {min: -200, max: 200, value: 0}},
+    calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -300, max: (w.winW) ? w.winW : 1000, value: 0}},
+    calibration_offsetY: {label: 'Offset Y', name: 'calibration_offsetY', midi: {min: -200, max: (w.winH) ? w.winH : 800, value: 0}},
     calibration_rotateX: {label: 'Rotate X', name: 'calibration_rotateX', midi: {min: -65, max: 65, value: 0}},
     calibration_rotateY: {label: 'Rotate Y', name: 'calibration_rotateY', midi: {min: -65, max: 65, value: 0}},
-    calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', midi: {min: 10, max: 2000, value: 800}}
+    calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', midi: {min: 100, max: 2000, value: 800}}
   };
   $.each(calibrationParams,function(key,param) {
     if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) calibrationParams[key] = w.mappings[w.hash][key];

@@ -63,7 +63,7 @@ function getWindowSize() {
 		startDrawX = 0;
 		endDrawX = winW;
 
-		var offsetSize = 480/(640/winW);
+		var offsetSize = 480/((640)/winW);
 
 		sizeRatio = winW/320;
 
@@ -78,10 +78,10 @@ function getWindowSize() {
 }
 
 function tX(xVal) {
-	return startDrawX + xVal*sizeRatio;
+	return startDrawX + xVal*sizeRatio*calibration_zoom + calibration_offsetX;
 }
 function tY(yVal) {
-	return startDrawY + yVal*sizeRatio;
+	return startDrawY + yVal*sizeRatio*calibration_zoom  + calibration_offsetY;
 }
 function tV(val) {
 	return val*sizeRatio;

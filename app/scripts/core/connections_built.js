@@ -71,7 +71,7 @@ this.changeScript = function(script) {
 	if(initScriptTimeout) clearTimeout(initScriptTimeout);
 
 	animatingTimeout = setTimeout(function() {
-		this.animating = false;
+		_this.animating = false;
 	},500);
 	initScriptTimeout = setTimeout(function() {
 		_this.clearStage();
@@ -145,13 +145,16 @@ this.initLoadedScript = function(script) {
 	this.loadedScript = true;
 
 
-	if(!this.animating) {
-		this.animating = true;
+	if(!_this.animating) {
+		_this.animating = true;
 		this.requestAnimFrame(animateFrame);
 	}
 
-	this.$('.blackness').removeClass('active');
 
+	setTimeout(function() {
+		_this.clearStage();
+		_this.$('.blackness').removeClass('active');
+	},50);
 
 }
 
