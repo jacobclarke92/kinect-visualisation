@@ -23,7 +23,7 @@ effect_circles1 = {
     var count = 0;
 
     var rand1 = Math.floor(Math.random()*(320*240));
-    while(!pixelInRange(pixels[rand1*4 +2]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
+    while(!pixelInRange(pixels[rand1*4 + pixelBit]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
 
     if(count >= breakLoop) return false;
 
@@ -32,9 +32,9 @@ effect_circles1 = {
     var rand2 = Math.floor(Math.random()*(320*240));
     while(
       (
-        !pixelInRange(pixels[rand2*4 +2]) || 
+        !pixelInRange(pixels[rand2*4 + pixelBit]) || 
         comparePts(rand1,rand2) > maxPointDist || 
-        !pixelInRange(pixels[ Math.round( (rand1+rand2)/2 )*4 + 2 ] )
+        !pixelInRange(pixels[ Math.round( (rand1+rand2)/2 )*4 + pixelBit ] )
       )  && ++count < breakLoop ) { 
       rand2 = Math.floor(Math.random()*(320*240));
     }
@@ -44,7 +44,7 @@ effect_circles1 = {
     var midpoint = Math.round((rand1+rand2)/2);
 
     var alf = 255;
-    alf = rangeAdjustedPixel(pixels[midpoint*4 +2])/255;
+    alf = rangeAdjustedPixel(pixels[midpoint*4 + pixelBit])/255;
 
 
     var yPos1 = Math.floor(rand1/320);

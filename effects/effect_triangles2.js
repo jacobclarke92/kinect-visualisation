@@ -10,7 +10,7 @@ effect_triangles2 = {
 
 	init: function() {
 		setMapping('volumeDivider', 400, 100, 150);
-		setMapping('trailAmount', 0, 0.5, 0.2); //51 works well
+		setMapping('trailAmount', 0, 1, 0.2); //51 works well
 	},
 	
 
@@ -30,27 +30,27 @@ effect_triangles2 = {
 		var count = 0;
 
 		var rand1 = Math.floor(Math.random()*(320*240));
-		while(!pixelInRange(pixels[rand1*4 + 2]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
+		while(!pixelInRange(pixels[rand1*4 + pixelBit]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
 
 
 		if(count >= breakLoop) return false;
 		else count = 0;
 
 		var rand2 = Math.floor(Math.random()*(320*240));
-		while((!pixelInRange(pixels[rand2*4 + 2]) || Math.abs(rand2-rand1) > 5000) && ++count < breakLoop) rand2 = Math.floor(Math.random()*(320*240));
+		while((!pixelInRange(pixels[rand2*4 + pixelBit]) || Math.abs(rand2-rand1) > 5000) && ++count < breakLoop) rand2 = Math.floor(Math.random()*(320*240));
 
 		if(count >= breakLoop) return false;
 		else count = 0;
 
 		var rand3 = Math.floor(Math.random()*(320*240));
-		while((!pixelInRange(pixels[rand3*4 + 2]) || Math.abs(rand3-rand2) > 5000) && ++count < breakLoop) rand3 = Math.floor(Math.random()*(320*240));
+		while((!pixelInRange(pixels[rand3*4 + pixelBit]) || Math.abs(rand3-rand2) > 5000) && ++count < breakLoop) rand3 = Math.floor(Math.random()*(320*240));
 		
 		if(count >= breakLoop) return false;
 		else count = 0;
 
 		var mean = Math.round((rand1+rand2+rand3)/3);
 		var alf = 1;
-		alf = rangeAdjustedPixel(pixels[mean*4 +2])/255;
+		alf = rangeAdjustedPixel(pixels[mean*4 + pixelBit])/255;
 
 		this.graphics.beginFill(randomPaletteColour(), alf);
 

@@ -1,4 +1,7 @@
 effect_test_visuals = {
+
+
+	// this effect utilizes pixi's shape classes and creates stored objects rather than a storing all recent graphic frames
 	
 	particles: [],
 

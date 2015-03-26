@@ -39,7 +39,7 @@ effect_hexigons1 = {
 
 			var pix = this.hexigons[i].drawX + this.hexigons[i].drawY/2*320
 
-			if(pixelInRange(pix*4 + 2)) {
+			if(pixelInRange(pix*4 + pixelBit)) {
 
 				if(this.hexigons[i].triggerAmount > 0) this.graphics.lineStyle(2,randomPaletteColour());
 				else this.graphics.lineStyle(2,0xFFFFFF);

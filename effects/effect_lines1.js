@@ -35,7 +35,7 @@ effect_lines1 = {
 
     var rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
 
-    while((!pixelInRange(pixels[rand1*4 + 3]) || comparePts(this.lastX + this.lastY*canvasWidth, rand1) < maxPointDist)
+    while((!pixelInRange(pixels[rand1*4 + pixelBit]) || comparePts(this.lastX + this.lastY*canvasWidth, rand1) < maxPointDist)
           && ++count < this.breakLoop) {
       rand1 = Math.floor(Math.random()*(canvasWidth*canvasHeight));
     }

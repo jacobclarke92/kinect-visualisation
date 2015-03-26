@@ -110,7 +110,7 @@ function initFrame() {
 	//apply fade out to past frames
 	currentScript.graphics = new PIXI.Graphics();
     for(var i=0; i<currentScript.screens.length; i++) {
-      currentScript.screens[i].alpha -= trailAmount/10;
+      currentScript.screens[i].alpha -= (trailAmount == 1) ? 1 : trailAmount/10;
       if(currentScript.screens[i].alpha <= 0) {
         stage.removeChild(currentScript.screens[i]);
         currentScript.screens.splice(i,1);

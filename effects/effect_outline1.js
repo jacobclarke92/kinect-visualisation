@@ -26,12 +26,12 @@ effect_outline1 = {
 
 					// Pixel location and color
 					var loc = x + y*320;
-					var pix = pixels[loc*4 + 2];
+					var pix = pixels[loc*4 + pixelBit];
 					// color pix = img.pixels[loc];
 
 					// Pixel to the left location and color
 					var leftLoc = (x-1) + y*320;
-					var leftPix = pixels[leftLoc*4 + 2];
+					var leftPix = pixels[leftLoc*4 + pixelBit];
 
 					// New color is difference between pixel and left neighbor
 					var diffLeft = Math.abs(pix - leftPix);

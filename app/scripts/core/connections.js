@@ -10,6 +10,7 @@ this.testImageURL = '';
 this.currentScriptString = false;
 
 
+this.pixelBit = 2;
 this.loadedScript = false;
 this.loadChecker;
 this.timeout = 3000; //ms
@@ -110,10 +111,9 @@ this.changeScript = function(script) {
 	$('#'+script, this.uiPopup.document).addClass('active');
 
 	if(!this.inited) {
-				this.inited = true;
-				//THIS CAN ONLY BE RUN ONCE OR ELSE MAX LAG (due to listener double-ups)
-				run();
-		}
+		this.inited = true;
+		run();
+	}
 
 }
 
@@ -150,6 +150,8 @@ this.run = function() {
 
 	if(testingImage) {
 
+		this.pixelBit = 3;
+
 		this.image.onload = function() {
 
 			bufferCanvasContext.drawImage(this, 0, 0);
@@ -183,6 +185,8 @@ this.run = function() {
 		console.warn('Web Socket not inited wtf! run -devmode');
 
 	}else{
+
+		this.pixelBit = 2;
 
 		// this.image = document.createElement("img");
 

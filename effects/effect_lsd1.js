@@ -29,10 +29,10 @@ effect_lsd1 = {
   makeShape: function() {
     var rand = Math.round(Math.random()*(320*240));
 
-    // if(Math.random()*500 < 2) console.log(pixels[rand*4 + 2],depthThreshold,depthRange);
+    // if(Math.random()*500 < 2) console.log(pixels[rand*4 + pixelBit],depthThreshold,depthRange);
     
     var count = 0;
-    while(!pixelInRange(pixels[rand*4 + 2]) && ++count < breakLoop) rand = Math.round(Math.random()*(320*240));
+    while(!pixelInRange(pixels[rand*4 + pixelBit]) && ++count < breakLoop) rand = Math.round(Math.random()*(320*240));
 
     if(count >= breakLoop) return false;
 

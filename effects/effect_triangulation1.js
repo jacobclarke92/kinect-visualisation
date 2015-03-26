@@ -4,9 +4,7 @@ effect_triangulation1 = {
     setMapping('maxParticles', 20, 100, 60);
     setMapping('maxPointDist', 15, 85, 50);
     setMapping('particleSpeedVariaton', 0, 5, 0.5);
-    setMapping('trailAmount', 0, 0.5, 0.2); //51 works well
-    setMapping('silhouetteOpacity', 0, 255, 255); //51 works well
-
+    setMapping('trailAmount', 0, 1, 1);
   },
 
 
@@ -30,10 +28,6 @@ effect_triangulation1 = {
 
 
     if(gotImage) {
-
-
-      // tint(255,silhouetteOpacity/4)
-      // image(img,0,0,width/zoom,height/zoom);
 
       if(!this.spawned) {
         //once its got an image generate all particles
@@ -87,7 +81,7 @@ effect_triangulation1 = {
           }
         }
 
-        if(!pixelInRange(pixels[p1.pixel*4 + 2]) || p1.x < 0 || p1.y < 0 || p1.x > winW || p1.y > winH) p1.die = true;
+        if(!pixelInRange(pixels[p1.pixel*4 + pixelBit]) || p1.x < 0 || p1.y < 0 || p1.x > winW || p1.y > winH) p1.die = true;
 
         p1.step();
 
@@ -105,7 +99,7 @@ effect_triangulation1 = {
 
     var rand1 = Math.floor(Math.random()*(320*240));
     var count = 0;
-    while(!pixelInRange(pixels[rand1*4 + 2]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
+    while(!pixelInRange(pixels[rand1*4 + pixelBit]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
     if(count >= breakLoop) return false;
 
     var yPos1 = Math.floor(rand1/320);

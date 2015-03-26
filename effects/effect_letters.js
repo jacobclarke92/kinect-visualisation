@@ -4,10 +4,10 @@ effect_letters = {
 	spawned: false,
 
 	init:function() {
-    	setMapping('maxParticles', 10, 1000, 60);
+    	setMapping('maxParticles', 10, 1000, 150);
     	setMapping('letterSize', 5, 100, 20);
-    	setMapping('sizeVariation', 0.05, 1.0, 50);
-    	setMapping('trailAmount', 0, 100, 50);
+    	setMapping('sizeVariation', 0.05, 1.0, 0.5);
+    	// setMapping('trailAmount', 0, 100, 50);
     	setMapping('lifespan', 50, 500, 50);
 	},
 	draw:function() {
@@ -36,7 +36,7 @@ effect_letters = {
 			for(var i=0; i < this.particles.length; i++) {
     			var p1 = this.particles[i];
 
-    			if(!pixelInRange(pixels[p1.pixel*4 + 2])/* || p1.x < 0 || p1.y < 0 || p1.x > winW || p1.y > winH*/) p1.die = true;
+    			if(!pixelInRange(pixels[p1.pixel*4 + pixelBit])/* || p1.x < 0 || p1.y < 0 || p1.x > winW || p1.y > winH*/) p1.die = true;
 
     			p1.draw();
 
@@ -48,7 +48,7 @@ effect_letters = {
 
 		var rand1 = Math.floor(Math.random()*(320*240));
 		var count = 0;
-		while(!pixelInRange(pixels[rand1*4 + 2]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
+		while(!pixelInRange(pixels[rand1*4 + pixelBit]) && ++count < breakLoop) rand1 = Math.floor(Math.random()*(320*240));
 		if(count >= breakLoop) return false;
 
 		var yPos1 = Math.floor(rand1/320);
