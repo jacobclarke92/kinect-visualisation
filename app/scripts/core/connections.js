@@ -56,14 +56,31 @@ this.startPage = function(fallback) {
 
 }
 
+var animatingTimeout = false;
+var initScriptTimeout = false;
 this.changeScript = function(script) {
 
 	//remove instance of previous script
-	if(this.currentScriptString && this.currentScriptString != script) {
-		delete window['effect_'+this.currentScriptString];
-	}
-	this.currentScriptString = script;
+	// if(this.currentScriptString && this.currentScriptString != script) {
+	// 	window['effect_'+this.currentScriptString] = false;
+	// }
 
+	this.$('.blackness').addClass('active');
+	if(animatingTimeout) clearTimeout(animatingTimeout);
+	if(initScriptTimeout) clearTimeout(initScriptTimeout);
+
+	animatingTimeout = setTimeout(function() {
+		this.animating = false;
+	},500);
+	initScriptTimeout = setTimeout(function() {
+		_this.clearStage();
+		_this.realChangeScript(script);
+	},600);
+}
+this.realChangeScript = function(script) {
+
+
+	this.currentScriptString = script;
 	//clear stage
 	this.clearStage();
 	this.loadedScript = false;
@@ -78,34 +95,21 @@ this.changeScript = function(script) {
 	if(typeof mappings[hash] != 'object') this.mappings[hash] = {};
 
 	//begin loading script
-	requirejs(['/effects/effect_'+script+'.js'],function() {
+	if(window['effect_'+script]) {
+		initLoadedScript(script);
+	}else{
+		requirejs(['/effects/effect_'+script+'.js'],function() {
 
-		//check that the loaded file contained the actual effect object
-		if(window['effect_'+script]) {
+			//check that the loaded file contained the actual effect object
+			if(window['effect_'+script]) {
 
-			this.currentScript = window['effect_'+script];
-			
-			//always run init before anything else -- this sets up mapping controls
-			if(typeof currentScript.init != 'undefined') currentScript.init();
-			else trailAmount = 1;
-
-			if(typeof currentScript.screens == 'undefined') {
-				this.currentScript.screens = [];
-				this.currentScript.graphics = false;
+				initLoadedScript(script);
+				
+			}else{
+				console.warn('Loaded script but incorrectly named or something');
 			}
-
-			//creates the mapping controls for the effect
-			this.createControls();
-
-			//begin animation frame
-			console.info('Script loaded! ',currentScript);
-			this.loadedScript = true;
-			this.requestAnimFrame(animateFrame);
-
-		}else{
-			console.warn('Loaded script but incorrectly named or something');
-		}
-	});
+		});
+	}
 	
 	$('.changeScript',this.uiPopup.document).removeClass('active');
 	$('#'+script, this.uiPopup.document).addClass('active');
@@ -114,6 +118,39 @@ this.changeScript = function(script) {
 		this.inited = true;
 		run();
 	}
+
+}
+
+this.initLoadedScript = function(script) {
+
+	this.$('.blackness').removeClass('active');
+
+	this.currentScript = window['effect_'+script];
+		
+	//always run init before anything else -- this sets up mapping controls
+	if(typeof currentScript.init != 'undefined') currentScript.init();
+	else trailAmount = 1;
+
+	if(typeof currentScript.screens == 'undefined') {
+		this.currentScript.screens = [];
+		this.currentScript.graphics = false;
+	}
+
+	//creates the mapping controls for the effect
+	this.createControls();
+
+	//begin animation frame
+	console.info('Script loaded! ',currentScript);
+	this.loadedScript = true;
+
+
+	if(!this.animating) {
+		this.animating = true;
+		this.requestAnimFrame(animateFrame);
+	}
+
+	this.$('.blackness').removeClass('active');
+
 
 }
 

@@ -46,3 +46,19 @@ td{
   zoom: 0.5;
   /*display: block !important;*/
 }
+
+.blackness{
+  z-index: 99;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s linear;
+  -webkit-transition: opacity 0.5s linear;
+  background-color: black;
+  opacity: 0;
+  &.active{
+    opacity: 1;
+  }
+}

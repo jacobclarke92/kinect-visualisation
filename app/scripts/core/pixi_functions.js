@@ -161,7 +161,7 @@ function maybeLog(val) {
 
 
 function clearStage() {
-	while(stage.children[0]) { stage.removeChild(stage.children[0]); }
+	while(stage.children.length > 1) { stage.removeChild(stage.children[0]); }
 }
 
 function initFrame() {
