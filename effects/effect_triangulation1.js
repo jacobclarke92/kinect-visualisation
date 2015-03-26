@@ -4,7 +4,11 @@ effect_triangulation1 = {
     setMapping('maxParticles', 20, 100, 60);
     setMapping('maxPointDist', 15, 85, 50);
     setMapping('particleSpeedVariaton', 0, 5, 0.5);
+    setMapping('circleOpacity', 0, 1, 1);
+    setMapping('lineThickness', 0.5, 10, 1);
+
     setMapping('trailAmount', 0, 1, 1);
+    
   },
 
   spawned: false,
@@ -52,7 +56,7 @@ effect_triangulation1 = {
 
           if (distance < maxPointDist + kickVolume/30 /**(volume/800)*/) {
             
-            this.graphics.lineStyle(2, 0xFFFFFF, op/2/255);
+            this.graphics.lineStyle(tV( lineThickness ), 0xFFFFFF, op/2/255);
           
             this.graphics.moveTo(tX( p1.x ), tY( p1.y )) ;
             this.graphics.lineTo(tX( p2.x ), tY( p2.y )) ;
@@ -128,9 +132,10 @@ Particle = {
   },
 
   draw: function() {
-    currentScript.graphics.lineStyle(2, this.colour, this.opacity/255);
-    currentScript.graphics.beginFill(0x000000, this.opacity/255);
-    currentScript.graphics.drawCircle(this.x*2, this.y*2, 5, 5);
+    var opacity = (this.opacity/255)*circleOpacity;
+    currentScript.graphics.lineStyle(2, this.colour, opacity);
+    currentScript.graphics.beginFill(0x000000, opacity);
+    currentScript.graphics.drawCircle(tX( this.x ), tY( this.y ), 5, 5);
     currentScript.graphics.endFill();
   }
 
