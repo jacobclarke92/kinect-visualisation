@@ -1,23 +1,57 @@
 #!/usr/bin/env node
 
+var quickStart = false;
+var skipColour = false;
+var skipMidi = false;
+var skipKinect = false;
+var skipEffectsList = false;
+var devMode = false;
+
+var isWin = /^win/.test(process.platform);
+
 //util modules
-var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
-var app = require('http');
 var fs = require('fs');
+var colors = require('colors/safe');
+
+var kinect;
+var midi;
+
+
+if(isWin) {
+	console.log()
+}
+
+if (!fs.existsSync('./node_modules/kinect')) {
+    console.log(colors.red('Kinect module doesnt exist -- skipping'));
+    skipKinect = true;
+}else if(isWin) {
+	console.log(colors.orange('On windows -- skipping mac kinect module'));
+	skipKinect = true;
+}else{
+	kinect = require('kinect');
+}
+if (!fs.existsSync('./node_modules/midi')) {
+    console.log(colors.red('MIDI module doesnt exist -- skipping'));
+    skipMidi = true;
+}else{
+	midi = require('midi');
+}
+
+
+var app = require('http');
 var httpRequest = require('http-request');
 var url = require("url");
 var BufferStream = require('bufferstream');
 var WebSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
+var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
 
 var sys = require('sys')
 var exec = require('child_process').exec;
 var child;
 
 //app specific modules
-var midi = require('midi');
 var keypress = require('keypress');
-var kinect = require('kinect');
 
 //compilation modules
 var chokidar = require('chokidar');
@@ -27,17 +61,10 @@ var clients = [];
 
 var selectPort = 0;
 
-var quickStart = false;
-var skipColour = false;
-var skipMidi = false;
-var skipKinect = false;
-var skipEffectsList = false;
-var devMode = false;
+
 
 
 app.globalAgent.maxSockets = 500;
-
-var log = console.log.bind(console);
 
 console.reset = function () { return process.stdout.write('\033c') }
 //console.reset();

@@ -8,6 +8,7 @@
     "buffer-stream": "0.0.1",
     "bufferstream": "^0.6.2",
     "chokidar": "^1.0.0-rc3",
+    "colors": "^1.0.3",
     "connect": "^3.3.5",
     "event-source-polyfill": "0.0.1",
     "http-request": "^0.7.0",
