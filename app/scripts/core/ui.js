@@ -12,7 +12,7 @@ uiPopup = false;
 function openControls() {
 
   //launch popup window
-  uiPopup = window.open("/app/ui.html", "Controls", 'width=524,height='+screen.height+',left=0,top=0');
+  uiPopup = window.open("/app/ui.html", "Controls", 'width=585,height='+screen.height+',left=0,top=0');
   uiPopup.focus();
 
   //wait for controls window to load
