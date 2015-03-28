@@ -14,7 +14,7 @@ function generateEffectsFiles() {
 
 }
 
-function createSliders(sliderArray,target) {
+function createSliders(sliderArray, target) {
 
   console.log('Generating sliders for ',target.selector);
 
@@ -88,8 +88,18 @@ function createSliders(sliderArray,target) {
     },
     change: function() {
       var val = $(this).val();
-      var key = $('.noUi-handle',this).attr('data-name');
-      if(val != false) {
+      var handle = $('.noUi-handle',this);
+      var key = handle.attr('data-name');
+      var range = parseFloat(handle.attr('data-max'))-parseFloat(handle.attr('data-min'));
+      console.log('range',range);
+
+      if( range > 10 & val <= 2 ) {
+        console.log('rounding to 0');
+        $(this).val(0);
+        val = 0;
+      }
+
+      if(val !== false) {
         $('#'+key+'_text').val(val);
         paramElementChanged(this, val);
         w.saveCookie();
