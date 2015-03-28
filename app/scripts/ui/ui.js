@@ -242,17 +242,20 @@ function updatePalettes() {
 function paramElementChanged(elem, value) {
 
 	if(elem.$) {
-		// console.log('knob value changed');
-		elem = elem.$; // is knob
+		// is a knob
+		elem = elem.$; 
 	}else if(!$(elem).hasClass('.noUi-handle')) {
-		// console.log('slider value changed');
+		// is a slider input field
 		elem = $(elem);
+	}else if($(elem).hasClass('.noUi-target')) {
+		// is an actual slider
+		elem = $('.noUi-handle', elem);
 	}else{
 		console.log('unknown element value changed');
 		elem = $(elem); //or otherwise...
 	}
 
-	// console.log(elem);
+	console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = elem.attr('data-name') || elem.attr('id');
 	if(!isset(paramName)) {

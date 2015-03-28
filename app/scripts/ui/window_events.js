@@ -118,11 +118,11 @@ function loaded() {
 	
 
 	// Tray buttons
-	$('#toggleTesting').click(function() {
+	$('#toggleTesting').unbind('click').bind('click', function(e) {
 		w.toggleTesting('image',false);
 	});
 
-	$('#mapMidiButton').click(function() {
+	$('#mapMidiButton').unbind('click').bind('click', function(e) {
 		if($('body').hasClass('mapping')) {
 			$('body').removeClass('mapping waiting');
 			$('[data-midi-mappable].waiting').removeClass('waiting');
@@ -132,7 +132,7 @@ function loaded() {
 		console.log('toggling mapping');
 	});
 
-	$('#mapAudioButton').click(function() {
+	$('#mapAudioButton').unbind('click').bind('click', function(e) {
 		if($('body').hasClass('mappingAudio')) {
 			w.currentlyMappingAudio = false;
 			$('body').removeClass('mappingAudio waitingAudio');
@@ -142,10 +142,42 @@ function loaded() {
 		}
 	});
 
-	$('.doneAudioMapping').click(function(e) {
+	$('#exportButton').unbind('click').bind('click', function(e) {
+		showAlert({
+			title: 'Copy to a text file:',
+			message: '<p>Be careful if you choose to modify this, min/max values are there for a reason.</p><textarea style="width: 100%; height: 200px; unicode-bidi: embed; font-family: monospace; white-space: pre; font-size: 8px;">'+JSON.stringify(w.mappings, null, 3)+'</textarea>',
+			buttons: [{label: 'Otayy'}]
+		});
+		// prompt('Copy the following to a text file:', JSON.stringify(w.mappings));
+	});
+	$('#importButton').unbind('click').bind('click', function(e) {
+		var importedData = prompt('Paste your exported data:');
+		if(importedData) {
+			try {
+				JSON.parse(importedData);
+			} catch (e) {
+				showAlert({
+					title: 'Unable to parse JSON string!',
+					message: 'Try running it through a JSON validator or something',
+					buttons: [{label: 'Aw rats!'}]
+				});
+				return false;
+			}
+			w.mappings = JSON.parse(importedData);
+			w.saveCookie();
+			w.loadCookie();
+			window.close();
+
+		}
+
+	});
+
+	$('.doneAudioMapping').unbind('click').bind('click', function(e) {
 		console.log('done button pressed');
 		mappingAudioDone(e);
 	});
+
+
 
 
 
@@ -300,7 +332,7 @@ function showAlert(config) {
 		for(var i=0; i<config.buttons.length; i++) {
 			$('.button'+(i+1),dialog).html(config.buttons[i].label || 'Okay').bind('click', config.buttons[i].callback).removeClass('hidden');
 		}
-		$('.button:not(.hidden').click(closeAlert);
+		$('.button:not(.hidden').unbind('click').bind('click', closeAlert);
 		$('.button:not(.hidden').last().focus();
 	}
 
