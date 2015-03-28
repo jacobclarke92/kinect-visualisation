@@ -65,14 +65,14 @@ function audioMappableElementClicked(e) {
 		w.currentlyMappingAudio = true;
 		
 		e.preventDefault();
-		console.log('Now waiting for midi info for ',e.target);
+		console.log('Now waiting for audio params to be set up for ',e.target);
 	
 	}
 }
 
 //mapping audio done button pressed
 function mappingAudioDone(e) {
-	if($('body').hasClass('mappingAudio waitingAudio')) {
+	if($('body').hasClass('mappingAudio') && $('body').hasClass('waitingAudio')) {
 		console.log('confirming audio mapping');
 		var elem = $('[data-audio-mappable].waitingAudio');
 		if(elem) {

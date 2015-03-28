@@ -5,7 +5,7 @@ effect_lsd1 = {
 
 
   init: function() {
-    setMapping('volumeDivider', 200, 40, 40);
+    setMapping('volumeDivider', 40, 200, 40);
     setMapping('shapeSize', 1, 100, 6);
     setMapping('trailAmount', 0, 1, 0.2); 
   },

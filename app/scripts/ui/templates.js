@@ -28,7 +28,13 @@ function createSliders(sliderArray, target) {
       var template = $('#templates #paramTemplate').children().clone();
       
       //init basic variables that are required to init noUiSlider
+      if(isNaN(param.midi.min)) param.midi.min = 0;
+      if(isNaN(param.midi.max)) param.midi.max = 0;
       var step = Math.round(Math.abs(param.midi.max-param.midi.min + 1)/100);
+      if(isNaN(step)) {
+        step = 1;
+        console.log('bad step',key, param.midi.max, param.midi.min, param);
+      }
       var label = (isset(param.label )) ? param.label : (isset(param.name )) ? param.name.readable() : 'Undefined param name';
       var cc = (isset(param.midi.cc ) && param.midi.cc != false) ? param.midi.cc : -1;
       
