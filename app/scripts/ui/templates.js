@@ -49,6 +49,7 @@ function createSliders(sliderArray, target) {
         }
 
       });
+      $('.slider .range',template).val( param.midi.value );
 
       //if slider has a CC value stored in cookies, display it as such
       if(cc != -1) $('.slider .range .noUi-handle', template).attr('data-midi-linked','')
@@ -110,8 +111,11 @@ function createSliders(sliderArray, target) {
   //handle input number changes and scroll on hover
   $('.slider .rangeText', target).on({
     'change': function() {
-      var slider = $('#'+$(this).data('name'));
-      var val = $(this).val();
+      // console.log('input text change');
+      var slider = $('#'+$(this).data('name')+'.noUi-handle').first();
+      console.log(slider);
+      var val = parseFloat( $(this).val() );
+      console.log(typeof val);
       slider.val(val);
       paramElementChanged(slider, val);
     },
@@ -170,6 +174,8 @@ function generateFilterParams() {
       filterParams[key] = w.mappings[w.hash][key];
       //this just makes it so the titles don't contain 'Filter' when t
       filterParams[key].label = (key.split('filter_').join('')).readable();
+      console.log(key, w.mappings[w.hash][key].midi.value);
+      filterParams[key].midi.value = w.mappings[w.hash][key].midi.value;
     }else{
       if(!isset(w.mappings[w.hash])) w.mappings[w.hash] = {};
       w.mappings[w.hash][key] = {

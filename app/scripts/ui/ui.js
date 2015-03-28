@@ -241,14 +241,24 @@ function updatePalettes() {
 
 function paramElementChanged(elem, value) {
 
-	if(elem.$) elem = elem.$; // is knob
-	else if(!$(elem).hasClass('.noUi-handle')) elem = $('.noUi-handle',elem); //is slider
-	else elem = $(elem); //or otherwise...
+	if(elem.$) {
+		// console.log('knob value changed');
+		elem = elem.$; // is knob
+	}else if(!$(elem).hasClass('.noUi-handle')) {
+		// console.log('slider value changed');
+		elem = $(elem);
+	}else{
+		console.log('unknown element value changed');
+		elem = $(elem); //or otherwise...
+	}
 
 	// console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = elem.attr('data-name') || elem.attr('id');
-	if(!isset(paramName)) console.log('paramName is unknown for ',elem);
+	if(!isset(paramName)) {
+		console.log('paramName is unknown for ',elem);
+		paramName = 'unknownParamName';
+	}
 
 	if(!isset(w.mappings[w.hash][paramName])) {
 		w.mappings[w.hash][paramName] = {

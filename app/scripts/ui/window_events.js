@@ -13,7 +13,7 @@ window.onunload = function() {
 var curDrag = false;
 var offsetLeft = 0;
 
-window.onkeyup = function(e) {keyPressed(e)};
+window.onkeypress = function(e) {keyPressed(e)};
 
 window.onresize = function(e) {
 	//update freq bar width in core upon resize so it draws accordingly
@@ -230,28 +230,57 @@ function initAllParameters() {
 
 
 function keyPressed(event) {
-	// console.log(event);
 
-  //number keys trigger effects
-  var chCode = ('which' in event) ? event.which : event.keyCode;
+	//number keys trigger effects
+	var chCode = ('which' in event) ? event.which : event.keyCode;
+		
+	var hasFocus = $("input, textarea").is(":focus");
 
-  // MMMMMMMMMMMAP key
-  if(chCode == 77) {
-  	$('#mapMidiButton').trigger('click');
-  }else if(chCode == 65) {
-  	$('#mapAudioButton').trigger('click');
-  //Key 1-4 toggle tabs
-  }else if(chCode >= 49 && chCode <= 52) {
-  	$('body').blur();
-  	$('.tabs>ul>li').removeClass('active');
-  	$('.tabs>ul>li>a').removeClass('active');
-  	$('a[href="#tab-'+(chCode-48)+'"]').parent().addClass('active');
-  	$('.tabArea').removeClass('active').hide();
-  	$('#tab-'+(chCode-48)).show().addClass('active');
-  }else if(chCode == 8 && $('body').hasClass('mapping waiting')) {
-  	deleteSelectedMapping();
-  }
-  console.log('key pressed ',chCode);
+	if(hasFocus) {
+		var input = $('input:focus').first();
+		if(input.attr('type') == 'number') {
+			if (chCode < 48 || chCode > 57) {
+				console.log('preventing non-number key press');
+				event.preventDefault();
+				return false;
+			}else{
+
+				/*
+				//this doesn't work because it needs to be on keyup to get the updated value but in order for preventdefault to work it needs to be on keydown lmao
+				var inputVal = parseFloat(input.val());
+				var inputMin = parseFloat(input.attr('min'));
+				var inputMax = parseFloat(input.attr('max'));
+				console.log(inputVal, inputMin, inputMax);
+				if( inputVal < parseFloat(input.attr('min')) || inputVal > parseFloat(input.attr('max')) ) {
+					event.preventDefault();
+					return false;
+				}
+				*/
+				return;
+			}
+		}else{
+			return;
+		}
+	}
+
+
+	// MMMMMMMMMMMAP key
+	if(chCode == 77) {
+		$('#mapMidiButton').trigger('click');
+	}else if(chCode == 65) {
+		$('#mapAudioButton').trigger('click');
+	//Key 1-4 toggle tabs
+	}else if(chCode >= 49 && chCode <= 52) {
+		$('body').blur();
+		$('.tabs>ul>li').removeClass('active');
+		$('.tabs>ul>li>a').removeClass('active');
+		$('a[href="#tab-'+(chCode-48)+'"]').parent().addClass('active');
+		$('.tabArea').removeClass('active').hide();
+		$('#tab-'+(chCode-48)).show().addClass('active');
+	}else if(chCode == 8 && $('body').hasClass('mapping waiting')) {
+		deleteSelectedMapping();
+	}
+	console.log('key pressed ',chCode);
   
 }
 
