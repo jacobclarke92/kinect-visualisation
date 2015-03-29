@@ -103,20 +103,37 @@ function compileLess(path) {
 	});
 }
 
-function compileScript() {
-	console.log('Browserifying connections.js');
-	child = exec("browserify ./app/scripts/core/connections.js -o ./app/scripts/core/connections_built.js", function (error, stdout, stderr) {
+var scriptsToCompile = [
+	'./app/scripts/core/connections.js',
+	'./app/scripts/helpers/outline_worker.js'
+];
+
+function compileScript(scriptName) {
+
+	console.log('Compiling '+scriptName);
+
+	var newName = scriptName.replace('.js','_built.js');
+	child = exec('browserify '+scriptName+' -o '+newName, function (error, stdout, stderr) {
 		sys.print('stdout: ' + stdout);
 		sys.print('stderr: ' + stderr);
 		if (error !== null) {
 			console.log('exec error: ' + error);
 		}
 	});
+
+}
+function compileScripts() {
+
+	console.log('Browserifying JS files');
+
+	for(var i=0; i < scriptsToCompile.length; i ++) {
+		compileScript(scriptsToCompile[i]);
+	}
 }
 
 compileLess('./app/styles/ui.less');
 compileLess('./app/styles/core.less');
-compileScript();
+compileScripts();
 if(devMode) {
 
 	var lessWatcher = chokidar.watch('file', {
@@ -129,9 +146,13 @@ if(devMode) {
 
 	var scriptWatcher = chokidar.watch('file', {persistent: true});
 	scriptWatcher.on('change', function(path, stats) {
-		compileScript();
+		compileScript(path);
 	});
-	scriptWatcher.add('./app/scripts/core/connections.js');
+
+	for(var i=0; i < scriptsToCompile.length; i ++) {
+		scriptWatcher.add(scriptsToCompile[i]);	
+	}
+	
 
 }
 
