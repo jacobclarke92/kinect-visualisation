@@ -325,6 +325,7 @@ var wss;
 var kstream;
 var kcontext;
 
+// this method of getting kinect data wasn't working out, hence the logic
 if(!skipKinect && 1 == 0) {
 
 	console.log('Initialising kinect!');
@@ -387,7 +388,7 @@ function updateKinectAngle(amt) {
 var id2 = 0;
 function writeImage(image) {
 
-	console.log('writing image');
+	// console.log('writing image');
 
 	var uri = 'data:image/png;base64,' + image.toString('base64');
 

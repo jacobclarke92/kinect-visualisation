@@ -236,6 +236,8 @@ this.run = function() {
 
 		if(attemptingToUseSocketLol) {
 
+			//this new fangled technologoy idk
+
 			socket = websocket('ws://localhost:5600');
 			socket.on('data', function (data) {
 
@@ -278,6 +280,8 @@ this.run = function() {
 
 		}else{
 
+			//old method -- loads image stream
+
 			console.warn('setting up old eventsource method');
 
 			image.onload = function() {
@@ -301,7 +305,7 @@ this.run = function() {
 			this.imageEventSource = new EventSource('/images');
 			this.imageEventSource.addEventListener('message', function(event) {
 
-				console.log('got image');
+				// console.log('got image');
 				if(event.data.substring(0,14) == 'data:image/png' ) {
 					
 					_this.image.src = event.data;
@@ -310,12 +314,13 @@ this.run = function() {
 						//generate array of outline points, second parameter is smoothing
 						_this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
 
-						var blobs = FindBlobs(rawImage);
+						// var blobs = FindBlobs(rawImage);
 					}
 
 					if(!_this.gotKinect) {
 						 console.log(event);
 						 _this.gotKinect = true;
+						 _this.gotImage = true;
 						 $('#kinectCheck', _this.uiPopup.document).removeClass('error');
 					}
 				}

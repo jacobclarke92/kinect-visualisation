@@ -8,7 +8,7 @@ function FindBlobs(src) {
   // console.log(xSize, ySize);
   // console.log(srcPixels.length+' pixel data bits');
   var midPt = Math.round(xSize*(ySize/2) + xSize/2);
-  console.log('mid point',srcPixels[midPt*4],srcPixels[midPt*4+1],srcPixels[midPt*4+2],srcPixels[midPt*4+3]);
+  // console.log('mid point',srcPixels[midPt*4],srcPixels[midPt*4+1],srcPixels[midPt*4+2],srcPixels[midPt*4+3]);
   // console.log(srcPixels);
 
   // This will hold the indecies of the regions we find
