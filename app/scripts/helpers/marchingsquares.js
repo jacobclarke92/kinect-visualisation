@@ -16,7 +16,7 @@
     MarchingSquares.DOWN = 3;
     MarchingSquares.RIGHT = 4;
 
-    MarchingSquares.depthThreshold = 155;
+    MarchingSquares.theshold = 155;
     MarchingSquares.w = 320;
     MarchingSquares.h = 240;
 
@@ -59,7 +59,7 @@
         return MarchingSquares.walkPerimeter(startingPoint.x, startingPoint.y);
     };
 
-     MarchingSquares.getBlobOutlinePointsFromImage = function(sourceDataRaw, smoothing, minPoints){
+     MarchingSquares.getBlobOutlinePointsFromImage = function(sourceDataRaw,smoothing,minPoints){
         
         MarchingSquares.smooth = smoothing;
         MarchingSquares.minPoints = minPoints;
@@ -108,32 +108,32 @@
     };
 
 
-    MarchingSquares.walkPerimeter = function(startX, startY, _imageData){
+    MarchingSquares.walkPerimeter = function(startX, startY){
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
         if (startX < 0){
             startX = 0;
         }
-        if (startX > MarchingSquares.w){
-            startX = MarchingSquares.w;
+        if (startX > MarchingSquares.sourceCanvas.width){
+            startX = MarchingSquares.sourceCanvas.width;
         }
         if (startY < 0){
             startY = 0;
         }
-        if (startY > MarchingSquares.h){
-            startY = MarchingSquares.h;
+        if (startY > MarchingSquares.sourceCanvas.height){
+            startY = MarchingSquares.sourceCanvas.height;
         }
 
         // Set up our return list
-        var pointList = [];
+        var pointList =[];
 
         // Our current x and y positions, initialized
         // to the init values passed in
         var x = startX;
         var y = startY;
 
-        var imageData = (_imageData) ? _imageData : MarchingSquares.sourceContext.getImageData(0,0, MarchingSquares.w, MarchingSquares.h);
+        var imageData = MarchingSquares.sourceContext.getImageData(0,0, MarchingSquares.sourceCanvas.width, MarchingSquares.sourceCanvas.height);
         var index, width4 = imageData.width * 4;
 
         var counter = 0;
@@ -149,9 +149,9 @@
             // If our current point is within our image
             // add it to the list of points
             if (x >= 0 &&
-                x < MarchingSquares.w &&
+                x < MarchingSquares.sourceCanvas.width &&
                 y >= 0 &&
-                y < MarchingSquares.h){
+                y < MarchingSquares.sourceCanvas.height){
 
                 pointList.push([x - 2, y - 1]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
                     
@@ -186,10 +186,10 @@
     MarchingSquares.step = function(index, data, width4){
         
 
-        MarchingSquares.upLeft = data[index + 2] > MarchingSquares.depthThreshold;
-        MarchingSquares.upRight = data[index + 6] > MarchingSquares.depthThreshold;
-        MarchingSquares.downLeft = data[index + width4 + 2] > MarchingSquares.depthThreshold;
-        MarchingSquares.downRight = data[index + width4 + 6] > MarchingSquares.depthThreshold;
+        MarchingSquares.upLeft = data[index + 2] > calibration_depthThreshold;
+        MarchingSquares.upRight = data[index + 6] > calibration_depthThreshold;
+        MarchingSquares.downLeft = data[index + width4 + 2] > calibration_depthThreshold;
+        MarchingSquares.downRight = data[index + width4 + 6] > calibration_depthThreshold;
 
         // Store our previous step
         MarchingSquares.previousStep = MarchingSquares.nextStep;
@@ -264,6 +264,6 @@
         }
     };
 
-    self.MarchingSquares = MarchingSquares;
+    window.MarchingSquares = MarchingSquares;
 
-}(self));
+}(window));

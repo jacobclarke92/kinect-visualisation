@@ -10,11 +10,16 @@
       self.postMessage({'outline': outline});
   }
   self.onmessage = function(e) {
+
+
     firstPixel = e.data.firstPixel;
     outlineAccuracy = e.data.outlineAccuracy;
     MarchingSquares.depthThreshold = e.data.depthThreshold;
+    _marchingSquares.depthThreshold = e.data.depthThreshold;
     getOutline(e.data.imageData);
-  }
+
+    if(Math.random() < 0.01) console.log(e.data);
+  }  
 
   
 }.call(self));

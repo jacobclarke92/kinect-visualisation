@@ -95,9 +95,11 @@
                     break;
             }
 
-        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
+        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false && counter > 1);
 
-        var firstFruits = []
+        // console.log(MarchingSquares.depthThreshold);
+
+        var firstFruits = [];
 
         for (var i = -3; i < pointList.length; i = i+MarchingSquares.smooth) {
             firstFruits.push(pointList[i]);
@@ -113,6 +115,8 @@
     // previous directions
 
     MarchingSquares.step = function(index, data, width4){
+
+
         
 
         MarchingSquares.upLeft = data[index + 2] > MarchingSquares.depthThreshold;

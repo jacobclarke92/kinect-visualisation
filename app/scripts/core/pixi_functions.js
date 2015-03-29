@@ -102,10 +102,12 @@ function initPIXI() {
 
 	document.getElementById('contentZone').appendChild(renderer.view);
 
-	depthTextureBase = new PIXI.BaseTexture(image);
-	depthTexture = new PIXI.Texture(depthTextureBase);
-	depthImageSprite = new PIXI.Sprite(depthTexture);
-	stage.addChild(depthImageSprite);
+	if(typeof image != 'undefined') {
+		depthTextureBase = new PIXI.BaseTexture(image);
+		depthTexture = new PIXI.Texture(depthTextureBase);
+		depthImageSprite = new PIXI.Sprite(depthTexture);
+		stage.addChild(depthImageSprite);
+	}
 	animating = true;
 }
 

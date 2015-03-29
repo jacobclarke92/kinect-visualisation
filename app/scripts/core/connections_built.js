@@ -177,12 +177,17 @@ var bufferCanvasContext = bufferCanvas.getContext('2d');
 var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
 this.outlineArray = [];
-var worker;
 
 
 var socket;
 var attemptingToUseSocketLol = false;
 
+this.startOutlineX = -1;
+this.startOutlineY = -1;
+
+
+var outlineWorker;
+var imageLoaderWorker;
 
 
 this.run = function() {
@@ -211,7 +216,7 @@ this.run = function() {
 				console.log('image loaded sending to post service');
 
 				//calibration_depthThreshold and calibration_depthRange are delcared in mappings.js and are controlled in popup
-				window.worker.postMessage([_this.pixels, _this.calibration_depthThreshold, _this.calibration_depthRange]);
+				// window.worker.postMessage([_this.pixels, _this.calibration_depthThreshold, _this.calibration_depthRange]);
 				_this.waiting = true;
 			}
 
@@ -279,11 +284,19 @@ this.run = function() {
 
 		}else{
 
-			//old method -- loads image stream
+			//older and current method -- loads image stream
+
 
 			console.warn('setting up old eventsource method');
 
 			image.onload = function() {
+
+		    	if(!_this.gotKinect) {
+					 console.log(event);
+					 _this.gotKinect = true;
+					 _this.gotImage = true;
+					 $('#kinectCheck', _this.uiPopup.document).removeClass('error');
+				}
 
 				bufferCanvasContext.drawImage(this, 0, 0);
 				_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
@@ -291,64 +304,13 @@ this.run = function() {
 
 				_this.imageLoaded = _this.image;
 
-				if(_this.pixels && _this.hash.indexOf('outline') > -1) {
-
-					//worker can't create canvas elements for data manipulation so we send it the first non transparent pixel in image
-					var y, i, rowData;
-					var firstX = -1;
-					var firstY = -1;
-			        for(y = 0; y < canvasHeight - 10 ; y += 10) {
-
-			            rowData = bufferCanvasContext.getImageData(0, y, canvasWidth, 1).data;
-
-			            for(var i=0; i < rowData.length - 4; i += 4){
-
-			                if(rowData[i+pixelBit] > calibration_depthThreshold && rowData[i+pixelBit] < 255){
-
-			                	firstX = i;
-			                	firstY = y;
-
-			                }
-			            }
-			        }
-
-					// _this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
-					if(firstX != -1 && firstY != -1) {
-						worker.postMessage({
-					    	'cmd': 'getOutline', 
-					    	'imageData': _this.rawImage,
-							'firstPixel': [firstX, firstY],
-							'outlineAccuracy': 3,
-							'depthTheshold': calibration_depthThreshold
-						});
-					}else{
-						console.log('cannot find first non transparent pixel!')
-					}
-				}
+				processImageOutline();
 
 			}
-			if(this.imageEventSource) {
-				this.imageEventSource.removeEventListener('message');
-				this.imageEventSource = false;
-			}
-			this.imageEventSource = new EventSource('/images');
-			this.imageEventSource.addEventListener('message', function(event) {
 
-				// console.log('got image');
-				if(event.data.substring(0,14) == 'data:image/png' ) {
-					
-					_this.image.src = event.data;
-					
+			console.log('launching image loader worker');
 
-					if(!_this.gotKinect) {
-						 console.log(event);
-						 _this.gotKinect = true;
-						 _this.gotImage = true;
-						 $('#kinectCheck', _this.uiPopup.document).removeClass('error');
-					}
-				}
-			});
-
+			launchImageLoaderWorker();
 
 		}
 	}
@@ -358,95 +320,83 @@ this.run = function() {
 	
 }
 
+function processImageOutline() {
+	
+	if(_this.currentScript.requresOutline === true) {
+
+		//worker can't create canvas elements for data manipulation so we send it the first non transparent pixel in image
+		var y, i, rowData;
+		_this.startOutlineX = -1;
+		_this.startOutlineY = -1;
+	    for(y = 0; y < canvasHeight - 10 ; y += 10) {
+
+	        rowData = bufferCanvasContext.getImageData(0, y, canvasWidth, 1).data;
+
+	        for(var i=0; i < rowData.length - 4; i += 4){
+
+	            if(rowData[i+pixelBit] > _this.calibration_depthThreshold && rowData[i+pixelBit] < _this.calibration_depthThreshold+_this.calibration_depthRange){
+
+	            	_this.startOutlineX = i/4;
+	            	_this.startOutlineY = y;
+
+	            }
+	        }
+	    }
+
+	    // console.log(_this.calibration_depthThreshold);
+
+		// _this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
+		if(_this.startOutlineX != -1 && _this.startOutlineY != -1) {
+			outlineWorker.postMessage({
+		    	'cmd': 'getOutline', 
+		    	'imageData': _this.rawImage,
+				'firstPixel': [_this.startOutlineX, _this.startOutlineY],
+				'outlineAccuracy': 3,
+				'depthThreshold': _this.calibration_depthThreshold
+			});
+		}else{
+			console.log('cannot find first non transparent pixel!')
+		}
+	}
+}
+
+
+
 function launchOutlineWorker() {
 
-	worker = new Worker('/app/scripts/helpers/outline_worker_built.js');
-		
-    worker.onmessage = function(e) {
-		_this.outlineArray = e.data.outline;
-    };
-    // worker.onerror = function(e) {
-    //   alert('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
-    // };
-
-    //start the worker
- //    worker.postMessage({
- //    	'cmd': 'getOutline', 
-	// 	'value': _this.pixels
-	// });
-}
-
-function startWorker() {
-
-	//remove instance of worker if one already exists
-	if(window.worker) {
-		console.log("removing window worker");
-		window.worker.terminate();
-		delete window.worker;
+	if(outlineWorker) {
+		outlineWorker.terminate();
 	}
 
-	//create window worker
-	window.worker = createWorker(process, 320, 240, this.hash);
-	window.worker.addEventListener('message', function(event) {
-
-		if(_this.testingImage) console.log('test image received from worker', event);
-		_this.waiting = false;
-		_this.gotImage = true;
-
-		var eventCopy = event;
-		eventCopy.width = _this.canvasWidth;
-
-		var blobs = FindBlobs(event);
-
-		console.log(blobs.length+' outlines');
-		// console.log(blobs);
-
-	});
+	outlineWorker = new Worker('/app/scripts/helpers/outline_worker_built.js');
+		
+    outlineWorker.onmessage = function(e) {
+		_this.outlineArray = e.data.outline;
+		// console.log(_this.outlineArray.length);
+    };
+    outlineWorker.onerror = function(e) {
+      console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
 }
 
-function createWorker(source) {
-	var URL = window.URL || window.webkitURL;
-	var args = Array.prototype.slice.call(arguments, 1);
-	var script = '(' + source.toString() + ').apply(this,' + JSON.stringify(args) + ')';
-	var blob = new Blob([script], {type: 'application/javascript'});
-	var url = URL.createObjectURL(blob);
-	var worker = new Worker(url);
-	return worker;
-}
+function launchImageLoaderWorker() {
 
+	if(imageLoaderWorker) {
+		imageLoaderWorker.terminate();
+	}
 
+	imageLoaderWorker = new Worker('/app/scripts/helpers/image_loader_worker.js');
+		
+    imageLoaderWorker.onmessage = function(e) {
+		image.src = e.data.image;
+    };
+    imageLoaderWorker.onerror = function(e) {
+      alert('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
+    imageLoaderWorker.postMessage({
+    	'cmd': 'start'
+    });
 
-//this function is a worker and only exists in its own scope\
-function process(width, height, hash) {
-
-	addEventListener('message', function(event) {
-
-		var pixels = event.data[0];
-		var threshold = event.data[1];
-		var range = event.data[2];
-
-		var image = new Array(width * height);
-		var max = threshold+range;
-		var min = threshold;
-
-		var i=0;
-		for (var y = 0; y < height; y++) {
-			for (var x = 0; x < width; x++) {
-				var offset = ((y * width) + x)*4;
-				var value = pixels[offset];
-				
-				if(value > min && value < max) value = ((value-min)/(max-min))*255;
-				else value = 0; 
-				
-
-				i++;
-				image[i] = Math.floor(value);
-			}
-		}
-		postMessage(image);
-
-	});
-	
 }
 
 }.call(window));

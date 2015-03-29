@@ -96,9 +96,11 @@
                     break;
             }
 
-        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
+        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false && counter > 1);
 
-        var firstFruits = []
+        // console.log(MarchingSquares.depthThreshold);
+
+        var firstFruits = [];
 
         for (var i = -3; i < pointList.length; i = i+MarchingSquares.smooth) {
             firstFruits.push(pointList[i]);
@@ -114,6 +116,8 @@
     // previous directions
 
     MarchingSquares.step = function(index, data, width4){
+
+
         
 
         MarchingSquares.upLeft = data[index + 2] > MarchingSquares.depthThreshold;
@@ -210,11 +214,16 @@
       self.postMessage({'outline': outline});
   }
   self.onmessage = function(e) {
+
+
     firstPixel = e.data.firstPixel;
     outlineAccuracy = e.data.outlineAccuracy;
     MarchingSquares.depthThreshold = e.data.depthThreshold;
+    _marchingSquares.depthThreshold = e.data.depthThreshold;
     getOutline(e.data.imageData);
-  }
+
+    if(Math.random() < 0.01) console.log(e.data);
+  }  
 
   
 }.call(self));
