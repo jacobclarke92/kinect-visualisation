@@ -1,4 +1,4 @@
-effect_sprinkles = {
+effect_squiggle = {
 
   invertImageData: false,
   flattenDepth: false,
