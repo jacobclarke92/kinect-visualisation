@@ -176,6 +176,7 @@ var bufferCanvasContext = bufferCanvas.getContext('2d');
 var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
 this.outlineArray = [];
+var worker;
 
 
 var socket;
@@ -283,16 +284,46 @@ this.run = function() {
 
 			image.onload = function() {
 
-				// console.log("TEST IMAGE LOADED");
-
 				bufferCanvasContext.drawImage(this, 0, 0);
 				_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
 				_this.pixels = _this.rawImage.data;
 
 				_this.imageLoaded = _this.image;
 
-				// var midPt = width*(height/2) + width/2;
-				// console.log(pixels[midPt*4+2]);
+				if(_this.pixels && _this.hash.indexOf('outline') > -1) {
+
+					//worker can't create canvas elements for data manipulation so we send it the first non transparent pixel in image
+					var y, i, rowData;
+					var firstX = -1;
+					var firstY = -1;
+			        for(y = 0; y < canvasHeight - 10 ; y += 10) {
+
+			            rowData = bufferCanvasContext.getImageData(0, y, canvasWidth, 1).data;
+
+			            for(var i=0; i < rowData.length - 4; i += 4){
+
+			                if(rowData[i+pixelBit] > calibration_depthThreshold && rowData[i+pixelBit] < 255){
+
+			                	firstX = i;
+			                	firstY = y;
+
+			                }
+			            }
+			        }
+
+					// _this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
+					if(firstX != -1 && firstY != -1) {
+						worker.postMessage({
+					    	'cmd': 'getOutline', 
+					    	'imageData': _this.rawImage,
+							'firstPixel': [firstX, firstY],
+							'outlineAccuracy': 3,
+							'depthTheshold': calibration_depthThreshold
+						});
+					}else{
+						console.log('cannot find first non transparent pixel!')
+					}
+				}
 
 			}
 			if(this.imageEventSource) {
@@ -306,13 +337,7 @@ this.run = function() {
 				if(event.data.substring(0,14) == 'data:image/png' ) {
 					
 					_this.image.src = event.data;
-					if(_this.pixels && _this.hash.indexOf('outline') > -1) {
-
-						//generate array of outline points, second parameter is smoothing
-						_this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
-
-						// var blobs = FindBlobs(rawImage);
-					}
+					
 
 					if(!_this.gotKinect) {
 						 console.log(event);
@@ -327,9 +352,27 @@ this.run = function() {
 		}
 	}
 	
-	startWorker();
+	launchOutlineWorker();
 
 	
+}
+
+function launchOutlineWorker() {
+
+	worker = new Worker('/app/scripts/helpers/outline_worker_built.js');
+		
+    worker.onmessage = function(e) {
+		_this.outlineArray = e.data.outline;
+    };
+    // worker.onerror = function(e) {
+    //   alert('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    // };
+
+    //start the worker
+ //    worker.postMessage({
+ //    	'cmd': 'getOutline', 
+	// 	'value': _this.pixels
+	// });
 }
 
 function startWorker() {

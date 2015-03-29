@@ -6,7 +6,7 @@
  * returns an Array of x and y positions defining the perimeter of a blob of non-transparent pixels on a canvas
  *
  */
-(function (window){
+(function (self){
 
     var MarchingSquares = {};
 
@@ -23,10 +23,6 @@
     MarchingSquares.smooth = 5;
 
     // MarchingSquares.sourceCanvas = document.getElementById('testCanvas');
-    MarchingSquares.sourceCanvas = document.createElement("canvas");
-    MarchingSquares.sourceCanvas.width = MarchingSquares.w;
-    MarchingSquares.sourceCanvas.height = MarchingSquares.h ;
-    MarchingSquares.sourceContext = MarchingSquares.sourceCanvas.getContext("2d");
 
     MarchingSquares.testing = false;
     MarchingSquares.forceStop = false;
@@ -41,74 +37,8 @@
     // define the perimeter of the upper-left most
     // object in that texture, using pixel alpha>0 to define
     // the boundary.
-    MarchingSquares.getBlobOutlinePoints = function(sourceCanvas){
 
-        //NOT USED
-
-        //Add a padding of 1 pixel to handle points which touch edges
-        // MarchingSquares.sourceCanvas = document.createElement("canvas");
-        MarchingSquares.sourceCanvas.width = sourceCanvas.width + 2;
-        MarchingSquares.sourceCanvas.height = sourceCanvas.height + 2;
-        MarchingSquares.sourceContext = MarchingSquares.sourceCanvas.getContext("2d");
-        MarchingSquares.sourceContext.drawImage(sourceCanvas,1,1);
-
-        // Find the starting point
-        var startingPoint = MarchingSquares.getFirstNonTransparentPixelTopDown(MarchingSquares.sourceCanvas);
-
-        // Return list of x and y positions
-        return MarchingSquares.walkPerimeter(startingPoint.x, startingPoint.y);
-    };
-
-     MarchingSquares.getBlobOutlinePointsFromImage = function(sourceDataRaw, smoothing, minPoints){
-        
-        MarchingSquares.smooth = smoothing;
-        MarchingSquares.minPoints = minPoints;
-
-        MarchingSquares.sourceData = MarchingSquares.sourceContext.createImageData(MarchingSquares.w, MarchingSquares.h); 
-        MarchingSquares.sourceData.data.set(sourceDataRaw);
-        MarchingSquares.sourceContext.putImageData(MarchingSquares.sourceData, 0,0);
-        
-        // Find the starting point
-        var startingPoint = MarchingSquares.getFirstNonTransparentPixelTopDown(MarchingSquares.sourceCanvas);
-
-        MarchingSquares.testing = false;
-        MarchingSquares.forceStop = false;
-        // Return list of x and y positions
-        if(startingPoint != null) {
-            //console.log(startingPoint);
-            return startingPoint;
-            //return MarchingSquares.walkPerimeter(startingPoint.x, startingPoint.y);
-        }
-        else return [];
-    };
-
-    MarchingSquares.getFirstNonTransparentPixelTopDown = function(canvas){
-
-        MarchingSquares.cT = (window.cropTop) ? Math.round(window.cropTop) : 0;
-        MarchingSquares.cR = (window.cropRight) ? Math.round(window.cropRight) : 0;
-        MarchingSquares.cB = (window.cropBottom) ? Math.round(window.cropBottom) : 0;
-        MarchingSquares.cL = (window.cropLeft) ? Math.round(window.cropLeft) : 0;
-
-        // var context = canvas.getContext("2d");
-        var y, i, rowData;
-        for(y = MarchingSquares.cT; y < MarchingSquares.h - MarchingSquares.cB; y+= 10){
-            rowData = MarchingSquares.sourceContext.getImageData(0, y, MarchingSquares.w, 1).data;
-            // MarchingSquares.sourceContext.putImageData(rowData, MarchingSquares.w, y);
-            // rowData = rowData.data;
-            for(i=MarchingSquares.cL*4; i<rowData.length - MarchingSquares.cR*4; i+=4){
-                // console.log(rowData[i+2]);
-                if(rowData[i+2] > calibration_depthThreshold && rowData[i+2] < 255){
-
-                    var pts = MarchingSquares.walkPerimeter(i/4,y);
-                    if(pts.length >= MarchingSquares.minPoints) return pts;
-                }
-            }
-        }
-        return null;
-    };
-
-
-    MarchingSquares.walkPerimeter = function(startX, startY, _imageData){
+    MarchingSquares.walkPerimeter = function(startX, startY, imageData){
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
@@ -133,7 +63,6 @@
         var x = startX;
         var y = startY;
 
-        var imageData = (_imageData) ? _imageData : MarchingSquares.sourceContext.getImageData(0,0, MarchingSquares.w, MarchingSquares.h);
         var index, width4 = imageData.width * 4;
 
         var counter = 0;
