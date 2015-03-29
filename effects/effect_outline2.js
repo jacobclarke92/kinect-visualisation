@@ -1,5 +1,7 @@
 effect_outline2 = {
 
+	requiresOutline: false,
+
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
 		setMapping('pixelResolution', 1, 10, 3);

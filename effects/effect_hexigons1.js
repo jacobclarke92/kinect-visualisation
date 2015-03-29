@@ -1,5 +1,7 @@
 effect_hexigons1 = {
 
+	requresOutline: false,
+
 	hexigons: [],
 
 	init: function() {

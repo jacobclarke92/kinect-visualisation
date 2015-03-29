@@ -1,5 +1,7 @@
 effect_outline3 = {
 
+  requresOutline: true,
+
   invertImageData: false,
   flattenDepth: false,
   getImageEdges: false,

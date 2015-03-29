@@ -1,8 +1,6 @@
 effect_triangles2 = {
 
-	invertImageData: false,
-	flattenDepth: false,
-	getImageEdges: false,
+	requresOutline: false,
 
 	screens: [],
   	graphics: false,

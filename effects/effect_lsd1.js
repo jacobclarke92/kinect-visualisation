@@ -1,5 +1,7 @@
 effect_lsd1 = {
 
+  requresOutline: false,
+
   screens: [],
   graphics: false,
 

@@ -1,5 +1,7 @@
 effect_triangulation1 = {
 
+  requresOutline: false,
+
   init: function() {
     setMapping('maxParticles', 20, 100, 60);
     setMapping('maxPointDist', 15, 85, 50);

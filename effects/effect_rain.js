@@ -1,6 +1,8 @@
 //exclude
 effect_rain = {
 
+	requresOutline: true,
+
 	particles: [],
 	
 	init:function() {

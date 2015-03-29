@@ -1,6 +1,8 @@
 //exclude
 effect_linesfromcenter = {
 
+  requresOutline: false,
+
   invertImageData: false,
   flattenDepth: false,
   getImageEdges: false,

@@ -1,5 +1,7 @@
 effect_outline1 = {
 
+	requiresOutline: false,
+
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
 		setMapping('pixelResolution', 1, 10, 3);
@@ -17,7 +19,6 @@ effect_outline1 = {
 
 		if(gotImage) {
 
-			this.graphics.lineStyle(lineThickness,randomPaletteColour());
 
 			// PImage edgeImg = createImage(img.width, img.height, ARGB);
 			var rez = Math.round(pixelResolution);
@@ -37,6 +38,8 @@ effect_outline1 = {
 					var diffLeft = Math.abs(pix - leftPix);
 
 					if(diffLeft > 0 && this.lastDiff > 0 && pixelInRange(pix)) {
+
+						this.graphics.lineStyle(lineThickness,randomPaletteColour());
 						this.graphics.moveTo(tX( this.lastX ), tY( this.lastY ));
 						this.graphics.lineTo(tX( x ), tY( y ));
 						// line(this.lastX,this.lastY,x,y);

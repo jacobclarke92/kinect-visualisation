@@ -1,4 +1,6 @@
 effect_depth_image = {
+
+	requresOutline: false,
 	draw:function() {
 		if(imageLoaded) {
 
@@ -9,8 +11,8 @@ effect_depth_image = {
 			// console.log(typeof imageLoaded);
 			var img = new PIXI.Sprite(texture);
 			img.alpha = 1;
-			img.x = 0;
-			img.y = 0;
+			img.x = startDrawX;
+			img.y = startDrawY;
 			img.scale.x = sizeRatio;
 			img.scale.y = sizeRatio;
 			stage.addChild(img);

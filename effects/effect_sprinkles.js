@@ -1,8 +1,6 @@
-effect_squiggle = {
+effect_sprinkles = {
 
-  invertImageData: false,
-  flattenDepth: false,
-  getImageEdges: false,
+  requresOutline: false,
 
   screens: [],
   graphics: false,
