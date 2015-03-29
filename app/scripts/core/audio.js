@@ -53,20 +53,18 @@ function setupAudioNodes(stream) {
 	javascriptNode = audioContext.createScriptProcessor(audioSampleSize, 1, 1);
 
 	javascriptNode.onaudioprocess = function () {
-		if(uiPopup.mappingAudio) {
 
-			if(!gotSound) gotSound = true;
+		if(!gotSound) gotSound = true;
 
-			amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
-			analyserNode.getByteTimeDomainData(amplitudeArray);
+		amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
+		analyserNode.getByteTimeDomainData(amplitudeArray);
 
-			frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);
-			analyserNode.getByteFrequencyData(frequencyArray);
+		frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);
+		analyserNode.getByteFrequencyData(frequencyArray);
 
-			volume = 0;
-			for(var i=0; i < amplitudeArray.length; i++) {
-				volume += Math.abs(amplitudeArray[i]-128);
-			}
+		volume = 0;
+		for(var i=0; i < amplitudeArray.length; i++) {
+			volume += Math.abs(amplitudeArray[i]-128);
 		}
 	}
 
@@ -122,18 +120,24 @@ function processAudio() {
 				var minX = soundRange[0]/100*freqCanvasWidth;
 				var maxX = soundRange[1]/100*freqCanvasWidth;
 
-				// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
-				if(currentlyMappingAudio && x+barWidth >= minX && x+barWidth <= maxX) {
 
+
+				
 					// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
+					if(currentlyMappingAudio && x+barWidth >= minX && x+barWidth <= maxX) {
 
-					if(barHeight > soundThresh*threshMultiplier) freqBarsCanvas.fillStyle = 'rgb(50, ' + (barHeight+100) + ', 50)';
-					else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-					currentFreqRangeVolume += barHeight;
-					freqCount ++;
-				}else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
+						// console.log(soundRange[0]*freqBarWidth,soundRange[1]*freqBarWidth);
 
-				freqBarsCanvas.fillRect(Math.round(x), Math.round(200-barHeight), Math.round(barWidth), Math.round(barHeight)); 
+						if(barHeight > soundThresh*threshMultiplier) freqBarsCanvas.fillStyle = 'rgb(50, ' + (barHeight+100) + ', 50)';
+						else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+						currentFreqRangeVolume += barHeight;
+						freqCount ++;
+					}else freqBarsCanvas.fillStyle = 'rgb(' + (barHeight+50) + ','+(barHeight+50)+','+(barHeight+50)+')';
+
+				if(uiPopup.mappingAudio || i%4 == 1) {
+					
+					freqBarsCanvas.fillRect(Math.round(x), Math.round(200-barHeight), Math.round(barWidth), Math.round(barHeight)); 
+				}
 				
 
 				if(audioMappings.length > 0) {
