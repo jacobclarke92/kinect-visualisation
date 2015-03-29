@@ -232,8 +232,8 @@ this.run = function() {
 
 		this.pixelBit = 2;
 
-		// this.image = document.createElement("img");
-
+		// This is from when I attempted to use an alternative socket method to get kinect data
+		// I want to try processing it in a work a worker
 		if(attemptingToUseSocketLol) {
 
 			//this new fangled technologoy idk
@@ -246,8 +246,6 @@ this.run = function() {
 	  			var bytearray = new Uint8Array(data);
 
 	  			// var b64encoded = btoa(String.fromCharCode.apply(null, bytearray));
-
-
 	  			
 	  			window.rawImage = bufferCanvasContext.getImageData(0,0, width, height);
 				var imgdatalen = window.rawImage.data.length;

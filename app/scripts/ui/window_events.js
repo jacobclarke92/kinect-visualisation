@@ -124,9 +124,11 @@ function loaded() {
 
 	$('#mapMidiButton').unbind('click').bind('click', function(e) {
 		if($('body').hasClass('mapping')) {
+			mappingMIDI = false;
 			$('body').removeClass('mapping waiting');
 			$('[data-midi-mappable].waiting').removeClass('waiting');
 		}else{
+			mappingMIDI = true;
 			$('body').addClass('mapping');
 		}
 		console.log('toggling mapping');
@@ -134,10 +136,12 @@ function loaded() {
 
 	$('#mapAudioButton').unbind('click').bind('click', function(e) {
 		if($('body').hasClass('mappingAudio')) {
+			mappingAudio = false;
 			w.currentlyMappingAudio = false;
 			$('body').removeClass('mappingAudio waitingAudio');
 			$('[data-audio-mappable].waiting').removeClass('waiting');
 		}else{
+			mappingAudio = true;
 			$('body').addClass('mappingAudio');
 		}
 	});
@@ -287,7 +291,9 @@ function keyPressed(event) {
 	if(hasFocus) {
 		var input = $('input:focus').first();
 		if(input.attr('type') == 'number') {
-			if (chCode < 48 || chCode > 57) {
+
+			//is it isn't a number and isn't a period
+			if ((chCode < 48 || chCode > 57) && chCode != 46) { 
 				console.log('preventing non-number key press');
 				event.preventDefault();
 				return false;

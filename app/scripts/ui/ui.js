@@ -1,5 +1,6 @@
 
-
+var mappingAudio = false;
+var mappingMIDI = false;
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {
@@ -61,8 +62,6 @@ function audioMappableElementClicked(e) {
 		$('[data-audio-mappable].waitingAudio').removeClass('waiting');
 		$(this).addClass('waitingAudio');
 		$('body').addClass('waitingAudio');
-
-		w.currentlyMappingAudio = true;
 		
 		e.preventDefault();
 		console.log('Now waiting for audio params to be set up for ',e.target);

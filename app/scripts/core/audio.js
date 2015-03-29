@@ -53,8 +53,9 @@ function setupAudioNodes(stream) {
 	javascriptNode = audioContext.createScriptProcessor(audioSampleSize, 1, 1);
 
 	javascriptNode.onaudioprocess = function () {
+		if(uiPopup.mappingAudio) {
 
-		if(!gotSound) gotSound = true;
+			if(!gotSound) gotSound = true;
 
 			amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
 			analyserNode.getByteTimeDomainData(amplitudeArray);
@@ -66,7 +67,7 @@ function setupAudioNodes(stream) {
 			for(var i=0; i < amplitudeArray.length; i++) {
 				volume += Math.abs(amplitudeArray[i]-128);
 			}
-
+		}
 	}
 
 	sourceNode.connect(analyserNode);
@@ -168,7 +169,7 @@ function processAudio() {
 				x += barWidth;
 			}
 
-			for(var n=0; n< audioMappings.length; n++) {
+			for(var n=0; n < audioMappings.length; n++) {
 
 				var param = audioMappings[n];
 
@@ -254,7 +255,7 @@ function processAudio() {
 			}
 
 			//draw guidelines while mapping
-			if(currentlyMappingAudio) {
+			if(uiPopup.mappingAudio) {
 
 				freqBarsCanvas.beginPath();
 				freqBarsCanvas.strokeStyle = 'rgb(255,255,255)'   ;
