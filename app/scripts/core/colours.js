@@ -35,7 +35,7 @@ function getTopColours() {
 			console.log('Error: ' + errorThrown);
 		},
 		success: function(xml) {
-			console.log('AJAX Request is succeded.',xml);
+			console.info('Colour palettes loaded.',xml);
 			palettesHtml = '<div class="palette" onclick="w.paletteChange(this)" id="_0"><span style="background-color: #FFFFFF; width: 100%;"></span></div>';
 			
 			$(xml).find('palettes palette').each(function(paletteIndex) {

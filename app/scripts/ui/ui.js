@@ -280,7 +280,7 @@ function paramElementChanged(elem, value) {
 	w.mappings[w.hash][paramName].midi.value = value;
 	w[paramName] = value;
 
-	if(paramName.indexOf('calibration_') != -1) w.updateCanvas();
+	if(paramName.indexOf('calibration_') != -1 && paramName != 'calibration_depthThreshold' && paramName != 'calibration_depthRange') w.updateCanvas();
 
 }
 

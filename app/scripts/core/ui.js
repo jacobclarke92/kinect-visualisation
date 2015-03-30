@@ -26,7 +26,7 @@ function openControls() {
     $('#openControlsToggle').hide();
     if(typeof window.palettesHtml == 'string' && window.palettesHtml != '') $('#paletteZone',uiPopup.document).html(window.palettesHtml);
 
-  	console.log('control window loaded now!');
+  	console.info('Control window onload called');
 
 
   }

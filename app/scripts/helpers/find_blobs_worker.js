@@ -1,3 +1,26 @@
+
+
+var depthThreshold = 166;
+var pixelBit = 2;
+
+function getOutline(imageData) {
+    // outline = MarchingSquares.getBlobOutlinePointsFromImage(imageData, outlineAccuracy, 20);
+    blobs = FindBlobs(imageData);
+    self.postMessage({'blobs': blobs});
+}
+self.onmessage = function(e) {
+
+
+  depthThreshold = e.data.depthThreshold;
+  pixelBit = e.data.pixelBit;
+
+  var blobs = FindBlobs(e.data.imageData);
+  self.postMessage({'blobs': blobs});
+
+  if(Math.random() < 0.01) console.log(e.data);
+}  
+
+
 function FindBlobs(src) {
 
   var xSize = src.width || 320;

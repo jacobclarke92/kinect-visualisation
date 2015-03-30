@@ -1,7 +1,5 @@
 (function () {
 
-console.log('running connections.js');
-
 _this = this;
 
 this.testingImage = false;
@@ -176,6 +174,7 @@ var bufferCanvasContext = bufferCanvas.getContext('2d');
 var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
 this.outlineArray = [];
+this.imageBlobs = [];
 
 
 var socket;
@@ -185,13 +184,19 @@ this.startOutlineX = -1;
 this.startOutlineY = -1;
 
 
+var attemptingToUseBlobDetection = true;
+
 var outlineWorker;
 var imageLoaderWorker;
+var blobDetectionWorker;
 
+
+var timesRun = 0;
 
 this.run = function() {
 
-	console.log('running core -- should only occur once');
+	timesRun ++;
+	if(timesRun > 1) console.warn('Core init is being run more than once!');
 
 	_this.image = new Image();
 	var showDepth = true;
@@ -241,6 +246,8 @@ this.run = function() {
 		// I want to try processing it in a work a worker
 		if(attemptingToUseSocketLol) {
 
+			console.info('setting up new image socket method');
+
 			//this new fangled technologoy idk
 
 			socket = websocket('ws://localhost:5600');
@@ -286,7 +293,7 @@ this.run = function() {
 			//older and current method -- loads image stream
 
 
-			console.warn('setting up old eventsource method');
+			console.info('setting up old eventsource method');
 
 			image.onload = function() {
 
@@ -303,11 +310,18 @@ this.run = function() {
 
 				_this.imageLoaded = _this.image;
 
-				processImageOutline();
+				if(attemptingToUseBlobDetection) {
+					blobDetectionWorker.postMessage({
+				    	'cmd': 'getBlobs', 
+				    	'imageData': _this.rawImage,
+						'depthThreshold': _this.calibration_depthThreshold,
+						'pixelBit': _this.pixelBit
+					});
+				}else{
+					processImageOutline();
+				}
 
 			}
-
-			console.log('launching image loader worker');
 
 			launchImageLoaderWorker();
 
@@ -315,6 +329,7 @@ this.run = function() {
 	}
 	
 	launchOutlineWorker();
+	launchBlobDetectionWorker();
 
 	
 }
@@ -361,7 +376,28 @@ function processImageOutline() {
 
 
 
+function launchBlobDetectionWorker() {
+
+	console.info('starting blob detection worker');
+
+	if(blobDetectionWorker) {
+		blobDetectionWorker.terminate();
+	}
+
+	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker.js');
+		
+    blobDetectionWorker.onmessage = function(e) {
+		_this.imageBlobs = e.data.blobs;
+		// console.log(_this.outlineArray.length);
+    };
+    blobDetectionWorker.onerror = function(e) {
+      console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
+}
+
 function launchOutlineWorker() {
+
+	console.info('starting outline worker');
 
 	if(outlineWorker) {
 		outlineWorker.terminate();
@@ -379,6 +415,8 @@ function launchOutlineWorker() {
 }
 
 function launchImageLoaderWorker() {
+
+	console.info('starting image loader worker');
 
 	if(imageLoaderWorker) {
 		imageLoaderWorker.terminate();

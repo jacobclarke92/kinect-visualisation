@@ -1,8 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function () {
 
-console.log('running connections.js');
-
 _this = this;
 
 this.testingImage = false;
@@ -177,6 +175,7 @@ var bufferCanvasContext = bufferCanvas.getContext('2d');
 var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
 this.outlineArray = [];
+this.imageBlobs = [];
 
 
 var socket;
@@ -186,13 +185,19 @@ this.startOutlineX = -1;
 this.startOutlineY = -1;
 
 
+var attemptingToUseBlobDetection = true;
+
 var outlineWorker;
 var imageLoaderWorker;
+var blobDetectionWorker;
 
+
+var timesRun = 0;
 
 this.run = function() {
 
-	console.log('running core -- should only occur once');
+	timesRun ++;
+	if(timesRun > 1) console.warn('Core init is being run more than once!');
 
 	_this.image = new Image();
 	var showDepth = true;
@@ -242,6 +247,8 @@ this.run = function() {
 		// I want to try processing it in a work a worker
 		if(attemptingToUseSocketLol) {
 
+			console.info('setting up new image socket method');
+
 			//this new fangled technologoy idk
 
 			socket = websocket('ws://localhost:5600');
@@ -287,7 +294,7 @@ this.run = function() {
 			//older and current method -- loads image stream
 
 
-			console.warn('setting up old eventsource method');
+			console.info('setting up old eventsource method');
 
 			image.onload = function() {
 
@@ -304,11 +311,18 @@ this.run = function() {
 
 				_this.imageLoaded = _this.image;
 
-				processImageOutline();
+				if(attemptingToUseBlobDetection) {
+					blobDetectionWorker.postMessage({
+				    	'cmd': 'getBlobs', 
+				    	'imageData': _this.rawImage,
+						'depthThreshold': _this.calibration_depthThreshold,
+						'pixelBit': _this.pixelBit
+					});
+				}else{
+					processImageOutline();
+				}
 
 			}
-
-			console.log('launching image loader worker');
 
 			launchImageLoaderWorker();
 
@@ -316,6 +330,7 @@ this.run = function() {
 	}
 	
 	launchOutlineWorker();
+	launchBlobDetectionWorker();
 
 	
 }
@@ -362,7 +377,28 @@ function processImageOutline() {
 
 
 
+function launchBlobDetectionWorker() {
+
+	console.info('starting blob detection worker');
+
+	if(blobDetectionWorker) {
+		blobDetectionWorker.terminate();
+	}
+
+	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker.js');
+		
+    blobDetectionWorker.onmessage = function(e) {
+		_this.imageBlobs = e.data.blobs;
+		// console.log(_this.outlineArray.length);
+    };
+    blobDetectionWorker.onerror = function(e) {
+      console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
+}
+
 function launchOutlineWorker() {
+
+	console.info('starting outline worker');
 
 	if(outlineWorker) {
 		outlineWorker.terminate();
@@ -380,6 +416,8 @@ function launchOutlineWorker() {
 }
 
 function launchImageLoaderWorker() {
+
+	console.info('starting image loader worker');
 
 	if(imageLoaderWorker) {
 		imageLoaderWorker.terminate();
@@ -4146,8 +4184,6 @@ Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert
 
 // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
 Buffer.prototype.copy = function copy (target, target_start, start, end) {
-  var self = this // source
-
   if (!start) start = 0
   if (!end && end !== 0) end = this.length
   if (target_start >= target.length) target_start = target.length
@@ -4156,13 +4192,13 @@ Buffer.prototype.copy = function copy (target, target_start, start, end) {
 
   // Copy 0 bytes; we're done
   if (end === start) return 0
-  if (target.length === 0 || self.length === 0) return 0
+  if (target.length === 0 || this.length === 0) return 0
 
   // Fatal error conditions
   if (target_start < 0) {
     throw new RangeError('targetStart out of bounds')
   }
-  if (start < 0 || start >= self.length) throw new RangeError('sourceStart out of bounds')
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
   if (end < 0) throw new RangeError('sourceEnd out of bounds')
 
   // Are we oob?
@@ -4247,8 +4283,7 @@ Buffer._augment = function _augment (arr) {
   arr.constructor = Buffer
   arr._isBuffer = true
 
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
+  // save reference to original Uint8Array set method before overwriting
   arr._set = arr.set
 
   // deprecated, will be removed in node 0.13+
