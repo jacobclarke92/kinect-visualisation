@@ -211,20 +211,18 @@ this.run = function() {
 			bufferCanvasContext.drawImage(this, 0, 0);
 			_this.rawImage = false;
 			_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
-			window.pixels = _this.rawImage.data;
+			_this.pixels = _this.rawImage.data;
 
-			if(_this.testingImage) console.log('test image loaded',_this.pixels.length);
-
-			if (!_this.waiting && window.worker) {
-
-				console.log('image loaded sending to post service');
-
-				//calibration_depthThreshold and calibration_depthRange are delcared in mappings.js and are controlled in popup
-				// window.worker.postMessage([_this.pixels, _this.calibration_depthThreshold, _this.calibration_depthRange]);
-				_this.waiting = true;
-			}
+			console.log('test image loaded',_this.pixels.length);
 
 			_this.imageLoaded = this;
+
+			blobDetectionWorker.postMessage({
+		    	'cmd': 'getBlobs', 
+		    	'imageData': _this.rawImage,
+				'depthThreshold': _this.calibration_depthThreshold,
+				'pixelBit': _this.pixelBit
+			});
 
 		};
 
@@ -233,6 +231,10 @@ this.run = function() {
 		window.pixels = [];
 		_this.image.src = _this.testImageURL;
 		document.getElementById('testImage').src = _this.testImageURL;
+
+
+		launchOutlineWorker();
+		launchBlobDetectionWorker();
 
 	}else if(!websocket) {
 
@@ -313,7 +315,7 @@ this.run = function() {
 				if(attemptingToUseBlobDetection) {
 					blobDetectionWorker.postMessage({
 				    	'cmd': 'getBlobs', 
-				    	'imageData': _this.rawImage,
+				    	'imageData': _this.rawImage.data,
 						'depthThreshold': _this.calibration_depthThreshold,
 						'pixelBit': _this.pixelBit
 					});
@@ -324,15 +326,63 @@ this.run = function() {
 			}
 
 			launchImageLoaderWorker();
+			launchOutlineWorker();
+			launchBlobDetectionWorker();
 
 		}
 	}
 	
-	launchOutlineWorker();
-	launchBlobDetectionWorker();
 
 	
 }
+
+
+
+
+_this.currentTestImage = 0;
+_this.testImages = 2;
+_this.randomInterval = false;
+_this.randomizeImage = function(intervalChange) {
+
+  console.log('changing test image');
+
+
+  var rand = Math.ceil(Math.random()*(_this.testImages-1));
+  while(rand == _this.currentTestImage && _this.testImages > 1) rand = Math.ceil(Math.random()*(_this.testImages-1));
+
+  _this.currentTestImage = rand;
+  _this.testImageURL = '/app/img/test'+_this.currentTestImage+'.png';
+
+  //console.log('new image: '+testImageURL);
+
+  if(_this.randomInterval) clearInterval(_this.randomInterval);
+
+  if(intervalChange) randomInterval = setTimeout(function() {randomizeImage(true)}, 5000);
+
+}
+_this.toggleTesting = function(thing, elem) {
+  console.info('toggling test '+thing);
+  if(thing == 'image') {
+    _this.testingImage = !_this.testingImage;
+    if(_this.testingImage) {
+    	console.log('stopping image loader worker');
+    	_this.randomizeImage(false);
+    	imageLoaderWorker.postMessage({
+	    	'cmd': 'stop'
+	    });
+    }else{
+    	console.log('starting image loader worker');
+    	imageLoaderWorker.postMessage({
+	    	'cmd': 'start'
+	    });
+    }
+    _this.run();
+  }else if(thing == 'sound') {
+    _this.testingSound = !_this.testingSound;
+    elem.innerHTML = ((_this.testingImage) ? 'Disable' : 'Enable') + ' test ' + thing;
+  }
+}
+
 
 function processImageOutline() {
 	
@@ -388,6 +438,7 @@ function launchBlobDetectionWorker() {
 		
     blobDetectionWorker.onmessage = function(e) {
 		_this.imageBlobs = e.data.blobs;
+		// _this.pixels = e.data.image;
 		// console.log(_this.outlineArray.length);
     };
     blobDetectionWorker.onerror = function(e) {

@@ -84,48 +84,6 @@ function clearCookie() {
 }
 
 
-
-
-
-
-function toggleTesting(thing, elem) {
-  console.info('toggling test '+thing);
-  if(thing == 'image') {
-    testingImage = !testingImage;
-    randomizeImage(false);
-    run();
-  }else if(thing == 'sound') {
-    testingSound = !testingSound;
-    elem.innerHTML = ((testingImage) ? 'Disable' : 'Enable') + ' test ' + thing;
-  }
-}
-
-
-
-var currentTestImage = 0;
-var testImages = 2;
-var randomInterval = false;
-function randomizeImage(intervalChange) {
-
-  console.log('changing test image');
-
-
-  var rand = Math.ceil(Math.random()*(testImages-1));
-  while(rand == currentTestImage && testImages > 1) rand = Math.ceil(Math.random()*(testImages-1));
-
-  currentTestImage = rand;
-  testImageURL = '/app/img/test'+currentTestImage+'.png';
-
-  //console.log('new image: '+testImageURL);
-
-  if(randomInterval) clearInterval(randomInterval);
-  run();
-
-  if(intervalChange) randomInterval = setTimeout(function() {randomizeImage(true)}, 5000);
-
-}
-
-
 function capitaliseFirstLetter(string){
     return string.charAt(0).toUpperCase() + string.slice(1);
 }

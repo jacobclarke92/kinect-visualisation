@@ -15,24 +15,31 @@ self.onmessage = function(e) {
   pixelBit = e.data.pixelBit;
 
   var blobs = FindBlobs(e.data.imageData);
-  self.postMessage({'blobs': blobs});
+  self.postMessage({
+    'blobs': blobs,
+    // 'image': e.data.imageData
+  });
 
   if(Math.random() < 0.01) console.log(e.data);
+  // console.log(e.data);
 }  
 
 
-function FindBlobs(src) {
+function FindBlobs(srcPixels) {
 
-  var xSize = src.width || 320;
-  var ySize = src.height || 240;
-  var srcPixels = src.data;
+  var xSize = 320;
+  var ySize = 240;
+  // var srcPixels = src.data;
+  // var srcPixels = src;
   var x, y, pos;
 
   // console.log(xSize, ySize);
   // console.log(srcPixels.length+' pixel data bits');
   var midPt = Math.round(xSize*(ySize/2) + xSize/2);
-  // console.log('mid point',srcPixels[midPt*4],srcPixels[midPt*4+1],srcPixels[midPt*4+2],srcPixels[midPt*4+3]);
-  // console.log(srcPixels);
+  midPt = 810;
+  // console.log(2,[srcPixels[(midPt*4)],srcPixels[(midPt*4) + 1],srcPixels[(midPt*4) + 2],srcPixels[(midPt*4) + 3]]);
+
+  console.log(2,srcPixels[810*4]);
 
   // This will hold the indecies of the regions we find
   var blobMap = [];
@@ -58,6 +65,8 @@ function FindBlobs(src) {
   // We're going to run this algorithm twice
   // The first time identifies all of the blobs candidates the second pass
   // merges any blobs that the first pass failed to merge
+
+
   var nIter = 2;
   while( nIter-- ){
 
@@ -71,7 +80,7 @@ function FindBlobs(src) {
 
         // We're only looking at the alpha channel in this case but you can
         // use more complicated heuristics
-        isVisible = (srcPixels[pos+pixelBit] > calibration_depthThreshold);
+        isVisible = (srcPixels[pos+pixelBit] > depthThreshold);
 
         if( isVisible ){
 

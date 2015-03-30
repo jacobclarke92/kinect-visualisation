@@ -1,0 +1,95 @@
+<script>
+
+_this = this;
+
+_this.calibration_depthThreshold = 166;
+_this.pixelBit = 2;
+
+this.canvasWidth = 320;
+this.canvasHeight = 240;
+
+
+var bufferCanvas = document.createElement('canvas');
+var width = bufferCanvas.width = this.canvasWidth;
+var height = bufferCanvas.height = this.canvasHeight;
+var bufferCanvasContext = bufferCanvas.getContext('2d');
+var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
+
+_this.image = new Image();
+var outlineWorker;
+var imageLoaderWorker;
+var blobDetectionWorker;
+
+
+var attemptingToUseBlobDetection = true;
+
+
+this.imageBlobs = [];
+
+image.onload = function() {
+
+	bufferCanvasContext.drawImage(this, 0, 0);
+	_this.rawImage = bufferCanvasContext.getImageData(0, 0, width, height);
+	_this.pixels = _this.rawImage.data;
+
+	console.log(1,_this.pixels[810*4]);
+
+	if(attemptingToUseBlobDetection) {
+		blobDetectionWorker.postMessage({
+	    	'cmd': 'getBlobs', 
+	    	'imageData': _this.rawImage.data,
+			'depthThreshold': _this.calibration_depthThreshold,
+			'pixelBit': _this.pixelBit
+		});
+	}else{
+		processImageOutline();
+	}
+
+}
+
+function launchImageLoaderWorker() {
+
+	console.info('starting image loader worker');
+
+	if(imageLoaderWorker) {
+		imageLoaderWorker.terminate();
+	}
+
+	imageLoaderWorker = new Worker('/app/scripts/helpers/image_loader_worker.js');
+		
+    imageLoaderWorker.onmessage = function(e) {
+		image.src = e.data.image;
+    };
+    imageLoaderWorker.onerror = function(e) {
+      alert('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
+    imageLoaderWorker.postMessage({
+    	'cmd': 'start'
+    });
+
+}
+
+function launchBlobDetectionWorker() {
+
+	console.info('starting blob detection worker');
+
+	if(blobDetectionWorker) {
+		blobDetectionWorker.terminate();
+	}
+
+	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker.js');
+		
+    blobDetectionWorker.onmessage = function(e) {
+		_this.imageBlobs = e.data.blobs;
+		// _this.pixels = e.data.image;
+		// console.log(_this.outlineArray.length);
+    };
+    blobDetectionWorker.onerror = function(e) {
+      console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+    };
+}
+
+launchImageLoaderWorker();
+launchBlobDetectionWorker();
+
+</script>

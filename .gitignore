@@ -4,4 +4,5 @@
 /app/palettes.xml
 /app/scripts/effects_list.js
 /app/styles/*.css
-app/styles/generated/*.css
+/app/styles/generated/*.css
+/app/voicemasks-master/
