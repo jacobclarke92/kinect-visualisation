@@ -185,6 +185,7 @@ this.startOutlineY = -1;
 
 
 var attemptingToUseBlobDetection = true;
+var waitingForBlobs = false;
 
 var outlineWorker;
 var imageLoaderWorker;
@@ -313,12 +314,15 @@ this.run = function() {
 				_this.imageLoaded = _this.image;
 
 				if(attemptingToUseBlobDetection) {
-					blobDetectionWorker.postMessage({
-				    	'cmd': 'getBlobs', 
-				    	'imageData': _this.rawImage.data,
-						'depthThreshold': _this.calibration_depthThreshold,
-						'pixelBit': _this.pixelBit
-					});
+					if(!waitingForBlobs) {
+						blobDetectionWorker.postMessage({
+					    	'cmd': 'getBlobs', 
+					    	'imageData': _this.rawImage.data,
+							'depthThreshold': _this.calibration_depthThreshold,
+							'pixelBit': _this.pixelBit
+						});
+						waitingForBlobs = true;
+					}
 				}else{
 					processImageOutline();
 				}
@@ -440,6 +444,7 @@ function launchBlobDetectionWorker() {
 		_this.imageBlobs = e.data.blobs;
 		// _this.pixels = e.data.image;
 		// console.log(_this.outlineArray.length);
+		waitingForBlobs = false;
     };
     blobDetectionWorker.onerror = function(e) {
       console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);

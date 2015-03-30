@@ -33,13 +33,9 @@ function FindBlobs(srcPixels) {
   // var srcPixels = src;
   var x, y, pos;
 
-  // console.log(xSize, ySize);
-  // console.log(srcPixels.length+' pixel data bits');
   var midPt = Math.round(xSize*(ySize/2) + xSize/2);
-  midPt = 810;
   // console.log(2,[srcPixels[(midPt*4)],srcPixels[(midPt*4) + 1],srcPixels[(midPt*4) + 2],srcPixels[(midPt*4) + 3]]);
-
-  console.log(2,srcPixels[810*4]);
+  // console.log(2,srcPixels[srcPixels.length/2]);
 
   // This will hold the indecies of the regions we find
   var blobMap = [];
