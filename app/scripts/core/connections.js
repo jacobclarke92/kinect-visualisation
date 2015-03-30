@@ -153,6 +153,9 @@ this.initLoadedScript = function(script) {
 		_this.$('.blackness').removeClass('active');
 	},50);
 
+	currentScriptRequiresOutlines = (this.currentScript.requiresOutlines) ? true : false;
+	console.log('Current script requires outlines ',currentScriptRequiresOutlines);
+
 }
 
 
@@ -186,6 +189,7 @@ this.startOutlineY = -1;
 
 var attemptingToUseBlobDetection = true;
 var waitingForBlobs = false;
+var currentScriptRequiresOutlines = false;
 
 var outlineWorker;
 var imageLoaderWorker;
@@ -220,10 +224,12 @@ this.run = function() {
 
 			blobDetectionWorker.postMessage({
 		    	'cmd': 'getBlobs', 
-		    	'imageData': _this.rawImage,
+		    	'imageData': _this.rawImage.data,
 				'depthThreshold': _this.calibration_depthThreshold,
-				'pixelBit': _this.pixelBit
+				'pixelBit': _this.pixelBit,
+				'outlineSmooth': 2
 			});
+			waitingForBlobs = true;
 
 		};
 
@@ -233,8 +239,6 @@ this.run = function() {
 		_this.image.src = _this.testImageURL;
 		document.getElementById('testImage').src = _this.testImageURL;
 
-
-		launchOutlineWorker();
 		launchBlobDetectionWorker();
 
 	}else if(!websocket) {
@@ -313,13 +317,14 @@ this.run = function() {
 
 				_this.imageLoaded = _this.image;
 
-				if(attemptingToUseBlobDetection) {
+				if(attemptingToUseBlobDetection && currentScriptRequiresOutlines) {
 					if(!waitingForBlobs) {
 						blobDetectionWorker.postMessage({
 					    	'cmd': 'getBlobs', 
 					    	'imageData': _this.rawImage.data,
 							'depthThreshold': _this.calibration_depthThreshold,
-							'pixelBit': _this.pixelBit
+							'pixelBit': _this.pixelBit,
+							'outlineSmooth': 1
 						});
 						waitingForBlobs = true;
 					}
@@ -330,7 +335,6 @@ this.run = function() {
 			}
 
 			launchImageLoaderWorker();
-			launchOutlineWorker();
 			launchBlobDetectionWorker();
 
 		}
@@ -438,34 +442,13 @@ function launchBlobDetectionWorker() {
 		blobDetectionWorker.terminate();
 	}
 
-	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker.js');
+	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker_built.js');
 		
     blobDetectionWorker.onmessage = function(e) {
-		_this.imageBlobs = e.data.blobs;
-		// _this.pixels = e.data.image;
-		// console.log(_this.outlineArray.length);
+		_this.outlineArray = e.data.outlines;
 		waitingForBlobs = false;
     };
     blobDetectionWorker.onerror = function(e) {
-      console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
-    };
-}
-
-function launchOutlineWorker() {
-
-	console.info('starting outline worker');
-
-	if(outlineWorker) {
-		outlineWorker.terminate();
-	}
-
-	outlineWorker = new Worker('/app/scripts/helpers/outline_worker_built.js');
-		
-    outlineWorker.onmessage = function(e) {
-		_this.outlineArray = e.data.outline;
-		// console.log(_this.outlineArray.length);
-    };
-    outlineWorker.onerror = function(e) {
       console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
     };
 }

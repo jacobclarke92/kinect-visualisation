@@ -1,6 +1,6 @@
 effect_letters = {
 
-	requresOutline: false,
+	requiresOutlines: false,
 	
 	particles: [],
 	spawned: false,

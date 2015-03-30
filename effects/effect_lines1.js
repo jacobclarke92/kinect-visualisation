@@ -1,6 +1,6 @@
 effect_lines1 = {
 
-  requresOutline: false,
+  requiresOutlines: false,
   
   lastX: 0,
   lastY: 0,

@@ -1,6 +1,6 @@
 effect_outline3 = {
 
-  requresOutline: true,
+  requiresOutlines: true,
 
   invertImageData: false,
   flattenDepth: false,
@@ -63,23 +63,13 @@ effect_outline3 = {
       this.minY = 0;
 
       // console.log(outlineArray.length);
-
-      for(var i=0; i<outlineArray.length; i++){
-        if(i > 0) {
-
-          if(outlineArray[i][0] < this.minX) this.minX = outlineArray[i][0];
-          if(outlineArray[i][0] > this.maxX) this.maxX = outlineArray[i][0];
-          if(outlineArray[i][1] < this.minY) this.minY = outlineArray[i][1];
-          if(outlineArray[i][1] > this.maxY) this.maxY = outlineArray[i][1];
-
-          // maybeLog(outlineArray[i][0]+", "+outlineArray[i][1]);
-
-          
-          if(i == 1) this.graphics.moveTo(tX( outlineArray[i][0] ), tY( outlineArray[i][1] ));
-          else this.graphics.lineTo(tX( outlineArray[i][0] ), tY( outlineArray[i][1] ));
-          
+      var outline;
+      for(var n=0; n < outlineArray.length; n ++) {
+        outline = outlineArray[n];
+        for(var i=0; i<outline.length; i++){
+          if(i == 0) this.graphics.moveTo(tX( outline[i][0] ), tY( outline[i][1] ));
+          else this.graphics.lineTo(tX( outline[i][0] ), tY( outline[i][1] ));
         }
-        
       }
 
       this.centerX = this.minX + (this.maxX-this.minX)/2;

@@ -1,6 +1,6 @@
 effect_depth_image = {
 
-	requresOutline: false,
+	requiresOutlines: false,
 	draw:function() {
 		if(imageLoaded) {
 

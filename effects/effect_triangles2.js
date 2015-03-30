@@ -1,6 +1,6 @@
 effect_triangles2 = {
 
-	requresOutline: false,
+	requiresOutlines: false,
 
 	screens: [],
   	graphics: false,

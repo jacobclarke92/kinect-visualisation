@@ -1,6 +1,6 @@
 effect_circles1 = {
 
-  requresOutline: false,
+  requiresOutlines: false,
 
   init: function() {
     setMapping('volumeDivider', 100, 400, 150);

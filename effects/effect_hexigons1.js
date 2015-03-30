@@ -1,6 +1,6 @@
 effect_hexigons1 = {
 
-	requresOutline: false,
+	requiresOutlines: false,
 
 	hexigons: [],
 

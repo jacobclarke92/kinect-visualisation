@@ -7,7 +7,7 @@ requirejs(
 		'/app/scripts/helpers/polyfills.js',
 		'/app/scripts/helpers/marchingsquares.js',
 		'/app/scripts/helpers/polygon_math.js',
-		'/app/scripts/helpers/find_blobs.js',
+		// '/app/scripts/helpers/find_blobs.js',
 
 		'/app/scripts/core/connections_built.js',
 		'/app/scripts/core/mappings.js',

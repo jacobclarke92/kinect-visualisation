@@ -1,6 +1,6 @@
 effect_outline2 = {
 
-	requiresOutline: false,
+	requiresOutlines: false,
 
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);

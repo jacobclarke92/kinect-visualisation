@@ -1,7 +1,7 @@
 //exclude
 effect_linesfromcenter = {
 
-  requresOutline: false,
+  requiresOutlines: false,
 
   invertImageData: false,
   flattenDepth: false,

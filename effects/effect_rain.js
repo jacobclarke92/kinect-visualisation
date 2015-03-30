@@ -1,7 +1,7 @@
 //exclude
 effect_rain = {
 
-	requresOutline: true,
+	requiresOutlines: true,
 
 	particles: [],
 	

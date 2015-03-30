@@ -105,7 +105,8 @@ function compileLess(path) {
 
 var scriptsToCompile = [
 	'./app/scripts/core/connections.js',
-	'./app/scripts/helpers/outline_worker.js'
+	'./app/scripts/helpers/outline_worker.js',
+	'./app/scripts/helpers/find_blobs_worker.js'
 ];
 
 function compileScript(scriptName) {

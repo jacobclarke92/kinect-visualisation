@@ -1,6 +1,6 @@
 effect_sprinkles = {
 
-  requresOutline: false,
+  requiresOutlines: false,
 
   screens: [],
   graphics: false,

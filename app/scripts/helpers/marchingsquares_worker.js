@@ -6,7 +6,9 @@
  * returns an Array of x and y positions defining the perimeter of a blob of non-transparent pixels on a canvas
  *
  */
-(function (self){
+(function (self) {
+
+    _this = this;
 
     var MarchingSquares = {};
 
@@ -16,13 +18,8 @@
     MarchingSquares.DOWN = 3;
     MarchingSquares.RIGHT = 4;
 
-    MarchingSquares.depthThreshold = 155;
     MarchingSquares.w = 320;
     MarchingSquares.h = 240;
-
-    MarchingSquares.smooth = 5;
-
-    // MarchingSquares.sourceCanvas = document.getElementById('testCanvas');
 
     MarchingSquares.testing = false;
     MarchingSquares.forceStop = false;
@@ -38,18 +35,18 @@
     // object in that texture, using pixel alpha>0 to define
     // the boundary.
 
-    MarchingSquares.walkPerimeter = function(startX, startY, imageData){
+    MarchingSquares.walkPerimeter = function(startX, startY, labelNum, imageData){
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
-        if (startX < 0){
-            startX = 0;
+        if (startX < 1){
+            startX = 1;
         }
         if (startX > MarchingSquares.w){
             startX = MarchingSquares.w;
         }
-        if (startY < 0){
-            startY = 0;
+        if (startY < 1){
+            startY = 1;
         }
         if (startY > MarchingSquares.h){
             startY = MarchingSquares.h;
@@ -63,18 +60,22 @@
         var x = startX;
         var y = startY;
 
-        var index, width4 = imageData.width * 4;
-
-        var counter = 0;
         // The main while loop, continues stepping until
         // we return to our initial points
         do{
             // Evaluate our state, and set up our next direction
-            //index = (y-1) * width4 + (x-1) * 4;
-            index = (y-1) * width4 + (x-1) * 4;
-            MarchingSquares.step(index, imageData.data, width4);
+            // index = (y-1) * width4 + (x-1) * 4;
 
-            counter ++;
+            if(x > MarchingSquares.w) {
+                x = 0;
+                y += _this.outlineSmooth;
+            }
+            if(y > MarchingSquares.h) {
+                y = MarchingSquares.h;
+            }
+
+            MarchingSquares.step(x-1, y-1, labelNum, imageData);
+
             // If our current point is within our image
             // add it to the list of points
             if (x >= 0 &&
@@ -82,47 +83,46 @@
                 y >= 0 &&
                 y < MarchingSquares.h){
 
-                pointList.push([x - 2, y - 1]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
+                pointList.push([x, y]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
                     
             }
 
             switch (MarchingSquares.nextStep){
-                case MarchingSquares.UP:    y--; break;
-                case MarchingSquares.LEFT:  x--; break;
-                case MarchingSquares.DOWN:  y++; break;
-                case MarchingSquares.RIGHT: x++; break;
+                case MarchingSquares.UP:    y -= _this.outlineSmooth; break;
+                case MarchingSquares.LEFT:  x -= _this.outlineSmooth; break;
+                case MarchingSquares.DOWN:  y += _this.outlineSmooth; break;
+                case MarchingSquares.RIGHT: x += _this.outlineSmooth; break;
                 default:
                     break;
             }
 
-        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false && counter > 1);
+        } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
 
-        // console.log(MarchingSquares.depthThreshold);
-
-        var firstFruits = [];
-
-        for (var i = -3; i < pointList.length; i = i+MarchingSquares.smooth) {
-            firstFruits.push(pointList[i]);
-        };
-
-        firstFruits.push([x - 1, y - 1]);
-
-        return firstFruits;
+        pointList[0] = [startX, startY];
+        return pointList;
     };
 
     // Determines and sets the state of the 4 pixels that
     // represent our current state, and sets our current and
     // previous directions
 
-    MarchingSquares.step = function(index, data, width4){
+    MarchingSquares.step = function(x, y, labelNum, data){
 
 
-        
+        //used to be that i'd check if above threshold but now it uses blob labels which can be any number above 0
 
-        MarchingSquares.upLeft = data[index + 2] > MarchingSquares.depthThreshold;
-        MarchingSquares.upRight = data[index + 6] > MarchingSquares.depthThreshold;
-        MarchingSquares.downLeft = data[index + width4 + 2] > MarchingSquares.depthThreshold;
-        MarchingSquares.downRight = data[index + width4 + 6] > MarchingSquares.depthThreshold;
+        MarchingSquares.upLeft = data[y][x] == labelNum;
+        MarchingSquares.upRight = data[y][x+1] == labelNum;
+        MarchingSquares.downLeft = data[y+1][x] == labelNum;
+        MarchingSquares.downRight = data[y+1][x+1] == labelNum;
+
+        /*
+        console.log('Label',labelNum);
+        console.log('upLeft',MarchingSquares.upLeft, data[y][x]);
+        console.log('upRight',MarchingSquares.upRight, data[y][x+1]);
+        console.log('downLeft',MarchingSquares.downLeft, data[y+1][x]);
+        console.log('downRight',MarchingSquares.downRight, data[y+1][x+1]);
+        */
 
         // Store our previous step
         MarchingSquares.previousStep = MarchingSquares.nextStep;

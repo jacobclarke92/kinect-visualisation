@@ -20,7 +20,7 @@ var bufferCanvasData = bufferCanvasContext.createImageData(width, height);
 
 var testCanvas = document.getElementById('test');
 var testCanvasContext = testCanvas.getContext('2d');
-testCanvasContext.createImageData(width,height);
+// testCanvasContext.createImageData(width,height);
 
 _this.image = new Image();
 var outlineWorker;
@@ -32,6 +32,7 @@ var attemptingToUseBlobDetection = true;
 
 
 this.imageBlobs = [];
+this.imageOutlines = [];
 
 var waitingForBlobs = false;
 
@@ -58,7 +59,28 @@ image.onload = function() {
 	}
 
 	testCanvasContext.drawImage(this,0,0);
+	drawOutlines();
 
+}
+
+function drawOutlines() {
+	testCanvasContext.strokeStyle = '#00FF00';
+	testCanvasContext.lineWidth = 1;
+
+
+	var outline;
+	for(var i = 0; i < _this.imageOutlines.length; i ++) {
+		outline = _this.imageOutlines[i];
+
+		testCanvasContext.beginPath();
+		for(var n=0; n < outline.length; n ++) {
+			// console.log(outline[n][0],outline[n][1]);
+			if(n == 0) testCanvasContext.moveTo(outline[n][0],outline[n][1]);
+			else testCanvasContext.lineTo(outline[n][0],outline[n][1]);
+		}
+		testCanvasContext.closePath();
+		testCanvasContext.stroke();
+	}
 }
 
 function launchImageLoaderWorker() {
@@ -91,16 +113,15 @@ function launchBlobDetectionWorker() {
 		blobDetectionWorker.terminate();
 	}
 
-	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker.js');
+	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker_built.js');
 		
     blobDetectionWorker.onmessage = function(e) {
-		_this.imageBlobs = e.data.blobs;
-		// _this.pixels = e.data.image;
-		// console.log(_this.outlineArray.length);
+
+    	_this.imageOutlines = e.data.outlines;
 		waitingForBlobs = false;
 
-		var midPt = Math.round(_this.canvasWidth*(_this.canvasHeight/2) + _this.canvasWidth/2);
-			console.log(1,_this.pixels[midPt]);
+		
+
     };
     blobDetectionWorker.onerror = function(e) {
       console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
@@ -113,6 +134,7 @@ var testImage = false;
 if(!testImage) {
 	launchImageLoaderWorker();
 }else{
+	pixelBit = 3;
 	image.src = '/app/img/test1.png';
 }
 launchBlobDetectionWorker();

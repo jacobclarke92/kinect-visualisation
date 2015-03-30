@@ -1,6 +1,6 @@
 effect_outline4 = {
 
-	requresOutline: true,
+	requiresOutlines: true,
 
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
@@ -32,21 +32,15 @@ effect_outline4 = {
 			img.scale.y = sizeRatio;
 			stage.addChild(img);
 
+		 	var outline;
+			for(var n=0; n<outlineArray.length; n++) {
+				outline = outlineArray[n];
+				for(var i=0; i< outline.length; i++) {
 
-		 	var lastX = startOutlineX;
-		 	var lastY = startOutlineY;
-
-		 	currentScript.graphics.lineStyle(2, 0xFF0000, 1);
-		 	this.graphics.beginFill(0xFFFFFF, 1);
-		 	this.graphics.drawCircle(tX( lastX ), tY( lastY ), 20);
-
-			for(var i=1; i<outlineArray.length; i++) {
-
-				this.graphics.lineStyle(lineThickness,randomPaletteColour());
-    			this.graphics.moveTo(tX( lastX ), tY( lastY ));
-				this.graphics.lineTo(tX( outlineArray[i][0] ), tY( outlineArray[i][1] ));
-				lastX = outlineArray[i][0];
-				lastY = outlineArray[i][1];
+					this.graphics.lineStyle(lineThickness,randomPaletteColour());
+	    			if(i==0) this.graphics.moveTo(tX( outline[i][0] ), tY( outline[i][1] ));
+					else this.graphics.lineTo(tX( outline[i][0] ), tY( outline[i][1] ));
+				}
         	}
 		}
 	}
