@@ -18,8 +18,10 @@ effect_outline3 = {
 
   init: function() {
     setMapping('lineThickness', 1, 50, 2);
-    setMapping('scaleAmount', 0, 1, 0.05);
-    setMapping('trailAmount', 0, 1, 0.8);
+    setMapping('randomizeAmount', 0, 50, 1);
+    setMapping('outlinePointSkip', 1, 20, 1);
+    setMapping('scaleAmount', 0, 1, 0.01);
+    setMapping('trailAmount', 0, 1, 0.001);
   },
 
   //overriding function for enterframe init
@@ -30,6 +32,9 @@ effect_outline3 = {
       this.screens = this.screens.splice(0,maxFrames);
     }
 
+    var winW = endDrawX-startDrawY;
+    var winH = endDrawY-startDrawY;
+
     //apply fade out to past frames
     this.graphics = new PIXI.Graphics();
     for(var i=0; i<this.screens.length; i++) {
@@ -39,8 +44,8 @@ effect_outline3 = {
 
       this.screens[i].scale.x = this.screens[i].scale.y -= scaleAmount;
 
-      this.screens[i].x = (640-640*this.screens[i].scale.x)/2;
-      this.screens[i].y = (480-480*this.screens[i].scale.y)/2;
+      this.screens[i].x = (winW-winW*this.screens[i].scale.x)/2;
+      this.screens[i].y = (winH-winH*this.screens[i].scale.y)/2;
 
       
       if(this.screens[i].alpha <= 0 || this.screens[i].scale.x <= 0) {
@@ -64,11 +69,15 @@ effect_outline3 = {
 
       // console.log(outlineArray.length);
       var outline;
+      var offset = Math.random()*randomizeAmount - (randomizeAmount/2);
       for(var n=0; n < outlineArray.length; n ++) {
         outline = outlineArray[n];
-        for(var i=0; i<outline.length; i++){
-          if(i == 0) this.graphics.moveTo(tX( outline[i][0] ), tY( outline[i][1] ));
-          else this.graphics.lineTo(tX( outline[i][0] ), tY( outline[i][1] ));
+        for(var i=0; i<outline.length; i += outlinePointSkip) {
+          if(i >= outline.length) i = outline.length-1;
+          
+          offsetY = Math.random()*randomizeAmount - (randomizeAmount/2);
+          if(i == 0) this.graphics.moveTo(tX( outline[i][0] + offset ), tY( outline[i][1] + offset ));
+          else this.graphics.lineTo(tX( outline[i][0] + offset ), tY( outline[i][1] + offset ));
         }
       }
 

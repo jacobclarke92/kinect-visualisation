@@ -19,8 +19,8 @@
     MarchingSquares.DOWN = 3;
     MarchingSquares.RIGHT = 4;
 
-    MarchingSquares.w = 320/_this.outlineSmooth;
-    MarchingSquares.h = 240/_this.outlineSmooth;
+    MarchingSquares.w = 320;
+    MarchingSquares.h = 240;
 
     MarchingSquares.testing = false;
     MarchingSquares.forceStop = false;
@@ -98,19 +98,6 @@
             }
 
         } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
-
-        // console.log(MarchingSquares.depthThreshold);
-        /*
-        var firstFruits = [];
-
-        for (var i = -3; i < pointList.length; i = i+MarchingSquares.smooth) {
-            firstFruits.push(pointList[i]);
-        };
-
-        firstFruits.push([x - 1, y - 1]);
-
-        return firstFruits;
-        */
 
         pointList[0] = [startX, startY];
         return pointList;
