@@ -81,7 +81,7 @@ var gainAmount = 1;
 
 var bass;
 var bassLastVal = 0;
-var audioTriggerCoolOff = 10;
+var audioTriggerCoolOff = 20;
 var audioTriggerFadeRate = 1.5; //division
 var audioTriggerKnee = 20; // amount it must be increased by to trigger
 var bassCount = 0;
@@ -182,28 +182,24 @@ function processAudio() {
 
 					var paramName = param.name.split('_knob').join('');
 					if(!isset(mappings[hash][paramName])) console.log(paramName,' not defined yet');
-					if(difference > 0) {
-						// console.log(difference);
-						freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(0.1 + difference/200)+')';
-						freqBarsCanvas.fillRect(param.audio.minX, 0, param.audio.maxX-param.audio.minX, 200);
 
-					}
+					if(difference > 0) freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(0.1 + difference/200)+')';
 
 
 					//range of original param
 					var range = mappings[hash][paramName].midi.max - mappings[hash][paramName].midi.min;
 					//audio knob value
 					var audioInfluence = mappings[hash][param.name].midi.value;
+					var stepAmount = reduceToOne(audioInfluence) * range/100;
+					var val = mappings[hash][paramName].midi.value;
 					if(param.audio.type == 'average') {
 
 						//sets the primary param's postValue to its value plus its range times the difference over threshold
-						var val = mappings[hash][paramName].midi.value;
 						if(difference > 0) {
 							val += (audioInfluence * difference/100);
 						}
 
 						//this eases the value back to its default rather than jumping sharply
-						var stepAmount = reduceToOne(audioInfluence) * range/100;
 						if((val > mappings[hash][paramName].midi.postValue-stepAmount && audioInfluence > 0) ||
 						   (val < mappings[hash][paramName].midi.postValue-stepAmount && audioInfluence < 0) ||
 						   Math.round(mappings[hash][paramName].midi.postValue) == val) {
@@ -215,35 +211,48 @@ function processAudio() {
 
 					}else if(param.audio.type == 'trigger') {
 
-						if(difference > 0) {
-						
-							if(param.audio.coolOff > 0) audioMappings[n].audio.coolOff --;
-							else{
+						//if we're ready for a new trigger and the time is right, go ahead
+						if(difference > 0 && param.audio.coolOff <= 0 && averageLevel - param.audio.lastAverageLevel > audioTriggerKnee) {
 								
-								if(averageLevel - param.audio.lastAverageLevel > audioTriggerKnee) {
-									//sets the trigger value to the range times the audio knob value (-1 to 1)
-									console.log('audio mapping triggered!', param.name, audioInfluence, range*(audioInfluence/100));
-									param.audio.coolOff = audioTriggerCoolOff;
-									audioMappings[n].audio.triggerValue = range*(audioInfluence/100);
-									audioMappings[n].audio.coolOff = audioTriggerCoolOff;
-								}
-							}
-						}else {
-							if(isset(mappings[hash][paramName])) {
-								mappings[hash][paramName].midi.postValue = mappings[hash][paramName].midi.value + audioMappings[n].audio.triggerValue;
-								audioMappings[n].audio.lastAverageLevel = averageLevel;
-								if(isset(audioMappings[n].audio.triggerValue) && audioMappings[n].audio.triggerValue != 0) {
-									audioMappings[n].audio.triggerValue /= audioTriggerFadeRate;
-									if(Math.round(audioMappings[n].audio.triggerValue) == 0) audioMappings[n].audio.triggerValue = 0;
-									// console.log('postmidi: ',mappings[hash][paramName].midi.postValue);
-									window[paramName] = mappings[hash][paramName].midi.postValue;
-								}
-							}else{
+							//sets the trigger value to the range times the audio knob value (-1 to 1)
+							console.log('audio mapping triggered!', param.name, audioInfluence, range*(audioInfluence/100));
+							param.audio.coolOff = audioTriggerCoolOff;
 
-								console.log('mapping for '+paramName+' doesnt exist');
+							audioMappings[n].audio.triggerValue = range*(audioInfluence/100);
+							mappings[hash][paramName].midi.postValue = val + audioMappings[n].audio.triggerValue;
+
+							audioMappings[n].audio.coolOff = audioTriggerCoolOff;
+
+							freqBarsCanvas.fillStyle = 'rgba(255, 80, 80, 1)';
+
+						//otherwise ease back to current value if it's greater
+						}else {
+
+							if((mappings[hash][paramName].midi.postValue - stepAmount > val && audioInfluence > 0) || 
+							   (mappings[hash][paramName].midi.postValue - stepAmount < val && audioInfluence < 0)) {
+								mappings[hash][paramName].midi.postValue -= stepAmount;
+							}else{
+								mappings[hash][paramName].midi.postValue = val;
 							}
+							/*
+							mappings[hash][paramName].midi.postValue = mappings[hash][paramName].midi.value + audioMappings[n].audio.triggerValue;
+							audioMappings[n].audio.lastAverageLevel = averageLevel;
+							if(isset(audioMappings[n].audio.triggerValue) && audioMappings[n].audio.triggerValue != 0) {
+								audioMappings[n].audio.triggerValue /= audioTriggerFadeRate;
+								if(Math.round(audioMappings[n].audio.triggerValue) == 0) audioMappings[n].audio.triggerValue = 0;
+								// console.log('postmidi: ',mappings[hash][paramName].midi.postValue);
+								window[paramName] = mappings[hash][paramName].midi.postValue;
+							}
+							*/
 						}
+						window[paramName] = mappings[hash][paramName].midi.postValue;
+						if(param.audio.coolOff > 0) audioMappings[n].audio.coolOff --;
 					}
+
+
+					freqBarsCanvas.fillRect(param.audio.minX, 0, param.audio.maxX-param.audio.minX, 200);
+
+
 
 					freqBarsCanvas.beginPath();
 					freqBarsCanvas.strokeStyle = 'rgb(255,255,255)';
