@@ -262,6 +262,7 @@ function toggleAudioMapping() {
 		console.log($('.xe').length);
 		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio');
 	}else{
+		if($('body').hasClass('mapping')) toggleMidiMapping();
 		mappingAudio = true;
 		$('body').addClass('mappingAudio');
 	}
@@ -274,6 +275,7 @@ function toggleMidiMapping() {
 		$('body').removeClass('mapping waiting');
 		$('[data-midi-mappable].waiting').removeClass('waiting');
 	}else{
+		if($('body').hasClass('mappingAudio')) toggleAudioMapping();
 		mappingMIDI = true;
 		$('body').addClass('mapping');
 	}
