@@ -319,8 +319,12 @@ function keyPressed(event) {
 		$('.tabArea').removeClass('active').hide();
 		$('#tab-'+(chCode-48)).show().addClass('active');
 	//delete mapping
-	}else if(chCode == 8 && $('body').hasClass('mapping waiting')) {
-		deleteSelectedMapping();
+	}else if(chCode == 100 || chCode == 68) {
+		if($('body').hasClass('waiting') && $('body').hasClass('mapping')) {
+			deleteSelectedMidiMapping();
+		}else if($('body').hasClass('waitingAudio') && $('body').hasClass('mappingAudio')) {
+			deleteSelectedAudioMapping();
+		}
 	}else if(hasFocus) {
 		event.preventDefault();
 	}

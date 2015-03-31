@@ -59,7 +59,7 @@ function audioMappableElementClicked(e) {
 		e.preventDefault();
 
 		//assign 'waiting for midi' state to selected element
-		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio');
+		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio12');
 		$(this).addClass('waitingAudio');
 		$('body').addClass('waitingAudio');
 		
@@ -317,7 +317,7 @@ function setElementValue(paramID, value) {
 }
 
 
-function deleteSelectedMapping() {
+function deleteSelectedMidiMapping() {
 	var mappedElement = $('[data-midi-mappable][data-midi-linked].waiting');
   	if(mappedElement) {
   		console.log('Deleting a mapping!');
@@ -337,3 +337,11 @@ function deleteSelectedMapping() {
   		console.log('no mapping to delete');
   	}
 }
+
+
+function deleteSelectedAudioMapping() {
+	console.log('deleting selected audio mapping MAKE THIS FUNCTION LMAO');
+}
+
+
+
