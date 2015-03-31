@@ -94,7 +94,6 @@ function loaded() {
 		if($('body').hasClass('disabled')) return;
 		
 		//never cross streams lmao
-		// console.log(e.data.substring(0,14));
 		if(e.data.substring(0,14) != 'data:image/png' ) {
 
 			//trick to retrigger css animation
@@ -319,9 +318,9 @@ function keyPressed(event) {
 
 
 	// MMMMMMMMMMMAP key
-	if(chCode == 77) {
+	if(chCode == 77 || chCode == 109) {
 		$('#mapMidiButton').trigger('click');
-	}else if(chCode == 65) {
+	}else if(chCode == 65 || chCode == 97) {
 		$('#mapAudioButton').trigger('click');
 	//Key 1-4 toggle tabs
 	}else if(chCode >= 49 && chCode <= 52) {
