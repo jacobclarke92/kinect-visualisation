@@ -240,26 +240,31 @@ function updatePalettes() {
 
 function paramElementChanged(elem, value) {
 
+	var targetElem;
+
 	if(elem.$) {
 		// is a knob
-		elem = elem.$; 
-	}else if(!$(elem).hasClass('.noUi-handle')) {
-		// is a slider input field
-		elem = $(elem);
-	}else if($(elem).hasClass('.noUi-target')) {
+		// console.log('is a knob');
+		targetElem = elem.$; 
+	}else if($(elem).find('.noUi-handle').length > 0) {
 		// is an actual slider
-		elem = $('.noUi-handle', elem);
+		// console.log('is a slider');
+		targetElem = $(elem).find('.noUi-handle').first();
+	}else if($(elem).hasClass('.noUi-handle')) {
+		// is a slider input field
+		// console.log('is an input');
+		targetElem = $(elem);
 	}else{
-		console.log('unknown element value changed');
-		elem = $(elem); //or otherwise...
+		console.warn('unknown element value changed');
+		targetElem = $(elem); //or otherwise...
 	}
 
-	console.log(elem);
+	// console.log($(elem)[0]);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
-	var paramName = elem.attr('data-name') || elem.attr('id');
+	var paramName = targetElem.attr('data-name') || targetElem.attr('id');
 	if(!isset(paramName)) {
-		console.log('paramName is unknown for ',elem);
-		paramName = 'unknownParamName';
+		console.warn('paramName is unknown for ',targetElem);
+		return false;
 	}
 
 	if(!isset(w.mappings[w.hash][paramName])) {
@@ -268,8 +273,8 @@ function paramElementChanged(elem, value) {
 			name: paramName, 
 			type: 'midi', 
 			midi: {
-				min: parseFloat(elem.attr('data-min')),
-				max: parseFloat(elem.attr('data-max')),
+				min: parseFloat(targetElem.attr('data-min')),
+				max: parseFloat(targetElem.attr('data-max')),
 				value: value,
 				initValue: value,
 				cc: -1
