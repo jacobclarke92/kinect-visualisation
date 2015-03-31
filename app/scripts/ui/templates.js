@@ -123,8 +123,8 @@ function createSliders(sliderArray, target) {
   //handle input number changes and scroll on hover
   $('.slider .rangeText', target).on({
     'change': function() {
-      // console.log('input text change');
-      var slider = $('#'+$(this).data('name')+'.noUi-handle').first();
+      console.log('input text change');
+      var slider = $('#'+$(this).attr('data-name')+'.noUi-handle').first();
       console.log(slider);
       var val = parseFloat( $(this).val() );
       console.log(typeof val);
@@ -218,17 +218,22 @@ function generateCalibrationParams() {
   var offsetY = (w.winH) ? w.winH : 1000;
   var calibrationParams = {
      //{label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:sliderChange}}
-    calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 254, value: 0}},
-    calibration_depthRange: {label: 'Depth Range', name: 'calibration_depthRange', midi: {min: 1, max: 55, value: 0}},
-    calibration_zoom: {label: 'Zoom', name: 'calibration_zoom', midi: {min: 0.2, max: 4.0, step: 0.1, value: 0}},
-    calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -offsetX, max: offsetX, value: 0}},
-    calibration_offsetY: {label: 'Offset Y', name: 'calibration_offsetY', midi: {min: -offsetY, max: offsetY, value: 0}},
-    calibration_rotateX: {label: 'Rotate X', name: 'calibration_rotateX', midi: {min: -65, max: 65, value: 0}},
-    calibration_rotateY: {label: 'Rotate Y', name: 'calibration_rotateY', midi: {min: -65, max: 65, value: 0}},
+    calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 254, value: w.calibration_depthThreshold || 150}},
+    calibration_depthRange: {label: 'Depth Range', name: 'calibration_depthRange', midi: {min: 1, max: 55, value: w.calibration_depthRange || 30}},
+    calibration_zoom: {label: 'Zoom', name: 'calibration_zoom', midi: {min: 0.2, max: 4.0, step: 0.1, value: w.calibration_zoom || 0}},
+    calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -offsetX, max: offsetX, value: w.calibration_offsetX || 0}},
+    calibration_offsetY: {label: 'Offset Y', name: 'calibration_offsetY', midi: {min: -offsetY, max: offsetY, value: w.calibration_offsetY || 0}},
+    calibration_rotateX: {label: 'Rotate X', name: 'calibration_rotateX', midi: {min: -65, max: 65, value: w.calibration_rotateX || 0}},
+    calibration_rotateY: {label: 'Rotate Y', name: 'calibration_rotateY', midi: {min: -65, max: 65, value: w.calibration_rotateY || 0}},
     calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', midi: {min: 100, max: 2000, value: 800}}
   };
   $.each(calibrationParams,function(key,param) {
-    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) calibrationParams[key] = w.mappings[w.hash][key];
+    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) {
+      console.log('mapping for calibration already exists!', key, w.mappings[w.hash][key]);
+      calibrationParams[key] = false;
+      calibrationParams[key] = w.mappings[w.hash][key];
+      console.log(param.midi.value, calibrationParams[key].midi.value)
+    }
   })
   console.log(calibrationParams);
 

@@ -5,6 +5,7 @@ effect_outline2 = {
 	init: function() {
     	setMapping('lineThickness', 1, 50, 2);
 		setMapping('pixelResolution', 1, 10, 3);
+		setMapping('randomizePosition', 0, 30, 1);
 		setMapping('trailAmount', 0, 1, 0.8);
 
 	},
@@ -43,10 +44,11 @@ effect_outline2 = {
 							this.graphics.lineTo(tX( x ), tY( y ));
 						}
 
-
+						var offsetX = Math.floor(Math.random()*randomizePosition) - randomizePosition/2;
+						var offsetY = Math.floor(Math.random()*randomizePosition) - randomizePosition/2;
 						if(diffLeft > 0) {
-						    this.lastX = x;
-						    this.lastY = y;
+						    this.lastX = x + offsetX;
+						    this.lastY = y + offsetY;
 						}
 						this.lastDiff = diffLeft;
 

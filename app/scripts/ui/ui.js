@@ -59,7 +59,7 @@ function audioMappableElementClicked(e) {
 		e.preventDefault();
 
 		//assign 'waiting for midi' state to selected element
-		$('[data-audio-mappable].waitingAudio').removeClass('waiting');
+		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio12');
 		$(this).addClass('waitingAudio');
 		$('body').addClass('waitingAudio');
 		
@@ -240,26 +240,33 @@ function updatePalettes() {
 
 function paramElementChanged(elem, value) {
 
+	var targetElem;
+
+	var elemType = false;
 	if(elem.$) {
 		// is a knob
-		elem = elem.$; 
-	}else if(!$(elem).hasClass('.noUi-handle')) {
-		// is a slider input field
-		elem = $(elem);
-	}else if($(elem).hasClass('.noUi-target')) {
+		targetElem = elem.$; 
+		elemType = 'knob';
+	}else if($(elem).find('.noUi-handle').length > 0) {
 		// is an actual slider
-		elem = $('.noUi-handle', elem);
+		targetElem = $(elem).find('.noUi-handle').first();
+		elemType = 'slider';
+	}else if($(elem).hasClass('noUi-handle')) {
+		// is a slider input field
+		targetElem = $(elem);
+		elemType = 'input';
 	}else{
-		console.log('unknown element value changed');
-		elem = $(elem); //or otherwise...
+		console.warn('unknown element value changed', elem);
+		targetElem = $(elem); //or otherwise...
 	}
+	// console.log(elemType);
+	// console.log($(elem)[0]);
 
-	console.log(elem);
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
-	var paramName = elem.attr('data-name') || elem.attr('id');
+	var paramName = targetElem.attr('data-name') || targetElem.attr('id');
 	if(!isset(paramName)) {
-		console.log('paramName is unknown for ',elem);
-		paramName = 'unknownParamName';
+		console.warn('paramName is unknown for ',targetElem);
+		return false;
 	}
 
 	if(!isset(w.mappings[w.hash][paramName])) {
@@ -268,8 +275,8 @@ function paramElementChanged(elem, value) {
 			name: paramName, 
 			type: 'midi', 
 			midi: {
-				min: parseFloat(elem.attr('data-min')),
-				max: parseFloat(elem.attr('data-max')),
+				min: parseFloat(targetElem.attr('data-min')),
+				max: parseFloat(targetElem.attr('data-max')),
 				value: value,
 				initValue: value,
 				cc: -1
@@ -310,7 +317,7 @@ function setElementValue(paramID, value) {
 }
 
 
-function deleteSelectedMapping() {
+function deleteSelectedMidiMapping() {
 	var mappedElement = $('[data-midi-mappable][data-midi-linked].waiting');
   	if(mappedElement) {
   		console.log('Deleting a mapping!');
@@ -330,3 +337,11 @@ function deleteSelectedMapping() {
   		console.log('no mapping to delete');
   	}
 }
+
+
+function deleteSelectedAudioMapping() {
+	console.log('deleting selected audio mapping MAKE THIS FUNCTION LMAO');
+}
+
+
+

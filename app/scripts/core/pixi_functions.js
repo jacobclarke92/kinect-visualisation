@@ -175,6 +175,13 @@ function initFrame() {
 
 	//apply fade out to past frames
 	currentScript.graphics = new PIXI.Graphics();
+
+	//draw a rectangle around whole screen so filter effects don't clip
+	currentScript.graphics.lineStyle(1,0x000000);
+	currentScript.graphics.drawRect(0,0,winW,winH)
+	currentScript.graphics.lineStyle(false,false);
+
+	//iterate through past frames and fade them out
     for(var i=0; i<currentScript.screens.length; i++) {
       currentScript.screens[i].alpha -= (trailAmount == 1) ? 1 : trailAmount/10;
       if(currentScript.screens[i].alpha <= 0) {
@@ -193,8 +200,8 @@ function animateFrame() {
 	processAudio();
 
     //display overall volume metre in ui
-    if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%', 'background-color':'#FF9999'});
-	else $('#volumeBar',uiPopup.document).css({'width':(volume/255)+'%', 'background-color': '#FFFFFF'});
+    if(uiPopup.curDrag != false) $('#volumeBar',uiPopup.document).css({'width':(currentFreqRangeVolume/2)+'%'});
+	else $('#volumeBar',uiPopup.document).css({'width':(volume/255)+'%'});
 
 	//GOT SCRIPT?
 	if(currentScript) {

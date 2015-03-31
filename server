@@ -265,7 +265,9 @@ var urlRules = [
 	['.ttf','application/x-font-ttf'],
 	['.otf','application/x-font-opentype'],
 	['.woff','application/x-font-woff'],
-	['.eot','application/vnd.ms-fontobject']
+	['.eot','application/vnd.ms-fontobject'],
+
+	['.ico','image/x-icon']
 ];
 
 
