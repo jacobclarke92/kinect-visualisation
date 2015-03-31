@@ -228,7 +228,12 @@ function generateCalibrationParams() {
     calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', midi: {min: 100, max: 2000, value: 800}}
   };
   $.each(calibrationParams,function(key,param) {
-    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) calibrationParams[key] = w.mappings[w.hash][key];
+    if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) {
+      console.log('mapping for calibration already exists!', key, w.mappings[w.hash][key]);
+      calibrationParams[key] = false;
+      calibrationParams[key] = w.mappings[w.hash][key];
+      console.log(param.midi.value, calibrationParams[key].midi.value)
+    }
   })
   console.log(calibrationParams);
 

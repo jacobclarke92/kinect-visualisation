@@ -59,7 +59,7 @@ function audioMappableElementClicked(e) {
 		e.preventDefault();
 
 		//assign 'waiting for midi' state to selected element
-		$('[data-audio-mappable].waitingAudio').removeClass('waiting');
+		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio');
 		$(this).addClass('waitingAudio');
 		$('body').addClass('waitingAudio');
 		
@@ -261,7 +261,7 @@ function paramElementChanged(elem, value) {
 	}
 	// console.log(elemType);
 	// console.log($(elem)[0]);
-	
+
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = targetElem.attr('data-name') || targetElem.attr('id');
 	if(!isset(paramName)) {

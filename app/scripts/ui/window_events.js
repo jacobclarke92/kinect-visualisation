@@ -122,27 +122,11 @@ function loaded() {
 	});
 
 	$('#mapMidiButton').unbind('click').bind('click', function(e) {
-		if($('body').hasClass('mapping')) {
-			mappingMIDI = false;
-			$('body').removeClass('mapping waiting');
-			$('[data-midi-mappable].waiting').removeClass('waiting');
-		}else{
-			mappingMIDI = true;
-			$('body').addClass('mapping');
-		}
-		console.log('toggling mapping');
+		toggleMidiMapping();
 	});
 
 	$('#mapAudioButton').unbind('click').bind('click', function(e) {
-		if($('body').hasClass('mappingAudio')) {
-			mappingAudio = false;
-			w.currentlyMappingAudio = false;
-			$('body').removeClass('mappingAudio waitingAudio');
-			$('[data-audio-mappable].waiting').removeClass('waiting');
-		}else{
-			mappingAudio = true;
-			$('body').addClass('mappingAudio');
-		}
+		toggleAudioMapping();
 	});
 
 	$('#exportButton').unbind('click').bind('click', function(e) {
@@ -270,6 +254,32 @@ function loaded() {
 	
 }
 
+function toggleAudioMapping() {
+	if($('body').hasClass('mappingAudio')) {
+		mappingAudio = false;
+		w.currentlyMappingAudio = false;
+		$('body').removeClass('mappingAudio waitingAudio');
+		console.log($('.xe').length);
+		$('[data-audio-mappable].waitingAudio').removeClass('waitingAudio');
+	}else{
+		mappingAudio = true;
+		$('body').addClass('mappingAudio');
+	}
+	console.log('toggling audio mapping');
+}
+
+function toggleMidiMapping() {
+	if($('body').hasClass('mapping')) {
+		mappingMIDI = false;
+		$('body').removeClass('mapping waiting');
+		$('[data-midi-mappable].waiting').removeClass('waiting');
+	}else{
+		mappingMIDI = true;
+		$('body').addClass('mapping');
+	}
+	console.log('toggling midi mapping');
+}
+
 function initAllParameters() {
 
 	generateEffectParams();
@@ -287,51 +297,32 @@ function keyPressed(event) {
 		
 	var hasFocus = $("input, textarea").is(":focus");
 
-	if(hasFocus) {
-		var input = $('input:focus').first();
-		if(input.attr('type') == 'number') {
-
-			//is it isn't a number and isn't a period
-			if ((chCode < 48 || chCode > 57) && chCode != 46) { 
-				console.log('preventing non-number key press');
-				event.preventDefault();
-				return false;
-			}else{
-
-				/*
-				//this doesn't work because it needs to be on keyup to get the updated value but in order for preventdefault to work it needs to be on keydown lmao
-				var inputVal = parseFloat(input.val());
-				var inputMin = parseFloat(input.attr('min'));
-				var inputMax = parseFloat(input.attr('max'));
-				console.log(inputVal, inputMin, inputMax);
-				if( inputVal < parseFloat(input.attr('min')) || inputVal > parseFloat(input.attr('max')) ) {
-					event.preventDefault();
-					return false;
-				}
-				*/
-				return;
-			}
-		}else{
-			return;
-		}
-	}
-
-
 	// MMMMMMMMMMMAP key
 	if(chCode == 77 || chCode == 109) {
 		$('#mapMidiButton').trigger('click');
+		if(hasFocus) {
+			event.preventDefault();
+			return false;
+		}
 	}else if(chCode == 65 || chCode == 97) {
 		$('#mapAudioButton').trigger('click');
+		if(hasFocus) {
+			event.preventDefault();
+			return false;
+		}
 	//Key 1-4 toggle tabs
-	}else if(chCode >= 49 && chCode <= 52) {
+	}else if(chCode >= 49 && chCode <= 52 && !hasFocus) {
 		$('body').blur();
 		$('.tabs>ul>li').removeClass('active');
 		$('.tabs>ul>li>a').removeClass('active');
 		$('a[href="#tab-'+(chCode-48)+'"]').parent().addClass('active');
 		$('.tabArea').removeClass('active').hide();
 		$('#tab-'+(chCode-48)).show().addClass('active');
+	//delete mapping
 	}else if(chCode == 8 && $('body').hasClass('mapping waiting')) {
 		deleteSelectedMapping();
+	}else if(hasFocus) {
+		event.preventDefault();
 	}
 	console.log('key pressed ',chCode);
   
