@@ -123,8 +123,8 @@ function createSliders(sliderArray, target) {
   //handle input number changes and scroll on hover
   $('.slider .rangeText', target).on({
     'change': function() {
-      // console.log('input text change');
-      var slider = $('#'+$(this).data('name')+'.noUi-handle').first();
+      console.log('input text change');
+      var slider = $('#'+$(this).attr('data-name')+'.noUi-handle').first();
       console.log(slider);
       var val = parseFloat( $(this).val() );
       console.log(typeof val);

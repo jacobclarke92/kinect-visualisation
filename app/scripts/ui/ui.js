@@ -242,24 +242,26 @@ function paramElementChanged(elem, value) {
 
 	var targetElem;
 
+	var elemType = false;
 	if(elem.$) {
 		// is a knob
-		// console.log('is a knob');
 		targetElem = elem.$; 
+		elemType = 'knob';
 	}else if($(elem).find('.noUi-handle').length > 0) {
 		// is an actual slider
-		// console.log('is a slider');
 		targetElem = $(elem).find('.noUi-handle').first();
-	}else if($(elem).hasClass('.noUi-handle')) {
+		elemType = 'slider';
+	}else if($(elem).hasClass('noUi-handle')) {
 		// is a slider input field
-		// console.log('is an input');
 		targetElem = $(elem);
+		elemType = 'input';
 	}else{
-		console.warn('unknown element value changed');
+		console.warn('unknown element value changed', elem);
 		targetElem = $(elem); //or otherwise...
 	}
-
+	// console.log(elemType);
 	// console.log($(elem)[0]);
+	
 	if(typeof value == 'string' && !isNaN(parseFloat(value))) value = parseFloat(value);
 	var paramName = targetElem.attr('data-name') || targetElem.attr('id');
 	if(!isset(paramName)) {
