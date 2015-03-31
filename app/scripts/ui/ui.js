@@ -90,7 +90,7 @@ function mappingAudioDone(e) {
 			});
 
 		}else{
-			console.log('no audio mappable element selected??');
+			console.log('no audio mappable element selected -- how did you get this far??');
 		}
 
 	}else{
@@ -320,12 +320,12 @@ function setElementValue(paramID, value) {
 function deleteSelectedMidiMapping() {
 	var mappedElement = $('[data-midi-mappable][data-midi-linked].waiting');
   	if(mappedElement) {
-  		console.log('Deleting a mapping!');
+  		console.log('Deleting a midi mapping!');
   		
   		var paramName = mappedElement.attr('data-name');
   		var paramType = mappedElement.attr('data-midi-type');
   		if(paramType == 'pot') {
-  			if(isset(w.mappings[w.hash][paramName])) delete w.mappings[w.hash][paramName];
+  			if(isset(w.mappings[w.hash][paramName].midi)) w.mappings[w.hash][paramName].midi.cc = -1;
   			mappedElement.removeAttr('data-midi-linked').removeClass('waiting');
   			$('body').removeClass('waiting');
   		}else if (paramType == 'key') {
@@ -340,7 +340,16 @@ function deleteSelectedMidiMapping() {
 
 
 function deleteSelectedAudioMapping() {
-	console.log('deleting selected audio mapping MAKE THIS FUNCTION LMAO');
+	var mappedElement = $('[data-audio-mappable][data-audio-linked].waitingAudio');
+  	if(mappedElement) {
+  		console.log('Deleting an audio mapping!');
+  		var paramName = mappedElement.attr('data-name');
+  		if(isset(w.mappings[w.hash][paramName]) && isset(w.mappings[w.hash][paramName].audio)) w.mappings[w.hash][paramName].audio = false;
+  		mappedElement.removeAttr('data-midi-linked').removeClass('waitingAudio');
+  		$('body').removeClass('waitingAudio');
+  	}else{
+  		console.log('no mapping to delete');
+  	}
 }
 
 
