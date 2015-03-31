@@ -344,7 +344,7 @@ function deleteSelectedAudioMapping() {
   	if(mappedElement) {
   		console.log('Deleting an audio mapping!');
   		var paramName = mappedElement.attr('data-name');
-  		if(isset(w.mappings[w.hash][paramName]) && isset(w.mappings[w.hash][paramName].audio)) w.mappings[w.hash][paramName].audio = false;
+  		if(isset(w.mappings[w.hash][paramName])) delete w.mappings[w.hash][paramName];
   		mappedElement.removeAttr('data-midi-linked').removeClass('waitingAudio');
   		$('body').removeClass('waitingAudio');
   	}else{
