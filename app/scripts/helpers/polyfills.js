@@ -21,6 +21,10 @@ function map_range(value, start1, stop1, start2, stop2) {
 function isset(variable) {
 	return (typeof variable != 'undefined');
 }
+function reduceToOne(num) {
+    return (num/-1 < 0) ? 1 : -1;
+}
+
 String.prototype.destring = function() {
     var num = parseFloat(this);
     if(!isNaN(num)) return num;

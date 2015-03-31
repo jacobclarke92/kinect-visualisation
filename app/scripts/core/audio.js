@@ -182,31 +182,43 @@ function processAudio() {
 
 					var paramName = param.name.split('_knob').join('');
 					if(!isset(mappings[hash][paramName])) console.log(paramName,' not defined yet');
-					else if(difference > 0) {
+					if(difference > 0) {
 						// console.log(difference);
 						freqBarsCanvas.fillStyle = 'rgba(255, 255, 255, '+(0.1 + difference/200)+')';
 						freqBarsCanvas.fillRect(param.audio.minX, 0, param.audio.maxX-param.audio.minX, 200);
 
+					}
 
-						//range of original param
-						var range = mappings[hash][paramName].midi.max - mappings[hash][paramName].midi.min;
-						//audio knob value
-						var audioInfluence = mappings[hash][param.name].midi.value;
-						if(param.audio.type == 'average') {
 
-							//sets the primary param's postValue to its value plus its range times the difference over threshold
-							var val = mappings[hash][paramName].midi.value + (range*(difference/50));
+					//range of original param
+					var range = mappings[hash][paramName].midi.max - mappings[hash][paramName].midi.min;
+					//audio knob value
+					var audioInfluence = mappings[hash][param.name].midi.value;
+					if(param.audio.type == 'average') {
+
+						//sets the primary param's postValue to its value plus its range times the difference over threshold
+						var val = mappings[hash][paramName].midi.value;
+						if(difference > 0) {
+							val += (audioInfluence * difference/100);
+						}
+
+						//this eases the value back to its default rather than jumping sharply
+						var stepAmount = reduceToOne(audioInfluence) * range/100;
+						if((val > mappings[hash][paramName].midi.postValue-stepAmount && audioInfluence > 0) ||
+						   (val < mappings[hash][paramName].midi.postValue-stepAmount && audioInfluence < 0) ||
+						   Math.round(mappings[hash][paramName].midi.postValue) == val) {
 							mappings[hash][paramName].midi.postValue = val;
-							if(val < mappings[hash][paramName].midi.min) val = mappings[hash][paramName].midi.min;
-							else if(val > mappings[hash][paramName].midi.max) val = mappings[hash][paramName].midi.max;
-							window[paramName] = val;
-							// console.log(mappings[hash][paramName].midi.postValue);
+						}else{
+							mappings[hash][paramName].midi.postValue -= stepAmount;
+						}
+						window[paramName] = mappings[hash][paramName].midi.postValue;
 
-						}else if(param.audio.type == 'trigger') {
-							
+					}else if(param.audio.type == 'trigger') {
+
+						if(difference > 0) {
+						
 							if(param.audio.coolOff > 0) audioMappings[n].audio.coolOff --;
 							else{
-								// console.log(averageLevel-param.audio.lastAverageLevel);
 								
 								if(averageLevel - param.audio.lastAverageLevel > audioTriggerKnee) {
 									//sets the trigger value to the range times the audio knob value (-1 to 1)
@@ -216,14 +228,7 @@ function processAudio() {
 									audioMappings[n].audio.coolOff = audioTriggerCoolOff;
 								}
 							}
-						}
-
-					}else{
-						if(param.audio.type == 'average') {
-							mappings[hash][paramName].midi.postValue = mappings[hash][paramName].midi.value;	
-						
-						}else if(param.audio.type == 'trigger') {
-
+						}else {
 							if(isset(mappings[hash][paramName])) {
 								mappings[hash][paramName].midi.postValue = mappings[hash][paramName].midi.value + audioMappings[n].audio.triggerValue;
 								audioMappings[n].audio.lastAverageLevel = averageLevel;
@@ -238,7 +243,6 @@ function processAudio() {
 								console.log('mapping for '+paramName+' doesnt exist');
 							}
 						}
-						
 					}
 
 					freqBarsCanvas.beginPath();
