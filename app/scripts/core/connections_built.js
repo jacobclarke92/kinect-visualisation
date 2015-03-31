@@ -31,10 +31,8 @@ this.startPage = function(fallback) {
 	loadCookie();
 	
 	if(hash){
-		this.hash = this.hash.substr(1,this.hash.length-1);
 
-		//console.log('hash: '+hash);
-		//console.log(_.indexOf(effects,hash));
+		this.hash = this.hash.substr(1,this.hash.length-1);
 
 		if(_.indexOf(effects,this.hash) > -1) {
 			changeScript(this.hash);
@@ -58,11 +56,6 @@ this.startPage = function(fallback) {
 var animatingTimeout = false;
 var initScriptTimeout = false;
 this.changeScript = function(script) {
-
-	//remove instance of previous script
-	// if(this.currentScriptString && this.currentScriptString != script) {
-	// 	window['effect_'+this.currentScriptString] = false;
-	// }
 
 	this.$('.blackness').addClass('active');
 	if(animatingTimeout) clearTimeout(animatingTimeout);
@@ -186,6 +179,7 @@ var attemptingToUseSocketLol = false;
 
 this.startOutlineX = -1;
 this.startOutlineY = -1;
+this.outlineSmooth = 2;
 
 
 var attemptingToUseBlobDetection = true;
@@ -228,7 +222,7 @@ this.run = function() {
 		    	'imageData': _this.rawImage.data,
 				'depthThreshold': _this.calibration_depthThreshold,
 				'pixelBit': _this.pixelBit,
-				'outlineSmooth': 2
+				'outlineSmooth': _this.outlineSmooth
 			});
 			waitingForBlobs = true;
 
@@ -325,7 +319,7 @@ this.run = function() {
 					    	'imageData': _this.rawImage.data,
 							'depthThreshold': _this.calibration_depthThreshold,
 							'pixelBit': _this.pixelBit,
-							'outlineSmooth': 1
+							'outlineSmooth': _this.outlineSmooth
 						});
 						waitingForBlobs = true;
 					}

@@ -43,10 +43,11 @@
     startingPoints = [];
     usedLabels = [];
 
-    var xSize = 320;
-    var ySize = 240;
-    // var srcPixels = src.data;
-    // var srcPixels = src;
+    var origSizeX = 320;
+    var origSizeY = 240;
+
+    var xSize = origSizeX/self.outlineSmooth;
+    var ySize = origSizeY/self.outlineSmooth;
     var x, y, pos;
 
     // This will hold the indecies of the regions we find
@@ -83,7 +84,7 @@
       for( y = self.outlineSmooth; y < ySize - self.outlineSmooth; y += self.outlineSmooth){
         for( x = self.outlineSmooth; x < xSize - self.outlineSmooth; x += self.outlineSmooth){
 
-          pos = (y*xSize+x)*4;
+          pos = (y*origSizeX+x)*4;
           // pos = (y*xSize+x);
 
           // We're only looking at the alpha channel in this case but you can
