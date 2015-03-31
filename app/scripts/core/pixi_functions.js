@@ -160,7 +160,11 @@ function maybeLog(val) {
 }
 
 
-
+function drawBoundingBox() {
+	currentScript.graphics.lineStyle(1,0x000000);
+	currentScript.graphics.drawRect(0,0,winW,winH)
+	currentScript.graphics.lineStyle(false,false);
+}
 
 function clearStage() {
 	while(stage.children.length > 1) { stage.removeChild(stage.children[0]); }
@@ -177,9 +181,7 @@ function initFrame() {
 	currentScript.graphics = new PIXI.Graphics();
 
 	//draw a rectangle around whole screen so filter effects don't clip
-	currentScript.graphics.lineStyle(1,0x000000);
-	currentScript.graphics.drawRect(0,0,winW,winH)
-	currentScript.graphics.lineStyle(false,false);
+	drawBoundingBox();
 
 	//iterate through past frames and fade them out
     for(var i=0; i<currentScript.screens.length; i++) {
