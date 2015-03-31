@@ -195,9 +195,12 @@ function processAudio() {
 						if(param.audio.type == 'average') {
 
 							//sets the primary param's postValue to its value plus its range times the difference over threshold
-							mappings[hash][paramName].midi.postValue = mappings[hash][paramName].midi.value + (range*(difference/50));
-							window[paramName] = mappings[hash][paramName].midi.postValue;
-							console.log(mappings[hash][paramName].midi.postValue);
+							var val = mappings[hash][paramName].midi.value + (range*(difference/50));
+							mappings[hash][paramName].midi.postValue = val;
+							if(val < mappings[hash][paramName].midi.min) val = mappings[hash][paramName].midi.min;
+							else if(val > mappings[hash][paramName].midi.max) val = mappings[hash][paramName].midi.max;
+							window[paramName] = val;
+							// console.log(mappings[hash][paramName].midi.postValue);
 
 						}else if(param.audio.type == 'trigger') {
 							
