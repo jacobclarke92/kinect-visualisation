@@ -175,6 +175,12 @@ function initFrame() {
 
 	//apply fade out to past frames
 	currentScript.graphics = new PIXI.Graphics();
+
+	//draw a rectangle around whole screen so filter effects don't clip
+	currentScript.graphics.lineStyle(1,0x000000);
+	currentScript.graphics.drawRect(0,0,winW,winH)
+
+	//iterate through past frames and fade them out
     for(var i=0; i<currentScript.screens.length; i++) {
       currentScript.screens[i].alpha -= (trailAmount == 1) ? 1 : trailAmount/10;
       if(currentScript.screens[i].alpha <= 0) {

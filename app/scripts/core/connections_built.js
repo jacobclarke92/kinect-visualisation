@@ -89,7 +89,7 @@ this.realChangeScript = function(script) {
 	window.location.href = '/#'+script;
 	this.hash = script;
 
-	//clear mappings for current hash
+	//create mapping objects if they don't exist
 	if(typeof mappings != 'object') this.mappings = {};
 	if(typeof mappings[hash] != 'object') this.mappings[hash] = {};
 
