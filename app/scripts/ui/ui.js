@@ -240,7 +240,6 @@ function paramElementChanged(elem, value) {
 		w.mappings[w.hash][paramName] = {
 			label: paramName.readable(), 
 			name: paramName, 
-			type: 'midi', 
 			midi: {
 				min: parseFloat(targetElem.attr('data-min')),
 				max: parseFloat(targetElem.attr('data-max')),

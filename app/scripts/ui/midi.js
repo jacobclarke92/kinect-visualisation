@@ -5,9 +5,9 @@ var midiChangeTimeout = false;
 //if we've been waiting to map something then the data has already been routed to another fuction to handle that
 function processMidiData(byteArray) {
 
-	byteArray[0] = parseInt(byteArray[0]);
-	byteArray[1] = parseInt(byteArray[1]);
-	byteArray[2] = parseInt(byteArray[2]);
+	byteArray[0] = byteArray[0].destring();
+	byteArray[1] = byteArray[1].destring();
+	byteArray[2] = byteArray[2].destring();
 	// console.log(byteArray);
 
 	//try to find a matching CC value
@@ -71,9 +71,9 @@ function processMidiData(byteArray) {
 function receiveMappingData(midiData, externalOverride) {
 
 	// midiData
-	midiData[0].destring();
-	midiData[1].destring();
-	midiData[2].destring();
+	midiData[0] = midiData[0].destring();
+	midiData[1] = midiData[1].destring();
+	midiData[2] = midiData[2].destring();
 
 	//this should refer to only 1 element - the on waiting to be mapped
 	var mappedElement = $('[data-midi-mappable].waiting');
@@ -141,7 +141,6 @@ function receiveMappingData(midiData, externalOverride) {
 			if(!isset( w.mappings[w.hash][paramName])) mapping = {
 				label: paramName.readable(), 
 				name: paramName, 
-				type: 'midi', 
 				midi: {
 					min: parseFloat(mappedElement.attr('data-min')),
 					max: parseFloat(mappedElement.attr('data-max')),
@@ -167,7 +166,6 @@ function receiveMappingData(midiData, externalOverride) {
 			w.mappings['midiButtons'][paramName] = {
 				label: paramName.readable(),
 				name: paramName,
-				type: 'midi',
 				midi: {
 					cc: midiData[1],
 				},
@@ -251,8 +249,7 @@ function updateMappings(byteArray) {
 
 					mappings[tempHash][ccUsed]['cc'] = -1;
 
-					mappings[tempHash][mappingID]['cc'] = parseInt(byteArray[1]);
-					//midiCCs[mappingID] = parseInt(byteArray[1]);
+					mappings[tempHash][mappingID]['cc'] = byteArray[1].destring();
 
 					//DEAL WITH STUFF
 					clearTimeout(mapTimeout);
@@ -274,10 +271,8 @@ function updateMappings(byteArray) {
 
 				//mapping is fresh, so save it
 
-				// console.log(mappingID);
-				mappings[tempHash][mappingID]['cc'] = parseInt(byteArray[1]);
+				mappings[tempHash][mappingID]['cc'] = byteArray[1].destring();
 
-				// midiCCs[mappingID] = parseInt(byteArray[1]);
 				console.info('mapping updated: '+mappings[tempHash][mappingID]['name']);
 				clearTimeout(mapTimeout);
 				mappingCC = mappingCanvasControl = false;
