@@ -30,6 +30,22 @@ function isObjectEmpty(obj) {
     }
     return true;
 }
+function isObjectPathSet(baseObj, pathArr) {
+    var oldObj = baseObj;
+    if(typeof baseObj == 'object' && typeof pathArr == 'object') {
+        for(var i=0; i<pathArr.length; i ++) {
+            if(isset(oldObj[pathArr[i]])) {
+                oldObj = oldObj[pathArr[i]];
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }else{
+        console.warn('isObjectPathSet -- bad typecast');
+        return false;
+    }
+}
 
 String.prototype.destring = function() {
     var num = parseFloat(this);

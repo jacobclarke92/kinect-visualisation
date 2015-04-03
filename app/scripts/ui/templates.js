@@ -226,7 +226,7 @@ function generateCalibrationParams() {
         min: 100, 
         max: 254, 
         value: w.calibration_depthThreshold || 150, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_depthThreshold'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_depthThreshold'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_depthThreshold', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_depthThreshold'].midi.cc : -1
       }
     },
     calibration_depthRange: {
@@ -236,7 +236,7 @@ function generateCalibrationParams() {
         min: 1, 
         max: 55, 
         value: w.calibration_depthRange || 30, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_depthRange'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_depthRange'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_depthRange', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_depthRange'].midi.cc : -1
       }
     },
     calibration_zoom: {
@@ -247,7 +247,7 @@ function generateCalibrationParams() {
         max: 4.0, 
         step: 0.1, 
         value: w.calibration_zoom || 0, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_zoom'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_zoom'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_zoom', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_zoom'].midi.cc : -1
       }
     },
     calibration_offsetX: {
@@ -257,7 +257,7 @@ function generateCalibrationParams() {
         min: -offsetX, 
         max: offsetX, 
         value: w.calibration_offsetX || 0, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_offsetX'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_offsetX'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetX', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_offsetX'].midi.cc : -1
       }
     },
     calibration_offsetY: {
@@ -267,7 +267,7 @@ function generateCalibrationParams() {
         min: -offsetY, 
         max: offsetY, 
         value: w.calibration_offsetY || 0, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_offsetY'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_offsetY'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_offsetY'].midi.cc : -1
       }
     },
     calibration_rotateX: {
@@ -277,7 +277,7 @@ function generateCalibrationParams() {
         min: -65, 
         max: 65, 
         value: w.calibration_rotateX || 0, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_rotateX'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_rotateX'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateX', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_rotateX'].midi.cc : -1
       }
     },
     calibration_rotateY: {
@@ -287,7 +287,7 @@ function generateCalibrationParams() {
         min: -65, 
         max: 65, 
         value: w.calibration_rotateY || 0, 
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_rotateY'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_rotateY'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_rotateY'].midi.cc : -1
       }
     },
     calibration_perspective: {
@@ -296,7 +296,7 @@ function generateCalibrationParams() {
       midi: {min: 100, 
         max: 2000, 
         value: 800,
-        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_perspective'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_perspective'].midi.cc : -1
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_perspective', 'midi', 'cc'])) ? w.mappings[w.lastScriptName]['calibration_perspective'].midi.cc : -1
       }
     }
   };
