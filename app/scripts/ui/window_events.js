@@ -129,6 +129,11 @@ function loaded() {
 		toggleAudioMapping();
 	});
 
+	$('#rebindButton').unbind('click').bind('click', function(e) {
+		linkMappableElements();
+	});
+
+
 	$('#exportButton').unbind('click').bind('click', function(e) {
 		showAlert({
 			title: 'Copy to a text file:',
@@ -246,7 +251,7 @@ function loaded() {
 	setTimeout(function() {
 		linkMappableElements();
 		refreshAudioMappings();
-	},2000);
+	},3000);
 
 
 	// Init tab view
@@ -348,7 +353,6 @@ function showAlert(config) {
 	if(isset(config.message)) $('.message',dialog).html(config.message);
 	if(isset(config.buttons)) {
 		for(var i=0; i<config.buttons.length; i++) {
-			console.log(config.buttons[i].callback);
 			$('.button'+(i+1),dialog).html(config.buttons[i].label || 'Okay').unbind('click').bind('click', config.buttons[i].callback).removeClass('hidden');
 		}
 		$('.button:not(.hidden)',dialog).bind('click', function() { closeAlert(false) });
