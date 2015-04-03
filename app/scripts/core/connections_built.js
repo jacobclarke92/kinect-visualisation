@@ -15,7 +15,7 @@ this.loadChecker;
 this.timeout = 3000; //ms
 this.timeoutTimer = 0;
 this.intervalCheck = 100; //ms
-this.hash = false;
+this.hash = 'depth_image';
 
 //for this to work it must be compiled with browserify which is done automatically with -devmode
 var websocket = require('../../../node_modules/websocket-stream');
