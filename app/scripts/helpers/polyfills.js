@@ -24,6 +24,12 @@ function isset(variable) {
 function reduceToOne(num) {
     return (num/-1 < 0) ? 1 : -1;
 }
+function isObjectEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) return false;
+    }
+    return true;
+}
 
 String.prototype.destring = function() {
     var num = parseFloat(this);

@@ -36,10 +36,6 @@ function loadCookie() {
 
   		mappings = JSON.parse(value);
       $.each(mappings, function(key, effect) {
-
-        $.each(effect, function(paramKey,paramVal) {
-          if(!isNaN(parseFloat(paramVal))) effect[paramKey] = parseFloat(paramVal); // json makes numbers into strings??
-        })
         console.log('Loaded saved effect mappings for '+key+': ',effect);
         window.mappings[key] = effect;
       })
