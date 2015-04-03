@@ -1,34 +1,40 @@
 #!/usr/bin/env node
 
-var quickStart = false;
+var portNum = 5600;
+
 var skipColour = false;
 var skipMidi = false;
 var skipKinect = false;
 var skipEffectsList = false;
+var skipLaunch = false;
 var devMode = false;
+var verbose = false;
 
 var isWin = /^win/.test(process.platform);
 
 //util modules
 var fs = require('fs');
 var colors = require('colors/safe');
+var clear = require('clear');
+
+var sys = require('sys');
+var tty = require('tty');
+var keypress = require('keypress');
+var exec = require('child_process').exec;
+var child;
 
 var kinect;
 var midi;
 
-
-if(isWin) {
-	console.log()
-}
+// For this to work run `npm install kinect`
+// I found that it didn't always compile on different computers so i left it out of the package file
+var goodKinectLibrary = false
 
 if (!fs.existsSync('./node_modules/kinect')) {
     console.log(colors.red('Kinect module doesnt exist -- skipping'));
-    skipKinect = true;
-}else if(isWin) {
-	console.log(colors.orange('On windows -- skipping mac kinect module'));
-	skipKinect = true;
 }else{
 	kinect = require('kinect');
+	goodKinectLibrary = true;
 }
 if (!fs.existsSync('./node_modules/midi')) {
     console.log(colors.red('MIDI module doesnt exist -- skipping'));
@@ -36,22 +42,40 @@ if (!fs.existsSync('./node_modules/midi')) {
 }else{
 	midi = require('midi');
 }
+if(isWin) {
+	console.log(colors.yellow('On windows -- skipping mac kinect module'));
+	skipKinect = true;
+}
+
+clear();
+console.log('\
+                      O          o                            o  \n\
+                     / \\         | o           o              |  \n\
+                    o---oo  o  o-O   o-o o   o   o-o o  o  oo |  \n\
+                    |   ||  | |  | | | |  \\ /  |  \\  |  | | | |  \n\
+                    o   oo--o  o-o | o-o   o   | o-o o--o o-o-o  \n\
+                                                                 \n\
+                                                                 \n\
+            o--o      o                                          \n\
+            |         |                                          \n\
+            O-o  \\ / -o- o-o  oo o   o  oo o--o  oo o-o  o-o  oo \n\
+            |     o   |  |   | |  \\ /  | | |  | | | |  |  /  | | \n\
+            o--o / \\  o  o   o-o-  o   o-o-o--O o-o-o  o o-o o-o-\n\
+                                              |                  \n\
+                                           o--o                  \n\
+\n');
+
+console.log(colors.bold('Kinect status: '));
 
 
 var app = require('http');
 var httpRequest = require('http-request');
 var url = require("url");
-var BufferStream = require('bufferstream');
-var WebSocketServer = require('ws').Server;
-var websocket = require('websocket-stream');
+// var BufferStream = require('bufferstream');
+// var WebSocketServer = require('ws').Server;
+// var websocket = require('websocket-stream');
 var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
 
-var sys = require('sys')
-var exec = require('child_process').exec;
-var child;
-
-//app specific modules
-var keypress = require('keypress');
 
 //compilation modules
 var chokidar = require('chokidar');
@@ -61,8 +85,7 @@ var clients = [];
 
 var selectPort = 0;
 
-
-
+console.log('\n');
 
 app.globalAgent.maxSockets = 500;
 
@@ -75,16 +98,27 @@ if(process.argv.length > 2) {
 	for(var i=0; i < params.length; i++) {
 		
 		var param = params[i];
-		if(param.indexOf('-port') === 0) selectPort = parseInt( param.substring(5,param.length) );
-		else if(param.indexOf('-quick') === 0) quickStart = true;
+		if(param.indexOf('-port') === 0) {
+			skipMidi = false;
+			selectPort = parseInt( param.substring(5,param.length) );
+		}
 		else if(param.indexOf('-skipmidi') === 0) skipMidi = true;
 		else if(param.indexOf('-skipcolour') === 0) skipColour = true;
 		else if(param.indexOf('-skipeffectslist') === 0) skipMidi = true;
 		else if(param.indexOf('-skipkinect') === 0) skipKinect = true;
+		else if(param.indexOf('-skiplaunch') === 0) skipLaunch = true;
 		else if(param.indexOf('-devmode') === 0) devMode = true;
+		else if(param.indexOf('-verbose') === 0) verbose = true;
 	}
 }else{
-	console.log("no params given! include -portXX to select midi device");
+	console.log(colors.bold("No params given!"));
+	console.log("\
+-portXX        selects the approriate MIDI port\n\
+-skipmidi      don't even listen for MIDI\n\
+-skipcolours   doesn't attempt to download the top colour palettes from Colour Lovers\n\
+-devmode       watches changes in .less and .js files and recompiles accordingly\n\
+-verbose       logs extra info, use for debugging\n\
+");
 }
 
 
@@ -97,7 +131,7 @@ function compileLess(path) {
 	    // console.log(data);
 	    less.render(data, function (e, css) {
 	        fs.writeFile(fpath, css.css, function(err){
-	            console.log('css compiled for ',path,' at ',fpath);
+	            if(verbose) console.log(colors.green('CSS compiled for ',path,' at ',fpath));
 	        });
 	    });
 	});
@@ -111,21 +145,21 @@ var scriptsToCompile = [
 
 function compileScript(scriptName) {
 
-	console.log('Compiling '+scriptName);
+	if(verbose) console.log('Compiling '+scriptName);
 
 	var newName = scriptName.replace('.js','_built.js');
 	child = exec('browserify '+scriptName+' -o '+newName, function (error, stdout, stderr) {
-		sys.print('stdout: ' + stdout);
-		sys.print('stderr: ' + stderr);
 		if (error !== null) {
-			console.log('exec error: ' + error);
+			console.log(colors.red('exec error: ' + error));
+		}else{
+			if(verbose) console.log(colors.green('JS compiled for '+scriptName));
 		}
 	});
 
 }
 function compileScripts() {
 
-	console.log('Browserifying JS files');
+	if(verbose) console.log('Browserifying JS files');
 
 	for(var i=0; i < scriptsToCompile.length; i ++) {
 		compileScript(scriptsToCompile[i]);
@@ -167,20 +201,24 @@ if(!skipEffectsList) {
 			if(files.length > 0) {
 				var totalEffects = files.length;
 
-				console.log('Scanning effects folder...');
+				if(verbose) console.log('Scanning effects folder...');
 				files.forEach(function(file) {
 					if(file.indexOf('effect_') === 0) {
 						fs.readFile('./effects/'+file, 'utf8', function(err,data) {
-							if(err) console.log('Error reading ',file);
-							else if(data.indexOf('//exclude') != 0) effects.push(file.substring(7,file.length-3));
-							else console.log('Exluding ',file);
+							if(err) {
+								console.log(colors.red('Error reading '+file+'! Check your permissions.'));
+							}else if(data.indexOf('//exclude') != 0) {
+								effects.push(file.substring(7,file.length-3));
+							}else{
+								if(verbose) console.log('Exluding '+file+', as per the //exclude comment on line 1');
+							}
 
 							if(++effectsScanned >= totalEffects) {
 
-								console.log(effects.length+' effects scanned');
+								if(verbose) console.log(effects.length+' effects scanned');
 								var str = 'effects = ["'+effects.join('", "')+'"];';
 								fs.writeFile('./app/scripts/effects_list.js', str, function() {
-									if(err) console.log('Unable to save effects list!');
+									if(err) console.log(colors.red('Unable to save effects list! Check your writable permissions.'));
 								});
 							}
 
@@ -191,10 +229,10 @@ if(!skipEffectsList) {
 				// fs.writeFile()
 
 			}else{
-				console.log('No effect files in effects folder ... um send help.')
+				console.log(colors.red('No effect files in effects folder ... um send help.'));
 			}
 		}else{
-			console.log('Error scanning effects folder... very problematic!')
+			console.log(colors.red('Error scanning effects folder... very problematic! Check your folder permissions.'));
 		}
 	});
 
@@ -211,23 +249,37 @@ if(!skipMidi) {
 
 	var input = new midi.input();
 	var ports = input.getPortCount();
-	if(ports < selectPort) {
-		console.log("UNABLE TO USE PORT "+selectPort+". Reverting to 0");
-		selectPort = 0;
-	}
-	console.log(ports+" MIDI PORTS AVAILABLE");
-	for(var i=0; i<ports; i++) {
-		console.log('port'+i+': '+input.getPortName(i));
-	}
 
-	input.on('message', function(deltaTime, message) {
-		console.log('m:' + message + ' d:' + deltaTime);
-		clients.forEach(function(client) {
-			client.write('data: ' + message.join(' ') + '\n\n');
+	if(ports > 0) {
+
+		if(ports < selectPort) {
+			console.log(colors.yellow("Unable to use port "+selectPort+". Reverting to 0"));
+			selectPort = 0;
+		}
+
+		if(ports.length > 1) {
+
+			console.log(colors.blue(ports+" MIDI ports available"));
+			for(var i=0; i<ports; i++) {
+				console.log('-port'+i+': '+input.getPortName(i));
+			}
+		}
+
+		console.log(colors.green.bold('Using MIDI port '+selectPort+': '+input.getPortName(selectPort)));
+
+		input.on('message', function(deltaTime, message) {
+			if(verbose) console.log('m:' + message + ' d:' + deltaTime);
+			clients.forEach(function(client) {
+				client.write('data: ' + message.join(' ') + '\n\n');
+			});
 		});
-	});
 
-	input.openPort(selectPort);
+		input.openPort(selectPort);
+
+	}else{
+		if(isWin) console.log(colors.yellow('No MIDI devies found. http://www.midiox.com/ is a good MIDI diagnosis utility.'));
+		else console.log(colors.yellow('No MIDI devies found. Check `Audio MIDI Setup` app (mac).'));
+	}
 
 }else{
 	console.log('Skipping midi setup');
@@ -236,12 +288,12 @@ if(!skipMidi) {
 //get top colours xml
 
 if(!skipColour) {
-	console.log('Attempting to download top colour palettes...')
+	if(verbose) console.log('Attempting to download top colour palettes...')
 	httpRequest.get('http://www.colourlovers.com/api/palettes/top?numResults=24', './app/palettes.xml', function (error, result) {
 			if (error) {
-					console.error('Error getting xml file',error);
+				console.log(colors.red('Error getting xml file. The API must be dead, let me know at jacobclarke92@gmail.com ',error));
 			} else {
-					console.log('File downloaded at: ' + result.file);
+				if(verbose) console.log(colors.green('Colour palette downloaded to: ' + result.file));
 			}
 	});
 }else{
@@ -304,12 +356,12 @@ var appServer = app.createServer(function(req, res) {
 	if (pathname == '/app/midi.json') {
 		
 		stream(req, res, 'text/event-stream');
-		console.log('midi stream requested');
+		if(verbose) console.log('midi stream requested');
 
 	}else if (pathname == '/images') {
 
 		stream(req, res, 'text/event-stream');
-		console.log('kinect stream requested');		
+		if(verbose) console.log('kinect stream requested');		
 
 	} else {
 		var mimeType = false;
@@ -350,12 +402,13 @@ var kstream;
 var kcontext;
 
 // this method of getting kinect data wasn't working out, hence the logic
-if(!skipKinect && 1 == 0) {
+if(goodKinectLibrary && 1 == 0) {
 
-	console.log('Initialising kinect!');
+	console.log('Initialising kinect motor controls!');
 
+
+	kcontext = kinect();
 	kstream = new BufferStream();
-
 	wss = new WebSocketServer({server: appServer});
 
 	//init socket stream
@@ -369,8 +422,6 @@ if(!skipKinect && 1 == 0) {
 		});
 
 	});
-
-	kcontext = kinect();
 	
 	//init kinect depth data stream
 	kcontext.resume();
@@ -380,20 +431,22 @@ if(!skipKinect && 1 == 0) {
 	  kstream.write(buf);
 	});
 
+	kcontext.resume();
+
 	//init terminal kinect controls
 	var kinectAngle = 0;
 	updateKinectAngle(0);
 
-	keypress(process.stdin);
-	process.stdin.on('keypress', function (ch, key) {
+	// keypress(process.stdin);
+	// process.stdin.on('keypress', function (ch, key) {
 
-	  if(key.name == 'up') updateKinectAngle(1);
-	  else if(key.name == 'down') updateKinectAngle(-1);
+	//   if(key.name == 'up') updateKinectAngle(1);
+	//   else if(key.name == 'down') updateKinectAngle(-1);
 
-	  if (key && key.ctrl && key.name == 'c') process.exit(0);//process.stdin.pause(); // die gracefully
-	});
-	process.stdin.setRawMode(true);
-	process.stdin.resume();
+	//   if (key && key.ctrl && key.name == 'c') process.exit(0);//process.stdin.pause(); // die gracefully
+	// });
+	// process.stdin.setRawMode(true);
+	// process.stdin.resume();
 
 
 }
@@ -429,29 +482,30 @@ function writeImage(image) {
 function startServer() {
 	process.stdin.resume();
 	process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
-	appServer.listen(5600);
+	appServer.listen(portNum);
 
-	console.log('Node server started!'); 
+	console.log(colors.green.bold('Node server started!')); 
+
+	if(!skipLaunch) {
+
+		var launchCmd;
+		var launchUrl = 'http://localhost:'+portNum+'/';
+		var startFullscreen = '';
+		// var startFullscreen = '--start-fullscreen ';
+		if(isWin) 'chrome.exe '+startFullscreen+'"'+launchUrl+'"';
+		else launchCmd = 'open -a "Google Chrome" --args '+startFullscreen+' "'+launchUrl+'"';
+
+		child = exec(launchCmd, function (error, stdout, stderr) {
+			if (error !== null) {
+				console.log(colors.red('exec error: ' + error));
+			}else{
+				if(verbose) console.log(colors.green('Launching chrome in fullscreen now...'));
+			}
+		});
+	}
 }
 
 
 
 
-if(quickStart) startServer();
-else{
-	var interval = false;
-	var count = 5;
-	setTimeout(function() {
-		console.log('5 seconds until node server launch...');
-		setTimeout(function() {
-
-			startServer();
-			
-			clearInterval(interval);
-		},5000);
-		interval = setInterval(function() {
-			count --;
-			console.log(count);
-		},1000);
-	},1500);
-}
+startServer();
