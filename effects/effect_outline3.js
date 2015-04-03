@@ -32,9 +32,6 @@ effect_outline3 = {
       this.screens = this.screens.splice(0,maxFrames);
     }
 
-    var winW = endDrawX-startDrawY;
-    var winH = endDrawY-startDrawY;
-
     //apply fade out to past frames
     this.graphics = new PIXI.Graphics();
     for(var i=0; i<this.screens.length; i++) {
