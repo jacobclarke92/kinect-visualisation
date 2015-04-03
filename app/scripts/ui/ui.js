@@ -4,21 +4,23 @@ var mappingMIDI = false;
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {
-	var counter = 0;
+	setTimeout(function() {
+		console.log('binding element events');
+		var counter = 0;
 
-	$('[data-midi-mappable]').each(function() {
-		counter ++;
-	});
-	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
-	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
+		$('[data-midi-mappable]').each(function() {
+			counter ++;
+		});
+		console.log('MIDI MAPPABLE ELEMENTS: ',counter);
+		$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
 
-	counter = 0;
-	$('[data-audio-mappable]').each(function() {
-		counter ++;
-	});
-	console.log('AUDIO MAPPABLE ELEMENTS: ',counter);
-	$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
-
+		counter = 0;
+		$('[data-audio-mappable]').each(function() {
+			counter ++;
+		});
+		console.log('AUDIO MAPPABLE ELEMENTS: ',counter);
+		$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
+	},500);
 }
 
 //a midi-mappable element has been clicked
