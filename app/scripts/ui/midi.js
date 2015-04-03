@@ -76,9 +76,9 @@ function processMidiData(byteArray) {
 function receiveMappingData(midiData, externalOverride) {
 
 	// midiData
-	midiData[0] = midiData[0].destring();
-	midiData[1] = midiData[1].destring();
-	midiData[2] = midiData[2].destring();
+	midiData[0] = (typeof midiData[0] != 'number') ? parseInt(midiData[0]) : midiData[0];
+	midiData[1] = (typeof midiData[1] != 'number') ? parseInt(midiData[1]) : midiData[1];
+	midiData[2] = (typeof midiData[2] != 'number') ? parseInt(midiData[2]) : midiData[2];
 
 	//this should refer to only 1 element - the on waiting to be mapped
 	var mappedElement = $('[data-midi-mappable].waiting');
@@ -150,7 +150,7 @@ function receiveMappingData(midiData, externalOverride) {
 					min: parseFloat(mappedElement.attr('data-min')),
 					max: parseFloat(mappedElement.attr('data-max')),
 				},
-				audio: flase
+				audio: false
 			};
 			else mapping = w.mappings[w.hash][paramName];
 			mapping.midi.value = midiData[2];
@@ -185,7 +185,7 @@ function receiveMappingData(midiData, externalOverride) {
 		console.log('Mapping made!',mappedElement,midiData);
 
 	}else{
-		console.log('incompatible control type to midi type!');
+		console.log('incompatible control type to midi type!',midiData[0]);
 	}
 
 	
