@@ -319,5 +319,30 @@ function deleteSelectedAudioMapping() {
   	}
 }
 
+function commenceAutoMapping() {
+	showAlert({
+		title: 'Auto Midi Map...',
+		message: '<p>This will allow you to quickly set up sequences of MIDI mappings, choose from the following sets to start:</p>',
+		buttons: [
+			{label: 'Cancel'},
+			{label: 'Visualisation List', callback: function() {
+
+			}},
+			{label: 'Colours', callback: function() {
+
+			}},
+			{label: 'Calibration Params', callback: function() {
+
+			}},
+			{label: 'Filter Params', callback: function() {
+
+			}},
+			{label: 'Current Visualisation Params', callback: function() {
+
+			}}
+		]
+	});
+}
+
 
 

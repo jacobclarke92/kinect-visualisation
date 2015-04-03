@@ -130,6 +130,10 @@ function loaded() {
 		linkMappableElements();
 	});
 
+	$('#autoMapButton').unbind('click').bind('click', function(e) {
+		commenceAutoMapping();
+	});	
+
 
 	$('#exportButton').unbind('click').bind('click', function(e) {
 		showAlert({
