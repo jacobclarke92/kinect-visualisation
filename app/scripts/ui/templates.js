@@ -164,7 +164,7 @@ function generateEffectParams() {
   }
   var tempMappings = {};
   $.each(w.mappings[w.hash],function(key,param) {
-    if(param.name.indexOf('calibration_') == -1 && param.name.indexOf('filter_') == -1) tempMappings[key] = param;
+    if(key.indexOf('calibration_') == -1 && key.indexOf('filter_') == -1 && param != null) tempMappings[key] = param;
   });
   console.log('effect mappings: ',tempMappings);
   createSliders(tempMappings, effectsZone);
@@ -181,13 +181,14 @@ function generateFilterParams() {
     filter_invert: {label: 'Invert', name: 'filter_invert', midi: {min: -2.5, max: 2.5, value: 0}},
     filter_blur: {label: 'Blur', name: 'filter_blur', midi: {min: 0, max: 100, value: 0}}
   };
+
+  console.info('CURRENT HASH: '+w.hash);
+
   $.each(filterParams,function(key,param) {
     if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) {
       filterParams[key] = w.mappings[w.hash][key];
-      //this just makes it so the titles don't contain 'Filter' when t
+      //this just makes it so the titles don't contain 'Filter'
       filterParams[key].label = (key.split('filter_').join('')).readable();
-      console.log(key, w.mappings[w.hash][key].midi.value);
-      filterParams[key].midi.value = w.mappings[w.hash][key].midi.value;
     }else{
       if(!isset(w.mappings[w.hash])) w.mappings[w.hash] = {};
       w.mappings[w.hash][key] = {
@@ -195,7 +196,7 @@ function generateFilterParams() {
         name: param.name,
         type: false,
         midi: {
-          value: 0,
+            value: 0,
           initValue: 0,
           postValue: 0,
           min: param.midi.min,
@@ -218,14 +219,86 @@ function generateCalibrationParams() {
   var offsetY = (w.winH) ? w.winH : 1000;
   var calibrationParams = {
      //{label: 'Mirrored', name: 'calibration_mirrored', value: 0, on:{onChange:sliderChange}}
-    calibration_depthThreshold: {label: 'Depth Threshold', name: 'calibration_depthThreshold', midi: {min: 100, max: 254, value: w.calibration_depthThreshold || 150}},
-    calibration_depthRange: {label: 'Depth Range', name: 'calibration_depthRange', midi: {min: 1, max: 55, value: w.calibration_depthRange || 30}},
-    calibration_zoom: {label: 'Zoom', name: 'calibration_zoom', midi: {min: 0.2, max: 4.0, step: 0.1, value: w.calibration_zoom || 0}},
-    calibration_offsetX: {label: 'Offset X', name: 'calibration_offsetX', midi: {min: -offsetX, max: offsetX, value: w.calibration_offsetX || 0}},
-    calibration_offsetY: {label: 'Offset Y', name: 'calibration_offsetY', midi: {min: -offsetY, max: offsetY, value: w.calibration_offsetY || 0}},
-    calibration_rotateX: {label: 'Rotate X', name: 'calibration_rotateX', midi: {min: -65, max: 65, value: w.calibration_rotateX || 0}},
-    calibration_rotateY: {label: 'Rotate Y', name: 'calibration_rotateY', midi: {min: -65, max: 65, value: w.calibration_rotateY || 0}},
-    calibration_perspective: {label: 'Perspective', name: 'calibration_perspective', midi: {min: 100, max: 2000, value: 800}}
+    calibration_depthThreshold: {
+      label: 'Depth Threshold', 
+      name: 'calibration_depthThreshold', 
+      midi: {
+        min: 100, 
+        max: 254, 
+        value: w.calibration_depthThreshold || 150, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_depthThreshold'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_depthThreshold'].midi.cc : -1
+      }
+    },
+    calibration_depthRange: {
+      label: 'Depth Range', 
+      name: 'calibration_depthRange', 
+      midi: {
+        min: 1, 
+        max: 55, 
+        value: w.calibration_depthRange || 30, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_depthRange'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_depthRange'].midi.cc : -1
+      }
+    },
+    calibration_zoom: {
+      label: 'Zoom', 
+      name: 'calibration_zoom', 
+      midi: {
+        min: 0.2, 
+        max: 4.0, 
+        step: 0.1, 
+        value: w.calibration_zoom || 0, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_zoom'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_zoom'].midi.cc : -1
+      }
+    },
+    calibration_offsetX: {
+      label: 'Offset X', 
+      name: 'calibration_offsetX', 
+      midi: {
+        min: -offsetX, 
+        max: offsetX, 
+        value: w.calibration_offsetX || 0, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_offsetX'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_offsetX'].midi.cc : -1
+      }
+    },
+    calibration_offsetY: {
+      label: 'Offset Y', 
+      name: 'calibration_offsetY', 
+      midi: {
+        min: -offsetY, 
+        max: offsetY, 
+        value: w.calibration_offsetY || 0, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_offsetY'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_offsetY'].midi.cc : -1
+      }
+    },
+    calibration_rotateX: {
+      label: 'Rotate X', 
+      name: 'calibration_rotateX', 
+      midi: {
+        min: -65, 
+        max: 65, 
+        value: w.calibration_rotateX || 0, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_rotateX'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_rotateX'].midi.cc : -1
+      }
+    },
+    calibration_rotateY: {
+      label: 'Rotate Y', 
+      name: 'calibration_rotateY', 
+      midi: {
+        min: -65, 
+        max: 65, 
+        value: w.calibration_rotateY || 0, 
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_rotateY'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_rotateY'].midi.cc : -1
+      }
+    },
+    calibration_perspective: {
+      label: 'Perspective', 
+      name: 'calibration_perspective', 
+      midi: {min: 100, 
+        max: 2000, 
+        value: 800,
+        cc: (w.lastScriptName != false && isset(w.mappings[w.lastScriptName]['calibration_perspective'].midi.cc)) ? w.mappings[w.lastScriptName]['calibration_perspective'].midi.cc : -1
+      }
+    }
   };
   $.each(calibrationParams,function(key,param) {
     if(isset(w.mappings[w.hash]) && isset(w.mappings[w.hash][key])) {

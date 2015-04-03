@@ -7,6 +7,7 @@ this.testingImage = false;
 this.testingSound = false;
 this.testImageURL = '';
 this.currentScriptString = false;
+this.lastScriptName = false;
 
 
 this.pixelBit = 2;
@@ -71,6 +72,7 @@ this.changeScript = function(script) {
 }
 this.realChangeScript = function(script) {
 
+	this.lastScriptName = this.currentScriptString
 
 	this.currentScriptString = script;
 	//clear stage
@@ -148,7 +150,7 @@ this.initLoadedScript = function(script) {
 	},50);
 
 	currentScriptRequiresOutlines = (this.currentScript.requiresOutlines) ? true : false;
-	console.log('Current script requires outlines ',currentScriptRequiresOutlines);
+	console.log('Current script requires outlines: '+currentScriptRequiresOutlines);
 
 }
 
@@ -300,7 +302,6 @@ this.run = function() {
 			image.onload = function() {
 
 		    	if(!_this.gotKinect) {
-					 console.log(event);
 					 _this.gotKinect = true;
 					 _this.gotImage = true;
 					 $('#kinectCheck', _this.uiPopup.document).removeClass('error');
