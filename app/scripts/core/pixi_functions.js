@@ -48,27 +48,31 @@ function getWindowSize() {
 
 	if(winW/winH > 4/3) {
 		//viewport is wider
-		startDrawY = 0;
-		endDrawY = winH;
+		var zoomOffsetY = Math.round( (winY*calibration_zoom - winY)/2 );
+		startDrawY = 0 - zoomOffsetX + calibration_offsetY;
+		endDrawY = winH + zoomOffsetX + calibration_offsetY;
 
 		var offsetSize = 640/(480/winH);
+		var zoomOffsetX = Math.round( (offsetSize*calibration_zoom - offsetSize)/2 );
 
 		sizeRatio = winH/240;
 
-		startDrawX = Math.round( (winW-offsetSize)/2 );
-		endDrawX = Math.round( winW - (winW-offsetSize)/2 );
+		startDrawX = Math.round( (winW-offsetSize)/2 ) + zoomOffsetX + calibration_offsetX;
+		endDrawX = Math.round( winW - (winW-offsetSize)/2 ) + zoomOffsetX + calibration_offsetX;
 
 	}else{
 		//viewport is taller
-		startDrawX = 0;
-		endDrawX = winW;
+		var zoomOffsetX = Math.round( (winW*calibration_zoom - winW)/2 );
+		startDrawX = 0 - zoomOffsetX + calibration_offsetX;
+		endDrawX = winW + zoomOffsetX + calibration_offsetX;
 
 		var offsetSize = 480/((640)/winW);
+		var zoomOffsetY = Math.round( (offsetSize*calibration_zoom - offsetSize)/2 )
 
 		sizeRatio = winW/320;
 
-		startDrawY = Math.round( (winH-offsetSize)/2 );
-		endDrawY = Math.round( winH - (winH-offsetSize)/2 );
+		startDrawY = Math.round( (winH-offsetSize)/2 ) - zoomOffsetY + calibration_offsetY;
+		endDrawY = Math.round( winH - (winH-offsetSize)/2 ) + zoomOffsetY + calibration_offsetY;
 	}
 
 

@@ -254,8 +254,8 @@ function generateCalibrationParams() {
       label: 'Offset X', 
       name: 'calibration_offsetX', 
       midi: {
-        min: -offsetX, 
-        max: offsetX, 
+        min: -offsetX/2, 
+        max: offsetX/2, 
         value: w.calibration_offsetX || 0, 
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetX', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_offsetX.midi.cc : -1
       }
@@ -264,8 +264,8 @@ function generateCalibrationParams() {
       label: 'Offset Y', 
       name: 'calibration_offsetY', 
       midi: {
-        min: -offsetY, 
-        max: offsetY, 
+        min: -offsetY/2, 
+        max: offsetY/2, 
         value: w.calibration_offsetY || 0, 
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_offsetY.midi.cc : -1
       }

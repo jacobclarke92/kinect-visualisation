@@ -75,7 +75,7 @@ function createControls() {
 
 calibration_mirrored = calibration_zoom = 1;
 calibration_rotateX = calibration_rotateY = calibration_offsetX = calibration_offsetY = 0;
-var calibration_depthThreshold = 145;
+var calibration_depthThreshold = 150;
 var calibration_depthRange = 50;
 var calibration_perspective = 800;
 
@@ -89,11 +89,13 @@ function updateCanvas() {
     'transform': transform
   });
 
-  var h = 480*calibration_zoom;
   $('#contentZone').css({
-    'perspective-origin': '50% '+(h/2),
+    'perspective-origin': '50% 50%',
     'perspective': calibration_perspective+'px'
   });
+
+  //set draw space is pixi_functions
+  getWindowSize();
 }
 
 

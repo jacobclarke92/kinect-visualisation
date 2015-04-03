@@ -33,6 +33,11 @@ function processMidiData(byteArray) {
 				//update the appropriate element
 				setElementValue(mapping.name, mappedValue);
 
+				//update canvas if calibration value is changed
+				if(mapping.name.indexOf('calibration_') === 0 && mapping.name.indexOf('depth') == -1) {
+					w.updateCanvas();
+				}
+
 				//obviously don't save a cookie on every midi message, so just set a timeout and clear it on any overriding midi messages
 				if(midiChangeTimeout) clearTimeout(midiChangeTimeout);
 				midiChangeTimeout = setTimeout(function() {

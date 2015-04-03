@@ -13,8 +13,8 @@ effect_depth_image = {
 			img.alpha = 1;
 			img.x = startDrawX;
 			img.y = startDrawY;
-			img.scale.x = sizeRatio;
-			img.scale.y = sizeRatio;
+			img.scale.x = sizeRatio*calibration_zoom;
+			img.scale.y = sizeRatio*calibration_zoom;
 			stage.addChild(img);
 
 			// console.log(1,pixels[pixels.length/2]);
