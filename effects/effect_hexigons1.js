@@ -1,3 +1,4 @@
+//exclude
 effect_hexigons1 = {
 
 	requiresOutlines: false,

@@ -19,11 +19,8 @@ self.onmessage = function(e) {
 		imageEventSource.addEventListener('message', function(event) {
 
 			if(running) {
-
-				// console.log('got image');
+				
 				if(event.data.substring(0,14) == 'data:image/png' ) {
-					
-					// image.src = event.data;
 
 					self.postMessage({
 

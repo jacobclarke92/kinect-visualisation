@@ -64,9 +64,6 @@ debug.prototype = {
 
 function loaded() {
 
-	//open log window
-
-
 	// init resize and grab palettes if core has loaded them
 	updatePalettes();
 
