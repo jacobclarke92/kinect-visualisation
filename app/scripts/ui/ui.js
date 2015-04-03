@@ -4,23 +4,21 @@ var mappingMIDI = false;
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {
-	setTimeout(function() {
-		console.log('binding element events');
-		var counter = 0;
+	console.log('binding element events');
+	var counter = 0;
 
-		$('[data-midi-mappable]').each(function() {
-			counter ++;
-		});
-		console.log('MIDI MAPPABLE ELEMENTS: ',counter);
-		$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
+	$('[data-midi-mappable]').each(function() {
+		counter ++;
+	});
+	console.log('MIDI MAPPABLE ELEMENTS: ',counter);
+	$('[data-midi-mappable]').unbind('click',midiMappableElementClicked).bind('click',midiMappableElementClicked);
 
-		counter = 0;
-		$('[data-audio-mappable]').each(function() {
-			counter ++;
-		});
-		console.log('AUDIO MAPPABLE ELEMENTS: ',counter);
-		$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
-	},500);
+	counter = 0;
+	$('[data-audio-mappable]').each(function() {
+		counter ++;
+	});
+	console.log('AUDIO MAPPABLE ELEMENTS: ',counter);
+	$('[data-audio-mappable]').unbind('click',audioMappableElementClicked).bind('click',audioMappableElementClicked);
 }
 
 //a midi-mappable element has been clicked
@@ -169,39 +167,6 @@ function refreshAudioMappings() {
 	});
 	console.log(w.audioMappings);
 }
-function compare(a,b) {
- 
-}
-
-function isMappingSetForCC(cc, paramType) {
-	var results = [];
-	var searchArr;
-	if(paramType == 'pot') searchArr = w.mappings[w.hash];
-	else if(paramType == 'key') searchArr = w.mappings['midiButtons'];
-	else return false;
-	if(typeof searchArr == 'undefined') return false;
-	
-	$.each(searchArr,function(key,mapping) {
-		if(mapping.cc !== false && mapping.cc != -1 && mapping.cc == cc) results.push(mapping.name);
-	});
-
-	return (results.length > 0) ? results : false;
-}
-function removeMappingsByCC(cc) {
-	if(isset(w.mappings[w.hash])) $.each(w.mappings[w.hash],function(key,mapping) {
-		if(mapping.cc === cc) {
-			$('#'+mapping.name).removeAttr('data-midi-linked');
-			delete w.mappings[w.hash][key];
-		}
-	});
-	if(isset(w.mappings['midiButtons'])) $.each(w.mappings['midiButtons'],function(key,mapping) {
-		if(mapping.cc === cc) {
-			$('#'+mapping.name).removeAttr('data-midi-linked');
-			delete w.mappings['midiButtons'][key];
-		}
-	});
-}
-
 
 var effectUI_data = [];
 

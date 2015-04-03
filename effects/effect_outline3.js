@@ -70,16 +70,17 @@ effect_outline3 = {
       // console.log(outlineArray.length);
       var outline;
       var offset;
+      var skip = (outlinePointSkip < 1) ? 1 : Math.round(outlinePointSkip);
       for(var n=0; n < outlineArray.length; n ++) {
         outline = outlineArray[n];
-        for(var i=0; i<outline.length; i += outlinePointSkip) {
+        for(var i=0; i<outline.length-skip; i += skip) {
           if(i >= outline.length) i = outline.length-1;
 
-          offset = Math.random()*randomizeAmount - (randomizeAmount/2);
+          offsetX = Math.random()*randomizeAmount - (randomizeAmount/2);
           
           offsetY = Math.random()*randomizeAmount - (randomizeAmount/2);
-          if(i == 0) this.graphics.moveTo(tX( outline[i][0] + offset ), tY( outline[i][1] + offset ));
-          else this.graphics.lineTo(tX( outline[i][0] + offset ), tY( outline[i][1] + offset ));
+          if(i == 0) this.graphics.moveTo(tX( outline[i][0] + offsetX ), tY( outline[i][1] + offsetY ));
+          else this.graphics.lineTo(tX( outline[i][0] + offsetX ), tY( outline[i][1] + offsetY ));
         }
       }
 

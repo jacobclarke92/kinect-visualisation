@@ -97,6 +97,9 @@ function receiveMappingData(midiData, externalOverride) {
 		if(typeof externalOverride == 'undefined') {
 
 			var mappingOverride = isMappingSetForCC(midiData[1], paramType);
+
+			console.log(mappingOverride);
+
 			//don't ask to override element that's already selected
 			if(mappingOverride.length == 1 && mappingOverride[0] == paramName) mappingOverride = false;
 			if(mappingOverride) {
@@ -120,10 +123,10 @@ function receiveMappingData(midiData, externalOverride) {
 							$('body').removeClass('disabled');
 						}},
 						{label: ((mappingOverride.length > 1) ? 'Only keep ' : 'Keep ')+paramName.readable(), callback: function() {
-							console.log('keep original');
+							console.log('keep new');
 							removeMappingsByCC(midiData[1]);
 							//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
-							receiveMappingData(midiData,true);
+							receiveMappingData(midiData);
 							$('body').removeClass('disabled');
 						}}
 					]
@@ -193,6 +196,34 @@ function receiveMappingData(midiData, externalOverride) {
 }
 
 
+function isMappingSetForCC(cc, paramType) {
+	var results = [];
+	var searchArr;
+	if(paramType == 'pot') searchArr = w.mappings[w.hash];
+	else if(paramType == 'key') searchArr = w.mappings['midiButtons'];
+	else return false;
+	if(typeof searchArr == 'undefined') return false;
+	
+	$.each(searchArr,function(key,mapping) {
+		if(isset(mapping.midi.cc) && mapping.midi.cc != -1 && mapping.midi.cc == cc) results.push(mapping.name);
+	});
+
+	return (results.length > 0) ? results : false;
+}
+function removeMappingsByCC(cc) {
+	if(isset(w.mappings[w.hash])) $.each(w.mappings[w.hash],function(key,mapping) {
+		if(isset(mapping.midi.cc) && mapping.midi.cc === cc) {
+			$('#'+mapping.name).removeAttr('data-midi-linked');
+			w.mappings[w.hash][key].midi.cc = -1;
+		}
+	});
+	if(isset(w.mappings['midiButtons'])) $.each(w.mappings['midiButtons'],function(key,mapping) {
+		if(mapping.cc === cc) {
+			$('#'+mapping.name).removeAttr('data-midi-linked');
+			delete w.mappings['midiButtons'][key];
+		}
+	});
+}
 
 
 function updateMappings(byteArray) {
