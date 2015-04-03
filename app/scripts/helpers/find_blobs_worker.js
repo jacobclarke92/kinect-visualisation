@@ -2,8 +2,10 @@
 
   var _marchingSquares = require('./marchingsquares_worker.js');
 
-  self.depthThreshold = 166;
-  self.outlineSmooth = 1; //gotta implement this later but it seems to be running smoothly without any downscaling! :D
+  _this = this;
+
+  _this.depthThreshold = 166;
+  _this.outlineSmooth = 1; //gotta implement this later but it seems to be running smoothly without any downscaling! :D
   var pixelBit = 2;
 
   var startingPoints = [];
@@ -11,8 +13,8 @@
 
   self.onmessage = function(e) {
 
-    self.depthThreshold = e.data.depthThreshold;
-    self.outlineSmooth = e.data.outlineSmooth;
+    _this.depthThreshold = e.data.depthThreshold;
+    _this.outlineSmooth = e.data.outlineSmooth;
 
     pixelBit = e.data.pixelBit;
 
@@ -38,7 +40,7 @@
 
   var usedLabels = [];
 
-  function FindBlobs(srcPixels) {
+  function FindBlobs(srcPixels,smooth) {
 
     startingPoints = [];
     usedLabels = [];
@@ -46,8 +48,8 @@
     var origSizeX = 320;
     var origSizeY = 240;
 
-    var xSize = origSizeX/self.outlineSmooth;
-    var ySize = origSizeY/self.outlineSmooth;
+    var xSize = origSizeX/_this.outlineSmooth;
+    var ySize = origSizeY/_this.outlineSmooth;
     var x, y, pos;
 
     // This will hold the indecies of the regions we find
@@ -81,10 +83,10 @@
 
       // We leave a 1 pixel border which is ignored so we do not get array
       // out of bounds errors
-      for( y = self.outlineSmooth; y < ySize - self.outlineSmooth; y += self.outlineSmooth){
-        for( x = self.outlineSmooth; x < xSize - self.outlineSmooth; x += self.outlineSmooth){
+      for( y = _this.outlineSmooth; y < ySize - _this.outlineSmooth; y += _this.outlineSmooth){
+        for( x = _this.outlineSmooth; x < xSize - _this.outlineSmooth; x += _this.outlineSmooth){
 
-          pos = (y*origSizeX+x)*4;
+          pos = ((y*origSizeX)+x)*4;
           // pos = (y*xSize+x);
 
           // We're only looking at the alpha channel in this case but you can

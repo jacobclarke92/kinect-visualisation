@@ -7,6 +7,7 @@ _this = this;
 
 _this.calibration_depthThreshold = 166;
 _this.pixelBit = 2;
+_this.outlineSmooth = 1;
 
 this.canvasWidth = 320;
 this.canvasHeight = 240;
@@ -50,7 +51,8 @@ image.onload = function() {
 		    	'cmd': 'getBlobs', 
 		    	'imageData': _this.rawImage.data,
 				'depthThreshold': _this.calibration_depthThreshold,
-				'pixelBit': _this.pixelBit
+				'pixelBit': _this.pixelBit,
+				'outlineSmooth': _this.outlineSmooth
 			});
 			waitingForBlobs = true;
 		}

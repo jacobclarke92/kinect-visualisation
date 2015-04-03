@@ -178,7 +178,7 @@ var attemptingToUseSocketLol = false;
 
 this.startOutlineX = -1;
 this.startOutlineY = -1;
-this.outlineSmooth = 2;
+this.outlineSmooth = 1;
 
 
 var attemptingToUseBlobDetection = true;
