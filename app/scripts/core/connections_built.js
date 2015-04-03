@@ -72,7 +72,7 @@ this.changeScript = function(script) {
 }
 this.realChangeScript = function(script) {
 
-	this.lastScriptName = this.currentScriptString
+	this.lastScriptName = this.currentScriptString;
 
 	this.currentScriptString = script;
 	//clear stage
@@ -85,8 +85,13 @@ this.realChangeScript = function(script) {
 	this.hash = script;
 
 	//create mapping objects if they don't exist
-	if(typeof mappings != 'object') this.mappings = {};
-	if(typeof mappings[hash] != 'object') this.mappings[hash] = {};
+	if(typeof this.mappings != 'object') {
+		this.mappings = {};
+	}
+	if(typeof this.mappings[hash] != 'object') {
+		this.mappings[hash] = {};
+	}
+
 
 	//begin loading script
 	if(window['effect_'+script]) {
@@ -108,6 +113,7 @@ this.realChangeScript = function(script) {
 	$('.changeScript',this.uiPopup.document).removeClass('active');
 	$('#'+script, this.uiPopup.document).addClass('active');
 
+
 	if(!this.inited) {
 		this.inited = true;
 		run();
@@ -128,6 +134,21 @@ this.initLoadedScript = function(script) {
 	if(typeof currentScript.screens == 'undefined') {
 		this.currentScript.screens = [];
 		this.currentScript.graphics = false;
+	}
+
+	//carry on calibration mapping data from previous effect
+	if(this.lastScriptName != false) {
+		$.each(mappings[lastScriptName], function(key,elem) {
+			if(key.indexOf('calibration_') > -1) {
+				if(!isObjectPathSet(mappings, [script, key, 'midi', 'cc']) && 
+				   isObjectPathSet(mappings, [lastScriptName, key, 'midi', 'cc']) && 
+				   mappings[lastScriptName][key].midi.cc != -1) {
+
+				   	console.info('setting previous calibration mapping CC for '+key+', CC: '+mappings[lastScriptName][key].midi.cc)
+					mappings[script][key] = mappings[lastScriptName][key];
+				}
+			}
+		});
 	}
 
 	//creates the mapping controls for the effect
@@ -411,9 +432,6 @@ function processImageOutline() {
 	        }
 	    }
 
-	    // console.log(_this.calibration_depthThreshold);
-
-		// _this.outlineArray = _this.MarchingSquares.getBlobOutlinePointsFromImage(_this.pixels, 3, 20);
 		if(_this.startOutlineX != -1 && _this.startOutlineY != -1) {
 			outlineWorker.postMessage({
 		    	'cmd': 'getOutline', 
@@ -441,7 +459,8 @@ function launchBlobDetectionWorker() {
 	blobDetectionWorker = new Worker('/app/scripts/helpers/find_blobs_worker_built.js');
 		
     blobDetectionWorker.onmessage = function(e) {
-		_this.outlineArray = e.data.outlines;
+
+		if(e.data.outlines.length > 1) _this.outlineArray = e.data.outlines;
 		waitingForBlobs = false;
     };
     blobDetectionWorker.onerror = function(e) {

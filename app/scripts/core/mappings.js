@@ -9,7 +9,7 @@ function setMapping(variable, minimum, maximum, _default) {
 
   if(!paramIsSet) {
 
-    console.log('setting window variable '+variable+' to effect defaults');
+    console.log('setting window variable ~'+variable+'~ to effect defaults');
 
     mappings[hash][variable] = {
       label: variable.readable(), 
@@ -28,7 +28,7 @@ function setMapping(variable, minimum, maximum, _default) {
   }else{
 
     console.log('setting window variable ~'+mappings[hash][variable].name+'~ from mappings: '+mappings[hash][variable].midi.value);
-    window[variable] = mappings[hash][variable].midi.vlaue;
+    window[variable] = mappings[hash][variable].midi.value;
 
   }
 }

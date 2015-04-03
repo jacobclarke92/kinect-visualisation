@@ -19,7 +19,7 @@ effect_outline3 = {
   init: function() {
     setMapping('lineThickness', 1, 50, 2);
     setMapping('randomizeAmount', 0, 50, 1);
-    setMapping('outlinePointSkip', 1, 20, 1);
+    setMapping('outlinePointSkip', 3, 20, 1);
     setMapping('scaleAmount', 0, 1, 0.01);
     setMapping('trailAmount', 0, 1, 0.001);
   },
