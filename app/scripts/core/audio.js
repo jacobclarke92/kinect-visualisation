@@ -91,7 +91,7 @@ var threshMultiplier = 2;
 
 function processAudio() {
 
-	if(gotSound && showFrequencyData && isset(frequencyArray) && isset(frequencyArray.length)) {
+	if(gotSound && showFrequencyData && typeof frequencyArray == 'object') {
 
 		if(freqBarsCanvas) {
 

@@ -105,22 +105,25 @@ function saveAudioMapping(mappingType, elem) {
 	console.log('saving audio '+mappingType+' mapping, elem: ',elem);
 	var paramName = (elem.attr('name')) ? elem.attr('name') : elem.attr('data-name');
 
-	if(!isset( w.mappings[w.hash][paramName])) mapping = {
-		label: paramName.readable(), 
-		name: paramName, 
-		audio: false,
-		midi: {
-			min: -100,
-			max: 100,
-			initValue: 0, 
-			postValue: 0,
-			value: 0,
-			cc: -1
-		},
-		audio: {}
-	};
-	else mapping = w.mappings[w.hash][paramName];
-	// if(!isset(mapping)) console.log(isset( w.mappings[w.hash][paramName]), paramName, mapping);
+	if(!isset( w.mappings[w.hash][paramName])) {
+		mapping = {
+			label: paramName.readable(), 
+			name: paramName, 
+			audio: false,
+			midi: {
+				min: -100,
+				max: 100,
+				initValue: 0, 
+				postValue: 0,
+				value: 0,
+				cc: -1
+			},
+			audio: {}
+		};
+	}else{
+		mapping = w.mappings[w.hash][paramName];
+	}
+
 	if(!mapping.audio) {
 		console.log('audio object for mapping ',elem,' was undefined');
 		mapping.audio = {};
@@ -151,13 +154,11 @@ function refreshAudioMappings() {
 		console.log('mappings for hash not set yet, cant refresh audio mappings');
 		return false;
 	}
-	// $.each(w.mappings[w.hash],function(keyGroup, mappingGroup) {
-		$.each(w.mappings[w.hash],function(key,mapping) {
-			if(mapping.audio) {
-				w.audioMappings.push(mapping);
-			}
-		});
-	// });
+	$.each(w.mappings[w.hash],function(key,mapping) {
+		if(mapping.audio) {
+			w.audioMappings.push(mapping);
+		}
+	});
 	console.log(w.audioMappings);
 	//sort audio mappings by their starting range point
 	w.audioMappings.sort(function(a,b) {
@@ -310,7 +311,7 @@ function deleteSelectedAudioMapping() {
   	if(mappedElement) {
   		console.log('Deleting an audio mapping!');
   		var paramName = mappedElement.attr('data-name');
-  		if(isset(w.mappings[w.hash][paramName])) delete w.mappings[w.hash][paramName];
+  		if(isObjectPathSet(w.mappings, [w.hash, paramName, 'audio'])) w.mappings[w.hash][paramName].audio = false;
   		mappedElement.removeAttr('data-midi-linked').removeClass('waitingAudio');
   		$('body').removeClass('waitingAudio');
   	}else{
