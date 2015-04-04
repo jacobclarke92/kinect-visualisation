@@ -240,13 +240,6 @@ function loaded() {
 	generateEffectsFiles();
 	initAllParameters();
 
-	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
-	setTimeout(function() {
-		linkMappableElements();
-		refreshAudioMappings();
-	},3000);
-
-
 	// Init tab view
 	$('.tabs').tabslet();
 	
@@ -285,7 +278,12 @@ function initAllParameters() {
 	generateEffectParams();
 	generateFilterParams();
 	generateCalibrationParams();
-	refreshAudioMappings();
+
+	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
+	setTimeout(function() {
+		linkMappableElements();
+		refreshAudioMappings();
+	},1000);
 
 }
 

@@ -8,9 +8,16 @@ appSettings = {
 		mirrored: 1,
 		depthThreshold: 150,
 		depthRange: 50,
-		perspective: 800,
-		trailAmountCC: 25
+		perspective: 800
 
+	},
+
+	defaultCCs: {
+
+		trailAmount: 25,
+		lineThickness: 13,
+		maxPointDist: 14
+		
 	}
 
 }
