@@ -56,7 +56,7 @@ effect_outline3 = {
 
   draw: function() {
 
-    if(gotImage && typeof outlineArray != 'undefined') {
+    if(gotImage && isset(outlineArray)) {
       
       this.graphics.lineStyle(lineThickness,randomPaletteColour());
 
@@ -65,30 +65,29 @@ effect_outline3 = {
       this.maxX = 0;
       this.minY = 0;
 
-      var firstX, firstY;
-
-      // console.log(outlineArray.length);
-      var outline;
-      var offset;
+      var firstX, firstY, offsetX, offsetY, outline, x, y;
       var skip = (outlinePointSkip < 1) ? 1 : Math.round(outlinePointSkip);
+
       for(var n=0; n < outlineArray.length; n ++) {
         outline = outlineArray[n];
         if(outline.length > skip) {
+
           for(var i=0; i<outline.length-skip; i += skip) {
             if(i >= outline.length) i = outline.length-1;
 
             offsetX = Math.random()*randomizeAmount - (randomizeAmount/2);
             offsetY = Math.random()*randomizeAmount - (randomizeAmount/2);
-
+            x = outline[i][0] + offsetX;
+            y = outline[i][1] + offsetY;
             if(i == 0) {
-              firstX = tX( outline[i][0] + offsetX );
-              firstY = tY( outline[i][1] + offsetY );
+              firstX = tX( x );
+              firstY = tY( y );
               this.graphics.moveTo(firstX,firstY);
             }else{
-              this.graphics.lineTo(tX( outline[i][0] + offsetX ), tY( outline[i][1] + offsetY ));
+              this.graphics.lineTo(tX( x ), tY( y ));
             }
           }
-          this.graphics.lineTo(firstX, firstY);
+          this.graphics.lineTo(tX( firstX ), tY( firstY ));
         }
       }
 
