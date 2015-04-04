@@ -3,11 +3,11 @@ effect_triangulation1 = {
   requiresOutlines: false,
 
   init: function() {
-    setMapping('maxParticles', 20, 100, 60);
+    setMapping('lineThickness', 0.5, 10, 1);
     setMapping('maxPointDist', 15, 85, 50);
+    setMapping('maxParticles', 20, 100, 60);
     setMapping('particleSpeedVariaton', 0, 5, 0.5);
     setMapping('circleOpacity', 0, 1, 1);
-    setMapping('lineThickness', 0.5, 10, 1);
 
     setMapping('trailAmount', 0, 1, 1);
     

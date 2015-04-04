@@ -8,8 +8,8 @@ effect_test_visuals = {
 	particles: [],
 
 	init: function() {
-    	setMapping('spawnAmount', 1, 10, 1);
     	setMapping('shapeSize', 1, 200, 100);
+    	setMapping('spawnAmount', 1, 10, 1);
 		setMapping('trailAmount', 0, 1, 0.2);
 	},
 
