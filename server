@@ -6,7 +6,7 @@ var skipColour = false;
 var skipMidi = false;
 var skipKinect = false;
 var skipEffectsList = false;
-var skipLaunch = false;
+var autoLaunch = false;
 var devMode = false;
 var verbose = false;
 
@@ -71,9 +71,9 @@ console.log(colors.bold('Kinect status: '));
 var app = require('http');
 var httpRequest = require('http-request');
 var url = require("url");
-// var BufferStream = require('bufferstream');
-// var WebSocketServer = require('ws').Server;
-// var websocket = require('websocket-stream');
+// var BufferStream = require('bufferstream'); //npm bufferstream
+// var WebSocketServer = require('ws').Server; //npm ws
+// var websocket = require('websocket-stream'); //npm websocket-stream
 var BufferedNetstringStream = require('./app/libs/netstring').BufferedNetstringStream;
 
 
@@ -106,7 +106,7 @@ if(process.argv.length > 2) {
 		else if(param.indexOf('-skipcolour') === 0) skipColour = true;
 		else if(param.indexOf('-skipeffectslist') === 0) skipMidi = true;
 		else if(param.indexOf('-skipkinect') === 0) skipKinect = true;
-		else if(param.indexOf('-skiplaunch') === 0) skipLaunch = true;
+		else if(param.indexOf('-autolaunch') === 0) autoLaunch = true;
 		else if(param.indexOf('-devmode') === 0) devMode = true;
 		else if(param.indexOf('-verbose') === 0) verbose = true;
 	}
@@ -486,14 +486,15 @@ function startServer() {
 
 	console.log(colors.green.bold('Node server started!')); 
 
-	if(!skipLaunch) {
+	if(!autoLaunch) {
 
 		var launchCmd;
 		var launchUrl = 'http://localhost:'+portNum+'/';
 		var startFullscreen = '';
+		var ignoreMediaPermissions = '';//'--use-fake-ui-for-media-stream';
 		// var startFullscreen = '--start-fullscreen ';
 		if(isWin) 'chrome.exe '+startFullscreen+'"'+launchUrl+'"';
-		else launchCmd = 'open -a "Google Chrome" --args '+startFullscreen+' "'+launchUrl+'"';
+		else launchCmd = 'open -a "Google Chrome" --args '+startFullscreen+' "'+launchUrl+'" '+ignoreMediaPermissions+' ';
 
 		child = exec(launchCmd, function (error, stdout, stderr) {
 			if (error !== null) {

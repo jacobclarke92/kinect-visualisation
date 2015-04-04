@@ -48,7 +48,7 @@ function getWindowSize() {
 
 	if(winW/winH > 4/3) {
 		//viewport is wider
-		var zoomOffsetY = Math.round( (winY*calibration_zoom - winY)/2 );
+		var zoomOffsetY = Math.round( (winH*calibration_zoom - winH)/2 );
 		startDrawY = 0 - zoomOffsetX + calibration_offsetY;
 		endDrawY = winH + zoomOffsetX + calibration_offsetY;
 
