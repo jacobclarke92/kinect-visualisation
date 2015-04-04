@@ -173,13 +173,55 @@ function generateEffectParams() {
 
 function generateFilterParams() {
   var filterParams = {
-    filter_rgbSplit: {label: 'RGB Split', name: 'filter_rgbSplit', midi: { min: 0, max: 100, value: 0}},
-    filter_displacement: {label: 'Displacement', name: 'filter_displacement',  midi: {min: 0, max: 100, value: 0}},
-    filter_pixelate: {label: 'Pixelate', name: 'filter_pixelate', midi: {min: 0, max: 100, value: 0}},
-    filter_twist: {label: 'Twist', name: 'filter_twist', midi: {min: 0, max: 15, value: 0}},
-    //  ': {label: 'Extreme Twist', name: 'filter_twist', midi: {min: 500, max: 510, value: 0}}
-    filter_invert: {label: 'Invert', name: 'filter_invert', midi: {min: -2.5, max: 2.5, value: 0}},
-    filter_blur: {label: 'Blur', name: 'filter_blur', midi: {min: 0, max: 100, value: 0}}
+    filter_rgbSplit: {
+      label: 'RGB Split', name: 'filter_rgbSplit', 
+      midi: {
+        min: 0, 
+        max: 100, 
+        value: 0,
+        cc: -1
+      }
+    },
+    filter_displacement: {
+      label: 'Displacement', name: 'filter_displacement',  midi: {
+          min: 0, 
+          max: 100, 
+          value: 0,
+          cc: -1
+      } 
+    },
+    filter_pixelate: {
+      label: 'Pixelate', name: 'filter_pixelate', midi: {
+          min: 0, 
+          max: 100, 
+          value: 0,
+          cc: -1
+      } 
+    },
+    filter_twist: {
+      label: 'Twist', name: 'filter_twist', midi: {
+          min: 0, 
+          max: 15, 
+          value: 0,
+          cc: -1
+      } 
+    },
+    filter_invert: {
+      label: 'Invert', name: 'filter_invert', midi: {
+        min: -2.5,
+        max: 2.5,
+        value: 0,
+        cc: -1
+      }
+    },
+    filter_blur: {
+      label: 'Blur', name: 'filter_blur', midi: {
+          min: 0, 
+          max: 100, 
+          value: 0,
+          cc: -1
+      } 
+    }
   };
 
   console.info('CURRENT HASH: '+w.hash);

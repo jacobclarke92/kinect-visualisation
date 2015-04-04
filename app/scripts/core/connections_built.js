@@ -142,7 +142,7 @@ this.initLoadedScript = function(script) {
 		console.log(mappings[lastScriptName])
 		$.each(mappings[lastScriptName], function(key,elem) {
 			if(key in mappings[script]) console.info('both effects contain '+key);
-			if(key in mappings[script] && 
+			if((key in mappings[script] || key.indexOf('filter_') === 0 || key.indexOf('calibration_') === 0) && 
 			   isObjectPathSet(mappings, [lastScriptName, key, 'midi', 'cc']) && 
 			   mappings[lastScriptName][key].midi.cc != -1) {
 				
