@@ -346,7 +346,7 @@ function commenceAutoMapping() {
 			autoMapType = 'Calibration 1';
 			setTimeout(function() {
 				showAlert({
-					title: 'Waiting for MIDI button...', 
+					title: 'Waiting for MIDI pot...', 
 					message: 'This will use 4 pots for depthThreshold, depthRange, offsetX and offsetY'
 				}, [{label: 'Cancel'}]);
 			}, 500);
@@ -356,16 +356,44 @@ function commenceAutoMapping() {
 			autoMapType = 'Calibration 2';
 			setTimeout(function() {
 				showAlert({
-					title: 'Waiting for MIDI button...', 
+					title: 'Waiting for MIDI pot...', 
 					message: 'This will use 4 pots for zoom, perspective, rotateX and rotateY'
 				}, [{label: 'Cancel'}]);
 			}, 500);
 		}},
 		{label: 'Filter Params', callback: function() {
-
+			autoMapInProgress = true;
+			autoMapType = 'Filter Params';
+			setTimeout(function() {
+				showAlert({
+					title: 'Waiting for MIDI pot...', 
+					message: 'This will use 4 pots for RGB split, Displacement, Pixelate and Twist'
+				}, [{label: 'Cancel'}]);
+			}, 500);
 		}},
 		{label: 'Current Visualisation Params', callback: function() {
-
+			autoMapInProgress = true;
+			autoMapType = 'Effect Params';
+			setTimeout(function() {
+				var effectParams = $('[data-parent="effectsZone"].noUi-handle').length;
+				if(effectParams === 0) {
+					showAlert({
+						title: 'Hmm...', 
+						message: 'The current effect has no parameters. Maybe you should make some?'
+					}, [
+						{label: 'Hokay', callback: function() {
+							setTimeout(function() {
+								commenceAutoMapping();
+							},500);
+						}}
+					]);
+				}else{
+					showAlert({
+						title: 'Waiting for MIDI pot...', 
+						message: 'This will use '+effectParams+' consecutive pots'
+					}, [{label: 'Cancel'}]);
+				}
+			}, 500);
 		}},
 		{label: 'Cancel'}
 	]);
@@ -374,10 +402,13 @@ function receivedAutoMapMidi(byteArray, midiType) {
 	
 	if(!isset(w.mappings.midiButtons)) w.mappings.midiButtons = {};
 
+	var mappingFound = true;
+	var mappingsMade = 0;
 	var currentCC = byteArray[1];
 	console.log(midiType);
 
 	if(autoMapType == 'Visualisation List' && midiType == 'key') {
+
 		for(var i=0; i < effects.length; i ++) {
 			w.mappings.midiButtons[effects[i]] = {
 				label: effects[i].readable(),
@@ -389,11 +420,14 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			$('#'+effects[i]+'.file').attr('data-midi-linked','');
 			currentCC ++ ;
 		}
+		mappingsMade = effects.length;
+
 	}else if(autoMapType == 'Colour Palettes' && midiType == 'key') {
+
 		for(var i=0; i < w.palettes.length; i ++) {
 
 			var paletteName = 'palette_'+w.palettes[i].id;
-			w.mappings.midiButtons[effects[i]] = {
+			w.mappings.midiButtons[paletteName] = {
 				label: w.palettes[i].title,
 				name: paletteName,
 				midi: {
@@ -403,36 +437,56 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			$('#'+paletteName+'.palette').attr('data-midi-linked','');
 			currentCC ++ ;
 		}
-	}else if(autoMapType.indexOf('Calibration ') === 0 && midiType == 'pot') {
+		mappingsMade = w.palettes.length;
 
-		calibrationParams = $('[data-parent="calibrationZone"].noUi-handle');
+	}else if((autoMapType.indexOf('Calibration ') === 0 || autoMapType == 'Filter Params' || autoMapType == 'Effect Params') && midiType == 'pot') {
 
-		var start = 0;
-		var finish = 4;
-		if(autoMapType == 'Calibration 2') {
+		var parentElemName = 'calibrationZone';
+		if(autoMapType == 'Filter Params') parentElemName = 'filtersZone';
+		else if(autoMapType == 'Effect Params') parentElemName = 'effectsZone';
+
+		var isCalibration = (autoMapType.indexOf('Calibration ') === 0);
+
+		paramElems = $('[data-parent="'+parentElemName+'"].noUi-handle');
+		console.log(paramElems);
+
+		var start, finish;
+		if(autoMapType == 'Calibration 1' || autoMapType == 'Filter Params') {
+			start = 0;
+			finish = 4;
+		}else if(autoMapType == 'Calibration 2') {
 			start = 4;
-			finish = calibrationParams.length;
+			finish = paramElems.length;
+		}else if(autoMapType == 'Effect Params') {
+			start = 0;
+			finish = paramElems.length;
 		}
+
 		for(var i = start; i < finish; i ++) {
 
-			var paramElem = $(calibrationParams[i]);
+			var paramElem = $(paramElems[i]);
 			var paramName = paramElem.attr('data-name');
+
 			if(isObjectPathSet(w.mappings, [w.hash, paramName, 'midi'])) {
 
 				w.mappings[w.hash][paramName].midi.cc = currentCC;
 
 			}else{
 
+				var useCC = currentCC;
+				if(paramName == 'trailAmount') useCC = defaultTrailAmountCC;
+
+
 				w.mappings[w.hash][paramName] = {
-					label: paramName.replace('calibration_','').readable(), 
-					name: paramName, 
+					label: (isCalibration)?  (paramName.replace('calibration_','')).readable() : paramName.readable(), 
+					name: (isCalibration) ? 'calibration_'+paramName : paramName, 
 					midi: {
 						min: parseFloat(paramElem.attr('data-min')),
 						max: parseFloat(paramElem.attr('data-max')),
 						value: byteArray[2],
 						initValue: byteArray[2],
 						postValue: byteArray[2],
-						cc: currentCC
+						cc: useCC
 					},
 					audio: false
 				};
@@ -440,19 +494,38 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			paramElem.attr('data-midi-linked','');
 			currentCC ++;
 		}
+
+		mappingsMade = finish-start;
+	}else{
+		mappingFound = false;
 	}
 	
-	w.saveCookie();
+	if(mappingFound) {
 
-	autoMapInProgress = false;
-	showAlert({
-		label: 'Success', 
-		message: autoMapType+' has been auto-mapped to '+effects.length+' keys/buttons starting from CC '+byteArray[1]
-	}, [
-		{label: 'Sweet!', callback: function() {
-			setTimeout(function() { commenceAutoMapping() }, 500);
-		}}
-	]);
+		w.saveCookie();
+
+		var alertTimeout = setTimeout(function() { 
+			closeAlert(false);
+			setTimeout(function() {
+				commenceAutoMapping();
+			},500);
+		}, 1500);
+
+		autoMapInProgress = false;
+		showAlert({
+			label: 'Success', 
+			message: autoMapType+' has been auto-mapped to '+mappingsMade+' keys/buttons starting from CC '+byteArray[1]
+		}, [
+			{label: 'Sweet!', callback: function() {
+				setTimeout(function() { 
+					if(alertTimeout) clearTimeout(alertTimeout);
+					commenceAutoMapping() 
+				}, 500);
+			}}
+		]);
+	}
+
+
 }
 
 
