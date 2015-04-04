@@ -201,7 +201,7 @@ var attemptingToUseSocketLol = false;
 
 this.startOutlineX = -1;
 this.startOutlineY = -1;
-this.outlineSmooth = 2;
+this.outlineSmooth = 4; // 320 & 240 must be naturaly divisible by this number, basically not 3 or 6 
 
 
 var attemptingToUseBlobDetection = true;
@@ -420,6 +420,7 @@ function launchBlobDetectionWorker() {
     blobDetectionWorker.onmessage = function(e) {
 
 		if(e.data.outlines.length > 1 || (e.data.outlines.length == 1 && e.data.outlines[0].length > 40)) _this.outlineArray = e.data.outlines;
+		else _this.outlineArray = [];
 		waitingForBlobs = false;
     };
     blobDetectionWorker.onerror = function(e) {
