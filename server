@@ -121,6 +121,127 @@ if(process.argv.length > 2) {
 ");
 }
 
+var urlRules = [
+	['.pde','text/processing'],
+	['.png','image/png'],
+	['.js','application/javascript'],
+	['.html','text/html'],
+	['.css','text/css'],
+	['.json','text/event-stream'],
+	['.xml','text/xml'],
+
+	['.svg','image/svg+xml'],
+	['.ttf','application/x-font-ttf'],
+	['.otf','application/x-font-opentype'],
+	['.woff','application/x-font-woff'],
+	['.eot','application/vnd.ms-fontobject'],
+
+	['.ico','image/x-icon']
+];
+
+
+//start doing stream data stuff
+var id = 0;
+
+function stream(req, res) {
+	res.writeHead(200, {
+		'Content-Type':  'text/event-stream',
+		'Cache-Control': 'no-cache',
+		'Connection':    'keep-alive'
+	});
+
+	clients.push(res);
+
+	req.on('close', function() {
+		var index = clients.indexOf(res);
+		if (index != -1) {
+			clients.splice(index, 1);
+		}
+
+	});
+}
+
+var appServer = app.createServer(function(req, res) {
+
+	var parsedURL = url.parse(req.url, true);
+	var pathname = parsedURL.pathname;
+	// console.log(pathname);
+
+	var reqURL = __dirname + req.url;
+	if(pathname == '/') reqURL = __dirname + '/app/index.html';
+	
+	if (pathname == '/app/midi.json') {
+		
+		stream(req, res, 'text/event-stream');
+		if(verbose) console.log('midi stream requested');
+
+	}else if (pathname == '/images') {
+
+		stream(req, res, 'text/event-stream');
+		if(verbose) console.log('kinect stream requested');		
+
+	} else {
+		var mimeType = false;
+		for(var i=0; i< urlRules.length; i++) {
+			if (reqURL.indexOf(urlRules[i][0]) > -1) {
+				mimeType = urlRules[i][1];
+				i = urlRules.length;
+			}
+		}
+		if(!mimeType) mimeType = 'text/plain';
+		fs.readFile(reqURL, function (err, data) {
+			if (err) {
+				res.writeHead(500);
+				return res.end('Error loading ' +reqURL);
+				console.log('Error loading ' +reqURL);
+			}
+			res.writeHead(200,{
+				'Content-Type': mimeType
+			});
+			res.end(data);
+		});
+		/*
+		
+		*/
+	}
+
+});
+
+function startServer() {
+	process.stdin.resume();
+	process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
+	appServer.listen(portNum);
+
+	console.log(colors.green.bold('Node server started!')); 
+
+	if(!autoLaunch) {
+
+		var launchCmd;
+		var launchUrl = 'http://localhost:'+portNum+'/';
+		var startFullscreen = '';
+		var ignoreMediaPermissions = '';//'--use-fake-ui-for-media-stream';
+		// var startFullscreen = '--start-fullscreen ';
+		if(isWin) 'chrome.exe '+startFullscreen+'"'+launchUrl+'"';
+		else launchCmd = 'open -a "Google Chrome" --args '+startFullscreen+' "'+launchUrl+'" '+ignoreMediaPermissions+' ';
+
+		child = exec(launchCmd, function (error, stdout, stderr) {
+			if (error !== null) {
+				console.log(colors.red('exec error: ' + error));
+			}else{
+				if(verbose) console.log(colors.green('Launching chrome in fullscreen now...'));
+			}
+		});
+		child = exec('open -a "Soundflowerbed"', function (error, stdout, stderr) {
+			if (error !== null) {
+				console.log(colors.red('exec error: ' + error));
+			}else{
+				if(verbose) console.log(colors.green('Launching Soundflowerbed...'));
+			}
+		});
+	}
+}
+
+
 
 function compileLess(path) {
 	var fpath = path.replace(/\\/g, '/');
@@ -140,11 +261,25 @@ function compileLess(path) {
 var scriptsToCompile = [
 	'./app/scripts/core/connections.js',
 	'./app/scripts/helpers/outline_worker.js',
-	'./app/scripts/helpers/find_blobs_worker.js'
+	'./app/scripts/helpers/find_blobs_worker.js',
+	'./app/scripts/helpers/marchingsquares_worker.js',
+];
+var scriptLinks = [
+	['./app/scripts/helpers/marchingsquares_worker.js', './app/scripts/helpers/find_blobs_worker.js']
 ];
 
-function compileScript(scriptName) {
+var compiledScripts = 0;
+function compileScript(_scriptName) {
 
+
+	var scriptName = _scriptName;
+	if(scriptName.indexOf('app/') === 0) scriptName = './'+scriptName;
+	for(var i=0; i < scriptLinks.length; i++) {
+		if(scriptLinks[i][0] == scriptName) {
+			if(verbose) console.log('Swapping ~'+scriptName+'~ to ~'+scriptLinks[i][1]+'~');
+			scriptName = scriptLinks[i][1];
+		}
+	}
 	if(verbose) console.log('Compiling '+scriptName);
 
 	var newName = scriptName.replace('.js','_built.js');
@@ -153,8 +288,12 @@ function compileScript(scriptName) {
 			console.log(colors.red('exec error: ' + error));
 		}else{
 			if(verbose) console.log(colors.green('JS compiled for '+scriptName));
+			compiledScripts ++;
+			if(compiledScripts == scriptsToCompile.length) startServer();
 		}
 	});
+
+	
 
 }
 function compileScripts() {
@@ -301,96 +440,6 @@ if(!skipColour) {
 }
 
 
-
-
-
-var urlRules = [
-	['.pde','text/processing'],
-	['.png','image/png'],
-	['.js','application/javascript'],
-	['.html','text/html'],
-	['.css','text/css'],
-	['.json','text/event-stream'],
-	['.xml','text/xml'],
-
-	['.svg','image/svg+xml'],
-	['.ttf','application/x-font-ttf'],
-	['.otf','application/x-font-opentype'],
-	['.woff','application/x-font-woff'],
-	['.eot','application/vnd.ms-fontobject'],
-
-	['.ico','image/x-icon']
-];
-
-
-//start doing stream data stuff
-var id = 0;
-
-function stream(req, res) {
-	res.writeHead(200, {
-		'Content-Type':  'text/event-stream',
-		'Cache-Control': 'no-cache',
-		'Connection':    'keep-alive'
-	});
-
-	clients.push(res);
-
-	req.on('close', function() {
-		var index = clients.indexOf(res);
-		if (index != -1) {
-			clients.splice(index, 1);
-		}
-
-	});
-}
-
-var appServer = app.createServer(function(req, res) {
-
-	var parsedURL = url.parse(req.url, true);
-	var pathname = parsedURL.pathname;
-	// console.log(pathname);
-
-	var reqURL = __dirname + req.url;
-	if(pathname == '/') reqURL = __dirname + '/app/index.html';
-	
-	if (pathname == '/app/midi.json') {
-		
-		stream(req, res, 'text/event-stream');
-		if(verbose) console.log('midi stream requested');
-
-	}else if (pathname == '/images') {
-
-		stream(req, res, 'text/event-stream');
-		if(verbose) console.log('kinect stream requested');		
-
-	} else {
-		var mimeType = false;
-		for(var i=0; i< urlRules.length; i++) {
-			if (reqURL.indexOf(urlRules[i][0]) > -1) {
-				mimeType = urlRules[i][1];
-				i = urlRules.length;
-			}
-		}
-		if(!mimeType) mimeType = 'text/plain';
-		fs.readFile(reqURL, function (err, data) {
-			if (err) {
-				res.writeHead(500);
-				return res.end('Error loading ' +reqURL);
-				console.log('Error loading ' +reqURL);
-			}
-			res.writeHead(200,{
-				'Content-Type': mimeType
-			});
-			res.end(data);
-		});
-		/*
-		
-		*/
-	}
-
-});
-
-
 // ~~			   ~~ //
 // ~~ kinect stuff ~~ //
 // ~~ 			   ~~ //
@@ -476,44 +525,3 @@ function writeImage(image) {
 
 	id2++;
 }
-
-
-
-function startServer() {
-	process.stdin.resume();
-	process.stdin.pipe(new BufferedNetstringStream).on('data', writeImage);
-	appServer.listen(portNum);
-
-	console.log(colors.green.bold('Node server started!')); 
-
-	if(!autoLaunch) {
-
-		var launchCmd;
-		var launchUrl = 'http://localhost:'+portNum+'/';
-		var startFullscreen = '';
-		var ignoreMediaPermissions = '';//'--use-fake-ui-for-media-stream';
-		// var startFullscreen = '--start-fullscreen ';
-		if(isWin) 'chrome.exe '+startFullscreen+'"'+launchUrl+'"';
-		else launchCmd = 'open -a "Google Chrome" --args '+startFullscreen+' "'+launchUrl+'" '+ignoreMediaPermissions+' ';
-
-		child = exec(launchCmd, function (error, stdout, stderr) {
-			if (error !== null) {
-				console.log(colors.red('exec error: ' + error));
-			}else{
-				if(verbose) console.log(colors.green('Launching chrome in fullscreen now...'));
-			}
-		});
-		child = exec('open -a "Soundflowerbed"', function (error, stdout, stderr) {
-			if (error !== null) {
-				console.log(colors.red('exec error: ' + error));
-			}else{
-				if(verbose) console.log(colors.green('Launching Soundflowerbed...'));
-			}
-		});
-	}
-}
-
-
-
-
-startServer();
