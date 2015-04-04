@@ -21,7 +21,7 @@ var twistFilter = new PIXI.TwistFilter();
 
 rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = rgbSplitterFilter.green.y = rgbSplitterFilter.blue.x = rgbSplitterFilter.blue.y = 0;
 
-var filterCollection = [displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter];
+var filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter];
 
 window.filter_displacement = 0;
 window.filter_blur = 0;
@@ -238,10 +238,10 @@ function animateFrame() {
 		blurFilter.blurX = blurFilter.blurY = filter_blur;
 
 		filterCollection = [];
-		if(filter_displacement != 0) filterCollection.push(displacementFilter);
+		if(filter_rgbSplit != 0) filterCollection.push(rgbSplitterFilter);
 		if(filter_twist != 0) filterCollection.push(twistFilter);
 		if(filter_pixelate != 0) filterCollection.push(pixelateFilter);
-		if(filter_rgbSplit != 0) filterCollection.push(rgbSplitterFilter);
+		if(filter_displacement != 0) filterCollection.push(displacementFilter);
 		if(filter_invert != 0) filterCollection.push(invertFilter);
 		if(filter_blur != 0) filterCollection.push(blurFilter);
 		if(filterCollection.length == 0) filterCollection = null;
