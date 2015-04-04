@@ -137,16 +137,17 @@ this.initLoadedScript = function(script) {
 	}
 
 	//carry on calibration mapping data from previous effect
-	if(this.lastScriptName != false) {
+	if(lastScriptName != false) {
+		console.log(mappings[script])
+		console.log(mappings[lastScriptName])
 		$.each(mappings[lastScriptName], function(key,elem) {
-			if(key.indexOf('calibration_') > -1 || key.indexOf('filter_') > -1) {
-				if(!isObjectPathSet(mappings, [script, key, 'midi', 'cc']) && 
-				   isObjectPathSet(mappings, [lastScriptName, key, 'midi', 'cc']) && 
-				   mappings[lastScriptName][key].midi.cc != -1) {
-
-				   	console.info('setting previous mapping CC for '+key+', CC: '+mappings[lastScriptName][key].midi.cc)
-					mappings[script][key] = mappings[lastScriptName][key];
-				}
+			if(key in mappings[script]) console.info('both effects contain '+key);
+			if(key in mappings[script] && 
+			   isObjectPathSet(mappings, [lastScriptName, key, 'midi', 'cc']) && 
+			   mappings[lastScriptName][key].midi.cc != -1) {
+				
+				console.info('setting previous mapping CC for '+key+', CC: '+mappings[lastScriptName][key].midi.cc)
+				mappings[script][key] = mappings[lastScriptName][key];
 			}
 		});
 	}
