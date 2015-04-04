@@ -503,6 +503,13 @@ function startServer() {
 				if(verbose) console.log(colors.green('Launching chrome in fullscreen now...'));
 			}
 		});
+		child = exec('open -a "Soundflowerbed"', function (error, stdout, stderr) {
+			if (error !== null) {
+				console.log(colors.red('exec error: ' + error));
+			}else{
+				if(verbose) console.log(colors.green('Launching Soundflowerbed...'));
+			}
+		});
 	}
 }
 
