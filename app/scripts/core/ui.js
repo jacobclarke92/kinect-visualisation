@@ -63,17 +63,15 @@ window.onunload = function() {
 
 function createControls() {
 
-
-
   // at this stage the effect should have set all the standard values
   audioMappings = [];
-  if(!mappings[hash])  mappings[hash] = {};
+  if(!isset(mappings[hash]))  mappings[hash] = {};
 
   //handled by the UI functions 
-  if(isset(uiPopup.initAllParameters)) {
-    uiPopup.initAllParameters();
+  if(isset(uiPopup.updateEffectMappings)) {
+    uiPopup.updateEffectMappings();
     console.info('controls updated');
-  }else console.log('ui function generateEffectParams not available yet...');
+  }else console.log('ui function updateEffectMappings not available yet...');
   
 
 }

@@ -204,6 +204,33 @@ function updatePalettes() {
 
 }
 
+function updateMappingStates() {
+
+
+	//this works for effect params, filters and calibration
+	var midiLinkedSliders = 0;
+	console.log(w.hash);
+	console.log(w.mappings[w.hash]);
+	$.each(w.mappings[w.hash], function(i, elem) {
+		if(isset(elem.midi) && elem.midi.cc != -1) {
+			midiLinkedSliders ++;
+			$('#'+elem.name+'[data-midi-mappable]').attr('data-midi-linked','');
+		}
+	});
+	console.log('updated '+midiLinkedSliders+' midi linked sliders');
+
+	// This works for all buttons
+	var midiLinkedButtons = 0;
+	if(isset(w.mappings.midiButtons)) $.each(w.mappings.midiButtons, function(i, elem) {
+		if(isset(elem.midi) && elem.midi.cc != -1) {
+			midiLinkedButtons ++;
+			$('#'+elem.name+'[data-midi-mappable]').attr('data-midi-linked','');
+		}
+	});
+	console.log('updated '+midiLinkedButtons+' midi linked buttons');
+
+}
+
 function paramElementChanged(elem, value) {
 
 	var targetElem;
@@ -456,7 +483,7 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			finish = 4;
 		}else if(autoMapType == 'Calibration 2') {
 			start = 4;
-			finish = paramElems.length;
+			finish = 8;
 		}else if(autoMapType == 'Effect Params') {
 			start = 0;
 			finish = paramElems.length;

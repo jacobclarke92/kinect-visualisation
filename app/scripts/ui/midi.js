@@ -190,7 +190,7 @@ function receiveMappingData(midiData, externalOverride) {
 		console.log('Mapping made!',mappedElement,midiData);
 
 	}else{
-		console.log('incompatible control type to midi type!',midiData[0]);
+		console.log('incompatible midi type!',midiData[0],paramType,midiType);
 	}
 
 	
