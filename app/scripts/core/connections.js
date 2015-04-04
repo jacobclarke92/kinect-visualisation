@@ -417,7 +417,7 @@ function launchBlobDetectionWorker() {
 		
     blobDetectionWorker.onmessage = function(e) {
 
-		if(e.data.outlines.length > 1) _this.outlineArray = e.data.outlines;
+		if(e.data.outlines.length > 1 || (e.data.outlines.length == 1 && e.data.outlines[0].length > 40)) _this.outlineArray = e.data.outlines;
 		waitingForBlobs = false;
     };
     blobDetectionWorker.onerror = function(e) {
