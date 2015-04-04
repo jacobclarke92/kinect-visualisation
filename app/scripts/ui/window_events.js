@@ -346,7 +346,18 @@ function showAlert(config, buttons) {
 	if(isset(config.message)) $('.message',dialog).html(config.message);
 	if(isset(buttons)) {
 		for(var i=0; i<buttons.length; i++) {
-			$('.button'+(i+1),dialog).html(buttons[i].label || 'Okay').unbind('click').bind('click', buttons[i].callback).removeClass('hidden');
+
+			var alertButton = $('.button'+(i+1),dialog);
+			alertButton.html(buttons[i].label || 'Okay').unbind('click');
+			if(typeof buttons[i].callback == 'function') {
+				alertButton.bind('click', buttons[i].callback);
+			}else{
+				alertButton.bind('click', function() {
+					autoMapInProgress = false;
+				});
+			}
+			
+			alertButton.removeClass('hidden');
 		}
 		$('.button:not(.hidden)',dialog).bind('click', function() { closeAlert(false) });
 		$('.button:not(.hidden)',dialog).last().focus();

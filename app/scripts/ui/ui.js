@@ -320,7 +320,9 @@ function deleteSelectedAudioMapping() {
 function commenceAutoMapping() {
 	showAlert(uiMessages.commenceAutoMapping, [
 		{label: 'Visualisation List', callback: function() {
+			console.info(autoMapInProgress);
 			autoMapInProgress = true;
+			console.info(autoMapInProgress);
 			autoMapType = 'Visualisation List';
 			setTimeout(function() {
 				showAlert({
@@ -339,8 +341,25 @@ function commenceAutoMapping() {
 				}, [{label: 'Cancel'}]);
 			}, 500);
 		}},
-		{label: 'Calibration Params', callback: function() {
-
+		{label: 'Calibration Params 1', callback: function() {
+			autoMapInProgress = true;
+			autoMapType = 'Calibration 1';
+			setTimeout(function() {
+				showAlert({
+					title: 'Waiting for MIDI button...', 
+					message: 'This will use 4 pots for depthThreshold, depthRange, offsetX and offsetY'
+				}, [{label: 'Cancel'}]);
+			}, 500);
+		}},
+		{label: 'Calibration Params 2', callback: function() {
+			autoMapInProgress = true;
+			autoMapType = 'Calibration 2';
+			setTimeout(function() {
+				showAlert({
+					title: 'Waiting for MIDI button...', 
+					message: 'This will use 4 pots for zoom, perspective, rotateX and rotateY'
+				}, [{label: 'Cancel'}]);
+			}, 500);
 		}},
 		{label: 'Filter Params', callback: function() {
 
@@ -355,7 +374,8 @@ function receivedAutoMapMidi(byteArray, midiType) {
 	
 	if(!isset(w.mappings.midiButtons)) w.mappings.midiButtons = {};
 
-	var currentCC = byteArray[1]
+	var currentCC = byteArray[1];
+	console.log(midiType);
 
 	if(autoMapType == 'Visualisation List' && midiType == 'key') {
 		for(var i=0; i < effects.length; i ++) {
@@ -383,7 +403,46 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			$('#'+paletteName+'.palette').attr('data-midi-linked','');
 			currentCC ++ ;
 		}
+	}else if(autoMapType.indexOf('Calibration ') === 0 && midiType == 'pot') {
+
+		calibrationParams = $('[data-parent="calibrationZone"].noUi-handle');
+
+		var start = 0;
+		var finish = 4;
+		if(autoMapType == 'Calibration 2') {
+			start = 4;
+			finish = calibrationParams.length;
+		}
+		for(var i = start; i < finish; i ++) {
+
+			var paramElem = $(calibrationParams[i]);
+			var paramName = paramElem.attr('data-name');
+			if(isObjectPathSet(w.mappings, [w.hash, paramName, 'midi'])) {
+
+				w.mappings[w.hash][paramName].midi.cc = currentCC;
+
+			}else{
+
+				w.mappings[w.hash][paramName] = {
+					label: paramName.replace('calibration_','').readable(), 
+					name: paramName, 
+					midi: {
+						min: parseFloat(paramElem.attr('data-min')),
+						max: parseFloat(paramElem.attr('data-max')),
+						value: byteArray[2],
+						initValue: byteArray[2],
+						postValue: byteArray[2],
+						cc: currentCC
+					},
+					audio: false
+				};
+			}
+			paramElem.attr('data-midi-linked','');
+			currentCC ++;
+		}
 	}
+	
+	w.saveCookie();
 
 	autoMapInProgress = false;
 	showAlert({

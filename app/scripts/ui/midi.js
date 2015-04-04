@@ -121,27 +121,26 @@ function receiveMappingData(midiData, externalOverride) {
 				showAlert({
 					title: 'Mapping override',
 					message: 'Midi CC already set for '+readableList.join(', ')+'.<br>What would you like to do?',
-					buttons: [
-						{label: 'Keep '+readableList.join(', '), callback: function() {
-							console.log('keep original');
-							mappedElement.removeClass('waiting');
-							$('body').removeClass('disabled waiting');
-						}},
-						{label: 'Keep '+((mappingOverride.length > 1) ? 'all' : 'both'), callback: function() {
-							console.log('keep both');
-							//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
-							receiveMappingData(midiData,true);
-							$('body').removeClass('disabled');
-						}},
-						{label: ((mappingOverride.length > 1) ? 'Only keep ' : 'Keep ')+paramName.readable(), callback: function() {
-							console.log('keep new');
-							removeMappingsByCC(midiData[1]);
-							//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
-							receiveMappingData(midiData);
-							$('body').removeClass('disabled');
-						}}
-					]
-				});
+				},[
+					{label: 'Keep '+readableList.join(', '), callback: function() {
+						console.log('keep original');
+						mappedElement.removeClass('waiting');
+						$('body').removeClass('disabled waiting');
+					}},
+					{label: 'Keep '+((mappingOverride.length > 1) ? 'all' : 'both'), callback: function() {
+						console.log('keep both');
+						//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
+						receiveMappingData(midiData,true);
+						$('body').removeClass('disabled');
+					}},
+					{label: ((mappingOverride.length > 1) ? 'Only keep ' : 'Keep ')+paramName.readable(), callback: function() {
+						console.log('keep new');
+						removeMappingsByCC(midiData[1]);
+						//pass the same midi data received in the function with the addition of override = true to prevent a further prompts
+						receiveMappingData(midiData);
+						$('body').removeClass('disabled');
+					}}
+				]);
 				return;
 			}
 		}

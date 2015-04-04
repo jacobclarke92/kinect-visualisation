@@ -239,17 +239,6 @@ function generateCalibrationParams() {
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_depthRange', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_depthRange.midi.cc : -1
       }
     },
-    calibration_zoom: {
-      label: 'Zoom', 
-      name: 'calibration_zoom', 
-      midi: {
-        min: 0.2, 
-        max: 4.0, 
-        step: 0.1, 
-        value: w.calibration_zoom || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_zoom', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_zoom.midi.cc : -1
-      }
-    },
     calibration_offsetX: {
       label: 'Offset X', 
       name: 'calibration_offsetX', 
@@ -270,6 +259,26 @@ function generateCalibrationParams() {
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_offsetY.midi.cc : -1
       }
     },
+    calibration_zoom: {
+      label: 'Zoom', 
+      name: 'calibration_zoom', 
+      midi: {
+        min: 0.2, 
+        max: 4.0, 
+        step: 0.1, 
+        value: w.calibration_zoom || 0, 
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_zoom', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_zoom.midi.cc : -1
+      }
+    },
+    calibration_perspective: {
+      label: 'Perspective', 
+      name: 'calibration_perspective', 
+      midi: {min: 100, 
+        max: 2000, 
+        value: 800,
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_perspective', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_perspective.midi.cc : -1
+      }
+    },
     calibration_rotateX: {
       label: 'Rotate X', 
       name: 'calibration_rotateX', 
@@ -288,15 +297,6 @@ function generateCalibrationParams() {
         max: 65, 
         value: w.calibration_rotateY || 0, 
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_rotateY.midi.cc : -1
-      }
-    },
-    calibration_perspective: {
-      label: 'Perspective', 
-      name: 'calibration_perspective', 
-      midi: {min: 100, 
-        max: 2000, 
-        value: 800,
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_perspective', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_perspective.midi.cc : -1
       }
     }
   };
