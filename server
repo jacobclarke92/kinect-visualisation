@@ -9,6 +9,7 @@ var skipEffectsList = false;
 var autoLaunch = false;
 var devMode = false;
 var verbose = false;
+var useShortcuts = false;
 
 var isWin = /^win/.test(process.platform);
 
@@ -109,6 +110,7 @@ if(process.argv.length > 2) {
 		else if(param.indexOf('-autolaunch') === 0) autoLaunch = true;
 		else if(param.indexOf('-devmode') === 0) devMode = true;
 		else if(param.indexOf('-verbose') === 0) verbose = true;
+		else if(param.indexOf('-useshortcuts') === 0) useShortcuts = true;
 	}
 }else{
 	console.log(colors.bold("No params given!"));
@@ -525,3 +527,19 @@ function writeImage(image) {
 
 	id2++;
 }
+
+if(useShortcuts) {
+
+	var shortcut = 'osascript -e \'delay 5\';osascript -e \'tell application "Google Chrome" to activate\';osascript -e \'tell application "System Events" to keystroke "d" using {command down,control down,option down}\'';
+	child = exec(shortcut, function (error, stdout, stderr) {
+		if (error !== null) {
+			console.log(colors.red('exec error: ' + error));
+		}else{
+			if(verbose) console.log(colors.green('Running shortcut...'));
+		}
+	});
+
+}
+
+
+
