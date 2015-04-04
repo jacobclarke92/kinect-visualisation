@@ -1,12 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function () {
 
-  var _marchingSquares = require('./marchingsquares_worker.js');
-
-  _this = this;
-
+   _this = this;
   _this.depthThreshold = 166;
   _this.outlineSmooth = 1; //gotta implement this later but it seems to be running smoothly without any downscaling! :D
+
+  var _marchingSquares = require('./marchingsquares_worker.js');
+
   var pixelBit = 2;
 
   var startingPoints = [];
@@ -16,18 +16,19 @@
 
     _this.depthThreshold = e.data.depthThreshold;
     _this.outlineSmooth = e.data.outlineSmooth;
+    _this.MarchingSquares.w = 320/_this.outlineSmooth;
+    _this.MarchingSquares.h = 240/_this.outlineSmooth;
 
     pixelBit = e.data.pixelBit;
-
+    
     var blobs = FindBlobs(e.data.imageData);
 
-    // console.log('Starting points', startingPoints);
     outlines = [];
-    for(var i=0; i<startingPoints.length; i ++) {
-      outlines.push( MarchingSquares.walkPerimeter(startingPoints[i][0], startingPoints[i][1], startingPoints[i][2], blobs) );
+    if(startingPoints.length > 0) {
+      for(var i=0; i<startingPoints.length; i ++) {
+        outlines.push( MarchingSquares.walkPerimeter(startingPoints[i][0], startingPoints[i][1], startingPoints[i][2], blobs) );
+      }
     }
-
-    // console.log('Outlines', outlines);
 
     self.postMessage({
       // 'blobs': blobs,
@@ -35,7 +36,7 @@
       // 'image': e.data.imageData
     });
 
-    // if(Math.random() < 0.01) console.log(e.data);
+    
     // console.log(e.data);
   }  
 
@@ -84,10 +85,10 @@
 
       // We leave a 1 pixel border which is ignored so we do not get array
       // out of bounds errors
-      for( y = _this.outlineSmooth; y < ySize - _this.outlineSmooth; y += _this.outlineSmooth){
-        for( x = _this.outlineSmooth; x < xSize - _this.outlineSmooth; x += _this.outlineSmooth){
+      for( y = 1; y < ySize-1; y ++) {
+        for( x = 1; x < xSize-1; x ++) {
 
-          pos = ((y*origSizeX)+x)*4;
+          pos = ( ( (y*self.outlineSmooth)*origSizeX ) + (x*self.outlineSmooth) )*4;
           // pos = (y*xSize+x);
 
           // We're only looking at the alpha channel in this case but you can
@@ -97,14 +98,14 @@
           if( isVisible ){
 
             // Find the lowest blob index nearest this pixel
-            nw = blobMap[y-self.outlineSmooth][x-self.outlineSmooth] || 0;
-            nn = blobMap[y-self.outlineSmooth][x-0] || 0;
-            ne = blobMap[y-self.outlineSmooth][x+self.outlineSmooth] || 0;
-            ww = blobMap[y-0][x-self.outlineSmooth] || 0;
-            ee = blobMap[y-0][x+self.outlineSmooth] || 0;
-            sw = blobMap[y+self.outlineSmooth][x-self.outlineSmooth] || 0;
-            ss = blobMap[y+self.outlineSmooth][x-0] || 0;
-            se = blobMap[y+self.outlineSmooth][x+self.outlineSmooth] || 0;
+            nw = blobMap[y-1][x-1] || 0;
+            nn = blobMap[y-1][x-0] || 0;
+            ne = blobMap[y-1][x+1] || 0;
+            ww = blobMap[y-0][x-1] || 0;
+            ee = blobMap[y-0][x+1] || 0;
+            sw = blobMap[y+1][x-1] || 0;
+            ss = blobMap[y+1][x-0] || 0;
+            se = blobMap[y+1][x+1] || 0;
             minIndex = ww;
             if( 0 < ww && ww < minIndex ){ minIndex = ww; }
             if( 0 < ee && ee < minIndex ){ minIndex = ee; }
@@ -160,8 +161,8 @@
       }
     
       // Merge the blobs with multiple labels
-      for(y=0; y<ySize; y++){
-        for(x=0; x<xSize; x++){
+      for(y=0; y < ySize; y++){
+        for(x=0; x < xSize; x++){
           label = blobMap[y][x];
           if( label === 0 ){ continue; }
           while( label !== labelTable[label] ){
@@ -182,8 +183,8 @@
 
     // convert the blobs to the minimized labels
     var newLabel;
-    for(y=0; y<ySize; y++){
-      for(x=0; x<xSize; x++){
+    for(y=0; y < ySize; y++){
+      for(x=0; x < xSize; x++){
         label = blobMap[y][x];
         newLabel = labelTable[label];
         blobMap[y][x] = newLabel;
@@ -234,11 +235,11 @@
  * Javascript port of :
  * http://devblog.phillipspiess.com/2010/02/23/better-know-an-algorithm-1-marching-squares/
  * returns an Array of x and y positions defining the perimeter of a blob of non-transparent pixels on a canvas
- *
+ * 
  */
-(function (self) {
+(function () {
 
-    _this = this;
+    _this = this.self;
 
     var MarchingSquares = {};
 
@@ -248,27 +249,28 @@
     MarchingSquares.DOWN = 3;
     MarchingSquares.RIGHT = 4;
 
-    MarchingSquares.w = 320;
-    MarchingSquares.h = 240;
+    MarchingSquares.w = 320/_this.outlineSmooth;
+    MarchingSquares.h = 240/_this.outlineSmooth;
 
     MarchingSquares.testing = false;
     MarchingSquares.forceStop = false;
     MarchingSquares.minPoints = 20;
 
     MarchingSquares.cT = 0;
-    MarchingSquares.cR = 320;
-    MarchingSquares.cB = 240;
+    MarchingSquares.cR = MarchingSquares.w;
+    MarchingSquares.cB = MarchingSquares.h;
     MarchingSquares.cL = 0;
 
     // Takes a canvas and returns a list of pixels that
     // define the perimeter of the upper-left most
     // object in that texture, using pixel alpha>0 to define
-    // the boundary.
+    // the boundary. 
 
     MarchingSquares.walkPerimeter = function(startX, startY, labelNum, imageData){
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
+
         if (startX < 1){
             startX = 1;
         }
@@ -290,6 +292,8 @@
         var x = startX;
         var y = startY;
 
+        var count = 0;
+
         // The main while loop, continues stepping until
         // we return to our initial points
         do{
@@ -297,8 +301,8 @@
             // index = (y-1) * width4 + (x-1) * 4;
 
             if(x > MarchingSquares.w) {
-                x = 0;
-                y += _this.outlineSmooth;
+                x = 1;
+                y ++;
             }
             if(y > MarchingSquares.h) {
                 y = MarchingSquares.h;
@@ -313,22 +317,24 @@
                 y >= 0 &&
                 y < MarchingSquares.h){
 
-                pointList.push([x, y]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
+                pointList.push([x*_this.outlineSmooth, y*_this.outlineSmooth]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
                     
             }
 
             switch (MarchingSquares.nextStep){
-                case MarchingSquares.UP:    y -= _this.outlineSmooth; break;
-                case MarchingSquares.LEFT:  x -= _this.outlineSmooth; break;
-                case MarchingSquares.DOWN:  y += _this.outlineSmooth; break;
-                case MarchingSquares.RIGHT: x += _this.outlineSmooth; break;
+                case MarchingSquares.UP:    y -= 1; break;
+                case MarchingSquares.LEFT:  x -= 1; break;
+                case MarchingSquares.DOWN:  y += 1; break;
+                case MarchingSquares.RIGHT: x += 1; break;
                 default:
                     break;
             }
 
+            if(++count >= MarchingSquares.w*MarchingSquares.h) MarchingSquares.forceStop = true; 
+
         } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
 
-        pointList[0] = [startX, startY];
+        pointList[0] = [startX*_this.outlineSmooth, startY*_this.outlineSmooth];
         return pointList;
     };
 
@@ -337,7 +343,6 @@
     // previous directions
 
     MarchingSquares.step = function(x, y, labelNum, data){
-
 
         //used to be that i'd check if above threshold but now it uses blob labels which can be any number above 0
 

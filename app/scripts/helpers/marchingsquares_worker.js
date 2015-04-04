@@ -4,11 +4,11 @@
  * Javascript port of :
  * http://devblog.phillipspiess.com/2010/02/23/better-know-an-algorithm-1-marching-squares/
  * returns an Array of x and y positions defining the perimeter of a blob of non-transparent pixels on a canvas
- *
+ * 
  */
-(function (self) {
+(function () {
 
-    _this = this;
+    _this = this.self;
 
     var MarchingSquares = {};
 
@@ -18,27 +18,28 @@
     MarchingSquares.DOWN = 3;
     MarchingSquares.RIGHT = 4;
 
-    MarchingSquares.w = 320;
-    MarchingSquares.h = 240;
+    MarchingSquares.w = 320/_this.outlineSmooth;
+    MarchingSquares.h = 240/_this.outlineSmooth;
 
     MarchingSquares.testing = false;
     MarchingSquares.forceStop = false;
     MarchingSquares.minPoints = 20;
 
     MarchingSquares.cT = 0;
-    MarchingSquares.cR = 320;
-    MarchingSquares.cB = 240;
+    MarchingSquares.cR = MarchingSquares.w;
+    MarchingSquares.cB = MarchingSquares.h;
     MarchingSquares.cL = 0;
 
     // Takes a canvas and returns a list of pixels that
     // define the perimeter of the upper-left most
     // object in that texture, using pixel alpha>0 to define
-    // the boundary.
+    // the boundary. 
 
     MarchingSquares.walkPerimeter = function(startX, startY, labelNum, imageData){
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
+
         if (startX < 1){
             startX = 1;
         }
@@ -60,6 +61,8 @@
         var x = startX;
         var y = startY;
 
+        var count = 0;
+
         // The main while loop, continues stepping until
         // we return to our initial points
         do{
@@ -67,8 +70,8 @@
             // index = (y-1) * width4 + (x-1) * 4;
 
             if(x > MarchingSquares.w) {
-                x = 0;
-                y += _this.outlineSmooth;
+                x = 1;
+                y ++;
             }
             if(y > MarchingSquares.h) {
                 y = MarchingSquares.h;
@@ -83,22 +86,24 @@
                 y >= 0 &&
                 y < MarchingSquares.h){
 
-                pointList.push([x, y]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
+                pointList.push([x*_this.outlineSmooth, y*_this.outlineSmooth]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
                     
             }
 
             switch (MarchingSquares.nextStep){
-                case MarchingSquares.UP:    y -= _this.outlineSmooth; break;
-                case MarchingSquares.LEFT:  x -= _this.outlineSmooth; break;
-                case MarchingSquares.DOWN:  y += _this.outlineSmooth; break;
-                case MarchingSquares.RIGHT: x += _this.outlineSmooth; break;
+                case MarchingSquares.UP:    y -= 1; break;
+                case MarchingSquares.LEFT:  x -= 1; break;
+                case MarchingSquares.DOWN:  y += 1; break;
+                case MarchingSquares.RIGHT: x += 1; break;
                 default:
                     break;
             }
 
+            if(++count >= MarchingSquares.w*MarchingSquares.h) MarchingSquares.forceStop = true; 
+
         } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
 
-        pointList[0] = [startX, startY];
+        pointList[0] = [startX*_this.outlineSmooth, startY*_this.outlineSmooth];
         return pointList;
     };
 
@@ -107,7 +112,6 @@
     // previous directions
 
     MarchingSquares.step = function(x, y, labelNum, data){
-
 
         //used to be that i'd check if above threshold but now it uses blob labels which can be any number above 0
 

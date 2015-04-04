@@ -1,11 +1,11 @@
 (function () {
 
-  var _marchingSquares = require('./marchingsquares_worker.js');
-
-  _this = this;
-
+   _this = this;
   _this.depthThreshold = 166;
   _this.outlineSmooth = 1; //gotta implement this later but it seems to be running smoothly without any downscaling! :D
+
+  var _marchingSquares = require('./marchingsquares_worker.js');
+
   var pixelBit = 2;
 
   var startingPoints = [];
@@ -15,18 +15,19 @@
 
     _this.depthThreshold = e.data.depthThreshold;
     _this.outlineSmooth = e.data.outlineSmooth;
+    _this.MarchingSquares.w = 320/_this.outlineSmooth;
+    _this.MarchingSquares.h = 240/_this.outlineSmooth;
 
     pixelBit = e.data.pixelBit;
-
+    
     var blobs = FindBlobs(e.data.imageData);
 
-    // console.log('Starting points', startingPoints);
     outlines = [];
-    for(var i=0; i<startingPoints.length; i ++) {
-      outlines.push( MarchingSquares.walkPerimeter(startingPoints[i][0], startingPoints[i][1], startingPoints[i][2], blobs) );
+    if(startingPoints.length > 0) {
+      for(var i=0; i<startingPoints.length; i ++) {
+        outlines.push( MarchingSquares.walkPerimeter(startingPoints[i][0], startingPoints[i][1], startingPoints[i][2], blobs) );
+      }
     }
-
-    // console.log('Outlines', outlines);
 
     self.postMessage({
       // 'blobs': blobs,
@@ -34,7 +35,7 @@
       // 'image': e.data.imageData
     });
 
-    // if(Math.random() < 0.01) console.log(e.data);
+    
     // console.log(e.data);
   }  
 
@@ -83,10 +84,10 @@
 
       // We leave a 1 pixel border which is ignored so we do not get array
       // out of bounds errors
-      for( y = _this.outlineSmooth; y < ySize - _this.outlineSmooth; y += _this.outlineSmooth){
-        for( x = _this.outlineSmooth; x < xSize - _this.outlineSmooth; x += _this.outlineSmooth){
+      for( y = 1; y < ySize-1; y ++) {
+        for( x = 1; x < xSize-1; x ++) {
 
-          pos = ((y*origSizeX)+x)*4;
+          pos = ( ( (y*self.outlineSmooth)*origSizeX ) + (x*self.outlineSmooth) )*4;
           // pos = (y*xSize+x);
 
           // We're only looking at the alpha channel in this case but you can
@@ -96,14 +97,14 @@
           if( isVisible ){
 
             // Find the lowest blob index nearest this pixel
-            nw = blobMap[y-self.outlineSmooth][x-self.outlineSmooth] || 0;
-            nn = blobMap[y-self.outlineSmooth][x-0] || 0;
-            ne = blobMap[y-self.outlineSmooth][x+self.outlineSmooth] || 0;
-            ww = blobMap[y-0][x-self.outlineSmooth] || 0;
-            ee = blobMap[y-0][x+self.outlineSmooth] || 0;
-            sw = blobMap[y+self.outlineSmooth][x-self.outlineSmooth] || 0;
-            ss = blobMap[y+self.outlineSmooth][x-0] || 0;
-            se = blobMap[y+self.outlineSmooth][x+self.outlineSmooth] || 0;
+            nw = blobMap[y-1][x-1] || 0;
+            nn = blobMap[y-1][x-0] || 0;
+            ne = blobMap[y-1][x+1] || 0;
+            ww = blobMap[y-0][x-1] || 0;
+            ee = blobMap[y-0][x+1] || 0;
+            sw = blobMap[y+1][x-1] || 0;
+            ss = blobMap[y+1][x-0] || 0;
+            se = blobMap[y+1][x+1] || 0;
             minIndex = ww;
             if( 0 < ww && ww < minIndex ){ minIndex = ww; }
             if( 0 < ee && ee < minIndex ){ minIndex = ee; }
@@ -159,8 +160,8 @@
       }
     
       // Merge the blobs with multiple labels
-      for(y=0; y<ySize; y++){
-        for(x=0; x<xSize; x++){
+      for(y=0; y < ySize; y++){
+        for(x=0; x < xSize; x++){
           label = blobMap[y][x];
           if( label === 0 ){ continue; }
           while( label !== labelTable[label] ){
@@ -181,8 +182,8 @@
 
     // convert the blobs to the minimized labels
     var newLabel;
-    for(y=0; y<ySize; y++){
-      for(x=0; x<xSize; x++){
+    for(y=0; y < ySize; y++){
+      for(x=0; x < xSize; x++){
         label = blobMap[y][x];
         newLabel = labelTable[label];
         blobMap[y][x] = newLabel;

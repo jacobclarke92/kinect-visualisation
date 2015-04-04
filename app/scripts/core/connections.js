@@ -201,7 +201,7 @@ var attemptingToUseSocketLol = false;
 
 this.startOutlineX = -1;
 this.startOutlineY = -1;
-this.outlineSmooth = 1;
+this.outlineSmooth = 2;
 
 
 var attemptingToUseBlobDetection = true;
@@ -344,8 +344,6 @@ this.run = function() {
 						});
 						waitingForBlobs = true;
 					}
-				}else{
-					processImageOutline();
 				}
 
 			}
@@ -406,46 +404,6 @@ _this.toggleTesting = function(thing, elem) {
     elem.innerHTML = ((_this.testingImage) ? 'Disable' : 'Enable') + ' test ' + thing;
   }
 }
-
-
-function processImageOutline() {
-	
-	if(_this.currentScript.requresOutline === true) {
-
-		//worker can't create canvas elements for data manipulation so we send it the first non transparent pixel in image
-		var y, i, rowData;
-		_this.startOutlineX = -1;
-		_this.startOutlineY = -1;
-	    for(y = 0; y < canvasHeight - 10 ; y += 10) {
-
-	        rowData = bufferCanvasContext.getImageData(0, y, canvasWidth, 1).data;
-
-	        for(var i=0; i < rowData.length - 4; i += 4){
-
-	            if(rowData[i+pixelBit] > _this.calibration_depthThreshold && rowData[i+pixelBit] < _this.calibration_depthThreshold+_this.calibration_depthRange){
-
-	            	_this.startOutlineX = i/4;
-	            	_this.startOutlineY = y;
-
-	            }
-	        }
-	    }
-
-		if(_this.startOutlineX != -1 && _this.startOutlineY != -1) {
-			outlineWorker.postMessage({
-		    	'cmd': 'getOutline', 
-		    	'imageData': _this.rawImage,
-				'firstPixel': [_this.startOutlineX, _this.startOutlineY],
-				'outlineAccuracy': 3,
-				'depthThreshold': _this.calibration_depthThreshold
-			});
-		}else{
-			console.log('cannot find first non transparent pixel!')
-		}
-	}
-}
-
-
 
 function launchBlobDetectionWorker() {
 

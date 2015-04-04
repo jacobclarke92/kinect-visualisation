@@ -5,7 +5,7 @@
  * Javascript port of :
  * http://devblog.phillipspiess.com/2010/02/23/better-know-an-algorithm-1-marching-squares/
  * returns an Array of x and y positions defining the perimeter of a blob of non-transparent pixels on a canvas
- * 
+ *
  */
 (function () {
 
@@ -27,8 +27,8 @@
     MarchingSquares.minPoints = 20;
 
     MarchingSquares.cT = 0;
-    MarchingSquares.cR = MarchingSquares.w;
-    MarchingSquares.cB = MarchingSquares.h;
+    MarchingSquares.cR = 320;
+    MarchingSquares.cB = 240;
     MarchingSquares.cL = 0;
 
     // Takes a canvas and returns a list of pixels that
@@ -40,7 +40,6 @@
         // Do some sanity checking, so we aren't
         // walking outside the image
         // technically this should never happen
-
         if (startX < 1){
             startX = 1;
         }
@@ -62,17 +61,15 @@
         var x = startX;
         var y = startY;
 
-        var count = 0;
-
         // The main while loop, continues stepping until
         // we return to our initial points
         do{
             // Evaluate our state, and set up our next direction
             // index = (y-1) * width4 + (x-1) * 4;
 
-            if(x > MarchingSquares.w) {
+            if(x > MarchingSquares.w-1) {
                 x = 1;
-                y ++;
+                y += _this.outlineSmooth;
             }
             if(y > MarchingSquares.h) {
                 y = MarchingSquares.h;
@@ -87,24 +84,22 @@
                 y >= 0 &&
                 y < MarchingSquares.h){
 
-                pointList.push([x*_this.outlineSmooth, y*_this.outlineSmooth]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
+                pointList.push([x, y]);//offset of 1 due to the 1 pixel padding added to sourceCanvas
                     
             }
 
             switch (MarchingSquares.nextStep){
-                case MarchingSquares.UP:    y -= 1; break;
-                case MarchingSquares.LEFT:  x -= 1; break;
-                case MarchingSquares.DOWN:  y += 1; break;
-                case MarchingSquares.RIGHT: x += 1; break;
+                case MarchingSquares.UP:    y -= _this.outlineSmooth; break;
+                case MarchingSquares.LEFT:  x -= _this.outlineSmooth; break;
+                case MarchingSquares.DOWN:  y += _this.outlineSmooth; break;
+                case MarchingSquares.RIGHT: x += _this.outlineSmooth; break;
                 default:
                     break;
             }
 
-            if(++count >= MarchingSquares.w*MarchingSquares.h) MarchingSquares.forceStop = true; 
-
         } while ((x != startX || y != startY) && MarchingSquares.forceStop == false);
 
-        pointList[0] = [startX*_this.outlineSmooth, startY*_this.outlineSmooth];
+        pointList[0] = [startX, startY];
         return pointList;
     };
 
@@ -113,6 +108,7 @@
     // previous directions
 
     MarchingSquares.step = function(x, y, labelNum, data){
+
 
         //used to be that i'd check if above threshold but now it uses blob labels which can be any number above 0
 
@@ -205,30 +201,4 @@
     self.MarchingSquares = MarchingSquares;
 
 }(self));
-},{}],2:[function(require,module,exports){
-(function () {
-
-  var _marchingSquares = require('./marchingsquares_worker.js');
-
-  var firstPixel = [];
-  var outlineAccuracy = 3;
-  function getOutline(imageData) {
-      // outline = MarchingSquares.getBlobOutlinePointsFromImage(imageData, outlineAccuracy, 20);
-      outline = MarchingSquares.walkPerimeter(firstPixel[0], firstPixel[1], imageData);
-      self.postMessage({'outline': outline});
-  }
-  self.onmessage = function(e) {
-
-
-    firstPixel = e.data.firstPixel;
-    outlineAccuracy = e.data.outlineAccuracy;
-    MarchingSquares.depthThreshold = e.data.depthThreshold;
-    _marchingSquares.depthThreshold = e.data.depthThreshold;
-    getOutline(e.data.imageData);
-
-    if(Math.random() < 0.01) console.log(e.data);
-  }  
-
-  
-}.call(self));
-},{"./marchingsquares_worker.js":1}]},{},[2]);
+},{}]},{},[1]);
