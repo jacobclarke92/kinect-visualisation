@@ -327,10 +327,17 @@ function commenceAutoMapping() {
 					title: 'Waiting for MIDI button...', 
 					message: 'This will use '+effects.length+' consecutive keys/buttons'
 				}, [{label: 'Cancel'}]);
-			}, 500)
+			}, 500);
 		}},
 		{label: 'Colours', callback: function() {
-
+			autoMapInProgress = true;
+			autoMapType = 'Colour Palettes';
+			setTimeout(function() {
+				showAlert({
+					title: 'Waiting for MIDI button...', 
+					message: 'This will use '+w.palettes.length+' consecutive keys/buttons'
+				}, [{label: 'Cancel'}]);
+			}, 500);
 		}},
 		{label: 'Calibration Params', callback: function() {
 
@@ -360,6 +367,20 @@ function receivedAutoMapMidi(byteArray, midiType) {
 				}
 			}
 			$('#'+effects[i]+'.file').attr('data-midi-linked','');
+			currentCC ++ ;
+		}
+	}else if(autoMapType == 'Colour Palettes' && midiType == 'key') {
+		for(var i=0; i < w.palettes.length; i ++) {
+
+			var paletteName = 'palette_'+w.palettes[i].id;
+			w.mappings.midiButtons[effects[i]] = {
+				label: w.palettes[i].title,
+				name: paletteName,
+				midi: {
+					cc: currentCC
+				}
+			}
+			$('#'+paletteName+'.palette').attr('data-midi-linked','');
 			currentCC ++ ;
 		}
 	}

@@ -55,15 +55,15 @@ function processMidiData(byteArray) {
 
 		});
 	}else if(midiType == 'key') {
-		if(typeof w.mappings['midiButtons'] != 'undefined') {
+		if(isset(w.mappings.midiButtons)) {
 			$.each(w.mappings['midiButtons'],function(key, mapping) {
 				if(mapping.midi.cc == byteArray[1]) {
 
 					var elem = $('#'+mapping.name+'[data-midi-mappable]');
 					console.log('midi key pressed for ',elem);
-					if(elem) {
+					if(elem.length != 0) {
 						$(elem).trigger('click');
-						if(elem.hasClass('.palette')) console.log('is palette');
+						if(elem.hasClass('palette')) console.log('is palette');
 					}else{
 						console.log('elem ',mapping.name,' for CC ',mapping.cc,' not found!');
 					}
@@ -94,7 +94,7 @@ function receiveMappingData(midiData, externalOverride) {
 		console.log('no midi mappable element waiting to be mapped ????');
 		return;
 	}
-	var paramName = (mappedElement.attr('name')) ? mappedElement.attr('name') : mappedElement.attr('data-name');
+	var paramName = mappedElement.attr('name') || mappedElement.attr('data-name');
 	var paramType = mappedElement.attr('data-midi-type');
 
 	//detect whether a key or potentiometer was touched
@@ -104,8 +104,6 @@ function receiveMappingData(midiData, externalOverride) {
 
 	//if the midi message type matches the elements allowed midi type then proceed
 	if(paramType == midiType) {
-
-		console.log('compatible control type to match midi type! --',midiType);
 
 		if(typeof externalOverride == 'undefined') {
 
