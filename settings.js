@@ -5,6 +5,7 @@ appSettings = {
 	
 	defaults: {
 
+		mirrored: 1,
 		depthThreshold: 150,
 		depthRange: 50,
 		perspective: 800,

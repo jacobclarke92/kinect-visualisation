@@ -298,6 +298,16 @@ function generateCalibrationParams() {
         value: w.calibration_rotateY || 0, 
         cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_rotateY.midi.cc : -1
       }
+    },
+    calibration_mirror: {
+      label: 'Mirrored', 
+      name: 'calibration_mirrored', 
+      midi: {
+        min: 0, 
+        max: 1, 
+        value: w.calibration_mirrored || 0, 
+        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_mirrored', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_mirrored.midi.cc : -1
+      }
     }
   };
   $.each(calibrationParams,function(key,param) {

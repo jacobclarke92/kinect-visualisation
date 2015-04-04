@@ -1,11 +1,20 @@
 
-
 var frequencyBars;
 var freqBarsCanvas;
 var freqBarWidth = 1;
 var freqCanvasWidth = 444;
 var currentlyMappingAudio = false;
 var soundThresh = 100;
+
+var calibration_mirrored = appSettings.defaults.mirrored;
+var calibration_depthThreshold = appSettings.defaults.depthThreshold;
+var calibration_depthRange = appSettings.defaults.depthRange;
+var calibration_perspective = appSettings.defaults.perspective;
+var calibration_zoom = 1;
+var calibration_rotateX = 0;
+var calibration_rotateY = 0;
+var calibration_offsetX = 0;
+var calibration_offsetY = 0;
 
 
 uiPopup = false;
@@ -52,8 +61,6 @@ window.onunload = function() {
   uiPopup.close();
 }
 
-
-
 function createControls() {
 
 
@@ -71,20 +78,14 @@ function createControls() {
 
 }
 
-
-
-calibration_mirrored = calibration_zoom = 1;
-calibration_rotateX = calibration_rotateY = calibration_offsetX = calibration_offsetY = 0;
-var calibration_depthThreshold = appSettings.defaults.depthThreshold;
-var calibration_depthRange = appSettings.defaults.depthRange;
-var calibration_perspective = appSettings.defaults.perspective;
-
 function updateCanvas() {
  
   console.log('updating canvas');
   //console.log(calibration_mirrored,calibration_rotateX,calibration_rotateY,calibration_offsetX,calibration_offsetY);
 
-  var transform = 'scaleX('+calibration_mirrored+') rotateX('+calibration_rotateX+'deg) rotateY('+calibration_rotateY+'deg)';
+  var mirror = (Math.round(calibration_mirrored) == 1) ? 1 : -1;
+
+  var transform = 'scaleX('+mirror+') rotateX('+calibration_rotateX+'deg) rotateY('+calibration_rotateY+'deg)';
   $('.effectsRenderer,#processingCanvas3D').css({
     'transform': transform
   });
