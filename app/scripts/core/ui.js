@@ -75,9 +75,9 @@ function createControls() {
 
 calibration_mirrored = calibration_zoom = 1;
 calibration_rotateX = calibration_rotateY = calibration_offsetX = calibration_offsetY = 0;
-var calibration_depthThreshold = 150;
-var calibration_depthRange = 50;
-var calibration_perspective = 800;
+var calibration_depthThreshold = appSettings.defaults.depthThreshold;
+var calibration_depthRange = appSettings.defaults.depthRange;
+var calibration_perspective = appSettings.defaults.perspective;
 
 function updateCanvas() {
  

@@ -4,7 +4,7 @@ var mappingMIDI = false;
 var autoMapInProgress = false;
 var autoMapType = '';
 
-var defaultTrailAmountCC = 25;
+var defaultTrailAmountCC = appSettings.defaultTrailAmountCC;
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {

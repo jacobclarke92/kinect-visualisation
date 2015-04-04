@@ -2,7 +2,7 @@
 var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 var analyserNode;
 var javascriptNode;
-if(typeof audioSampleSize == 'undefined') audioSampleSize = 1024;
+var audioSampleSize = appSettings.audioSampleSize;
 var amplitudeArray;     // array to hold frequency data
 var frequencyArray;
 var audioStream;

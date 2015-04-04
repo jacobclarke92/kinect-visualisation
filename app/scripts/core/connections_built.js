@@ -203,7 +203,7 @@ var attemptingToUseSocketLol = false;
 
 this.startOutlineX = -1;
 this.startOutlineY = -1;
-this.outlineSmooth = 4; // 320 & 240 must be naturaly divisible by this number, basically not 3 or 6 
+this.outlineSmooth = appSettings.outlineDownsample; 
 
 
 var attemptingToUseBlobDetection = true;

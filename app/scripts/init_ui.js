@@ -3,6 +3,7 @@ requirejs(
 	[
 		'/app/scripts/helpers/polyfills.js',
 
+		'/settings.js',
 		'/app/scripts/effects_list.js',
 
 		'/app/scripts/ui/ui.js',
