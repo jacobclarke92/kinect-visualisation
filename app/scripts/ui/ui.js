@@ -1,6 +1,8 @@
 
 var mappingAudio = false;
 var mappingMIDI = false;
+var autoMapInProgress = false;
+var autoMapType = '';
 
 //reset all mappable elements' click bindings
 function linkMappableElements() {
@@ -317,9 +319,15 @@ function deleteSelectedAudioMapping() {
 
 function commenceAutoMapping() {
 	showAlert(uiMessages.commenceAutoMapping, [
-		{label: 'Cancel'},
 		{label: 'Visualisation List', callback: function() {
-
+			autoMapInProgress = true;
+			autoMapType = 'Visualisation List';
+			setTimeout(function() {
+				showAlert({
+					title: 'Waiting for MIDI button...', 
+					message: 'This will use '+effects.length+' consecutive keys/buttons'
+				}, [{label: 'Cancel'}]);
+			}, 500)
 		}},
 		{label: 'Colours', callback: function() {
 
@@ -332,9 +340,39 @@ function commenceAutoMapping() {
 		}},
 		{label: 'Current Visualisation Params', callback: function() {
 
+		}},
+		{label: 'Cancel'}
+	]);
+}
+function receivedAutoMapMidi(byteArray, midiType) {
+	
+	if(!isset(w.mappings.midiButtons)) w.mappings.midiButtons = {};
+
+	var currentCC = byteArray[1]
+
+	if(autoMapType == 'Visualisation List' && midiType == 'key') {
+		for(var i=0; i < effects.length; i ++) {
+			w.mappings.midiButtons[effects[i]] = {
+				label: effects[i].readable(),
+				name: effects[i],
+				midi: {
+					cc: currentCC
+				}
+			}
+			$('#'+effects[i]+'.file').attr('data-midi-linked','');
+			currentCC ++ ;
+		}
+	}
+
+	autoMapInProgress = false;
+	showAlert({
+		label: 'Success', 
+		message: autoMapType+' has been auto-mapped to '+effects.length+' keys/buttons starting from CC '+byteArray[1]
+	}, [
+		{label: 'Sweet!', callback: function() {
+			setTimeout(function() { commenceAutoMapping() }, 500);
 		}}
 	]);
 }
-
 
 

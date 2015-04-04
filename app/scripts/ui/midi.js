@@ -15,6 +15,13 @@ function processMidiData(byteArray) {
 	if(byteArray[0] >= 176 && byteArray[0] <= 191) midiType = 'pot';
 	else if(byteArray[0] >= 144 && byteArray[0] <= 159) midiType = 'key';
 
+
+	if(autoMapInProgress) {
+
+		receivedAutoMapMidi(byteArray, midiType);
+		return;
+	}
+
 	if(midiType == 'pot') {
 		$.each(w.mappings[w.hash],function(key, mapping) {
 
@@ -64,7 +71,8 @@ function processMidiData(byteArray) {
 				}
 			});
 		}else{
-			console.warn('midiButtons not defined in mappings!');
+			console.log('midiButtons not defined in mappings. creating now');
+			w.mappings['midiButtons'] = {};
 		}
 	}
 
