@@ -4,6 +4,8 @@ var mappingMIDI = false;
 var autoMapInProgress = false;
 var autoMapType = '';
 
+var defaultTrailAmountCC = 25;
+
 //reset all mappable elements' click bindings
 function linkMappableElements() {
 	console.log('binding element events');
@@ -467,19 +469,18 @@ function receivedAutoMapMidi(byteArray, midiType) {
 			var paramElem = $(paramElems[i]);
 			var paramName = paramElem.attr('data-name');
 
+			var useCC = currentCC;
+			if(paramName == 'trailAmount') useCC = defaultTrailAmountCC;
+
 			if(isObjectPathSet(w.mappings, [w.hash, paramName, 'midi'])) {
 
-				w.mappings[w.hash][paramName].midi.cc = currentCC;
+				w.mappings[w.hash][paramName].midi.cc = useCC;
 
 			}else{
 
-				var useCC = currentCC;
-				if(paramName == 'trailAmount') useCC = defaultTrailAmountCC;
-
-
 				w.mappings[w.hash][paramName] = {
 					label: (isCalibration)?  (paramName.replace('calibration_','')).readable() : paramName.readable(), 
-					name: (isCalibration) ? 'calibration_'+paramName : paramName, 
+					name: paramName,
 					midi: {
 						min: parseFloat(paramElem.attr('data-min')),
 						max: parseFloat(paramElem.attr('data-max')),
