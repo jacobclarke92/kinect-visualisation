@@ -45,10 +45,8 @@ function setupAudioNodes(stream) {
 	audioStream = stream;
 
 	analyserNode = audioContext.createAnalyser();
-	console.warn('fft size = '+analyserNode.fftSize);
-	// analyserNode.fftSize = 256;
 	analyserNode.fftSize = audioSampleSize;
-	console.warn('fft size = '+analyserNode.fftSize);
+	console.log('fft size = '+analyserNode.fftSize);
 	analyserNode.smoothingTimeConstant = 0.5;
 	javascriptNode = audioContext.createScriptProcessor(audioSampleSize, 1, 1);
 

@@ -1,3 +1,4 @@
+//exclude
 effect_outline4 = {
 
 	requiresOutlines: true,

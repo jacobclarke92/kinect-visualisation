@@ -1,13 +1,7 @@
 
 var imageEventSource;
-// var image = new Image();
-
 var running = false;
 
-function getOutline(imageData) {
-	outline = MarchingSquares.walkPerimeter(firstPixel[0], firstPixel[1], imageData);
-	self.postMessage({'outline': outline});
-}
 self.onmessage = function(e) {
 
 	if(e.data.cmd == 'start') {
