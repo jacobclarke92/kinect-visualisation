@@ -135,7 +135,7 @@ function saveAudioMapping(mappingType, elem) {
 
 	w.mappings[w.hash][paramName] = mapping;
 	
-	w.saveCookie();
+	w.saveStorage();
 
 	elem.attr('data-audio-linked','');
 	elem.removeClass('waitingAudio');
@@ -538,7 +538,7 @@ function receivedAutoMapMidi(byteArray, midiType) {
 	
 	if(mappingFound) {
 
-		w.saveCookie();
+		w.saveStorage();
 
 		var alertTimeout = setTimeout(function() { 
 			closeAlert(false);

@@ -162,10 +162,24 @@ function loaded() {
 					
 					return false;
 				}
+				console.info('IMPORTED DATA IS GOOD');
+				console.log(w.mappings);
+				w.mappings = {};
+				console.log(w.mappings);
 				w.mappings = JSON.parse(importedData);
-				w.saveCookie();
-				w.loadCookie();
-				window.close();
+				w.saveStorage();
+				setTimeout(function() {
+					w.loadStorage();
+					console.log(w.mappings);
+				},500)
+				
+				
+				setTimeout(function() {
+					showAlert({message: 'UI window will now reload'},[{label:'Yep',callback: function() {
+						window.close();	
+					}}]);
+				},500);
+				
 
 			}}
 		]);
@@ -283,6 +297,8 @@ function initAllParameters() {
 	setTimeout(function() {
 		linkMappableElements();
 		refreshAudioMappings();
+
+		updateMappingStates();
 	},1000);
 
 }

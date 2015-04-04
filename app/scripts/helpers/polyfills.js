@@ -14,6 +14,10 @@ String.prototype.readable = function() {
 	return this.replace(/[_-]+(.)?/g,function(str) { return str.charAt(1).toUpperCase() }).replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase() })
 };
 
+String.prototype.stripNasties = function() {
+    return this.replace(/[^\w\s]/gi, '');
+};
+
 function map_range(value, start1, stop1, start2, stop2) {
 	return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
@@ -30,6 +34,17 @@ function isObjectEmpty(obj) {
     }
     return true;
 }
+function byteCount(s) {
+    return encodeURI(s).split(/%..|./).length - 1;
+}
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
 function isObjectPathSet(baseObj, pathArr) {
     var oldObj = baseObj;
     if(typeof baseObj == 'object' && typeof pathArr == 'object') {

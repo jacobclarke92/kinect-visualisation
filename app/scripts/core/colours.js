@@ -76,7 +76,7 @@ function getTopColours() {
 
 				uiPopup.updatePalettes();
 
-				if(cookieLoaded && paletteID) {
+				if(storageLoaded && paletteID) {
 					for(var i=0; i < palettes.length; i++) {
 						
 						if(paletteID == palettes[i].id) {
@@ -103,7 +103,7 @@ function paletteChange(colorID) {
 	}
 	console.info('Palette changed to:', currentPalette.title);
 	// console.log(div);
-	saveCookie();
+	saveStorage();
 }
 
 function randomPaletteColour() {

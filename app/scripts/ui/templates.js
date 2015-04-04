@@ -114,7 +114,7 @@ function createSliders(sliderArray, target) {
       if(val !== false) {
         $('#'+key+'_text').val(val);
         paramElementChanged(this, val);
-        w.saveCookie();
+        w.saveStorage();
       }
     }
   });

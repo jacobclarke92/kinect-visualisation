@@ -29,7 +29,7 @@ this.startPage = function(fallback) {
 
 	this.hash = window.location.hash;
 
-	loadCookie();
+	loadStorage();
 	
 	if(hash){
 
@@ -46,8 +46,8 @@ this.startPage = function(fallback) {
 	}
 
 
-	if(testingImage) {
-		thisrandomizeImage(true);
+	if(testingImage === true) {
+		this.randomizeImage(true);
 		run();
 	}
 

@@ -48,7 +48,7 @@ function processMidiData(byteArray) {
 				//obviously don't save a cookie on every midi message, so just set a timeout and clear it on any overriding midi messages
 				if(midiChangeTimeout) clearTimeout(midiChangeTimeout);
 				midiChangeTimeout = setTimeout(function() {
-					w.saveCookie();
+					w.saveStorage();
 				},2000);
 
 			}
@@ -185,7 +185,7 @@ function receiveMappingData(midiData, externalOverride) {
 		mappedElement.removeClass('waiting').attr('data-midi-linked','');
 		$('body').removeClass('waiting');
 
-		w.saveCookie();
+		w.saveStorage();
 
 		console.log('Mapping made!',mappedElement,midiData);
 
