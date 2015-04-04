@@ -34,6 +34,7 @@ effect_outline3 = {
 
     //apply fade out to past frames
     this.graphics = new PIXI.Graphics();
+    drawBoundingBox();
     for(var i=0; i<this.screens.length; i++) {
 
       this.screens[i].alpha -= trailAmount;

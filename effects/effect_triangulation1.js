@@ -68,7 +68,7 @@ effect_triangulation1 = {
 
         if(!pixelInRange(pixels[p1.pixel*4 + pixelBit]) || p1.x < 0 || p1.y < 0 || p1.x > winW || p1.y > winH) p1.die = true;
 
-        p1.step();
+        if(isset(p1)) p1.step(); // this threw an exception after long use idk
 
       }
       for(var i=0; i < this.particles.length; i++) {

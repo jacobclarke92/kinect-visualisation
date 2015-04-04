@@ -9,8 +9,8 @@ effect_letters = {
     	setMapping('maxParticles', 10, 1000, 150);
     	setMapping('letterSize', 5, 100, 20);
     	setMapping('sizeVariation', 0.05, 1.0, 0.5);
-    	setMapping('trailAmount', 0, 100, 50);
     	setMapping('lifespan', 50, 500, 50);
+    	setMapping('trailAmount', 0, 1, 1);
 	},
 	draw:function() {
 
