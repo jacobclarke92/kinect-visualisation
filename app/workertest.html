@@ -5,7 +5,8 @@
 
 _this = this;
 
-_this.calibration_depthThreshold = 166;
+_this.calibration_depthThreshold = 150;
+_this.calibration_depthRange = 50;
 _this.pixelBit = 2;
 _this.outlineSmooth = 2;
 
@@ -51,6 +52,7 @@ image.onload = function() {
 		    	'cmd': 'getBlobs', 
 		    	'imageData': _this.rawImage.data,
 				'depthThreshold': _this.calibration_depthThreshold,
+				'depthRange': _this.calibration_depthRange,
 				'pixelBit': _this.pixelBit,
 				'outlineSmooth': _this.outlineSmooth
 			});

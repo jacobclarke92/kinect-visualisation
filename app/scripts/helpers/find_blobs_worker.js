@@ -2,6 +2,7 @@
 
    _this = this;
   _this.depthThreshold = 166;
+  _this.depthRange = 50;
   _this.outlineSmooth = 1; //gotta implement this later but it seems to be running smoothly without any downscaling! :D
 
   var _marchingSquares = require('./marchingsquares_worker.js');
@@ -13,7 +14,8 @@
 
   self.onmessage = function(e) {
 
-    _this.depthThreshold = e.data.depthThreshold;
+    _this.depthThreshold = e.data.depthThreshold || 166;
+    _this.depthRange = e.data.depthRange || 50;
     _this.outlineSmooth = e.data.outlineSmooth;
     _this.MarchingSquares.w = 320/_this.outlineSmooth;
     _this.MarchingSquares.h = 240/_this.outlineSmooth;
@@ -92,7 +94,7 @@
 
           // We're only looking at the alpha channel in this case but you can
           // use more complicated heuristics
-          isVisible = (srcPixels[pos+pixelBit] > self.depthThreshold);
+          isVisible = (srcPixels[pos+pixelBit] > self.depthThreshold && srcPixels[pos+pixelBit] < self.depthThreshold+self.depthRange);
 
           if( isVisible ){
 

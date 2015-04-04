@@ -243,6 +243,7 @@ this.run = function() {
 		    	'cmd': 'getBlobs', 
 		    	'imageData': _this.rawImage.data,
 				'depthThreshold': _this.calibration_depthThreshold,
+				'depthRange': _this.calibration_depthRange,
 				'pixelBit': _this.pixelBit,
 				'outlineSmooth': _this.outlineSmooth
 			});
@@ -339,6 +340,7 @@ this.run = function() {
 					    	'cmd': 'getBlobs', 
 					    	'imageData': _this.rawImage.data,
 							'depthThreshold': _this.calibration_depthThreshold,
+							'depthRange': _this.calibration_depthRange,
 							'pixelBit': _this.pixelBit,
 							'outlineSmooth': _this.outlineSmooth
 						});
