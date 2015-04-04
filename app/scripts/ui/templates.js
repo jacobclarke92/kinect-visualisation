@@ -41,7 +41,6 @@ function createSliders(sliderArray, target) {
       if(label === false) {
         console.error('undefined param name!!!', param);
         return;
-        label = 'Undefined param name';
       }
       
 
@@ -155,6 +154,7 @@ function createSliders(sliderArray, target) {
 
 }
 
+// Gets called on effect change
 function generateEffectParams() {
   var effectsZone = $("#effectsZone");
   effectsZone.html('');
@@ -171,6 +171,7 @@ function generateEffectParams() {
   
 }
 
+// Only gets called once on init
 function generateFilterParams() {
   var filterParams = {
     filter_rgbSplit: {
@@ -228,17 +229,16 @@ function generateFilterParams() {
 
   $.each(filterParams,function(key,param) {
     if(isObjectPathSet(w.mappings, [w.hash, key])) {
+      console.log('mapping for filter already exists!', key, w.mappings[w.hash][key]);
       filterParams[key] = w.mappings[w.hash][key];
-      //this just makes it so the titles don't contain 'Filter'
       filterParams[key].label = (key.split('filter_').join('')).readable();
     }else{
       if(!isset(w.mappings[w.hash])) w.mappings[w.hash] = {};
       w.mappings[w.hash][key] = {
         label: param.label,
         name: param.name,
-        type: false,
         midi: {
-            value: 0,
+          value: 0,
           initValue: 0,
           postValue: 0,
           min: param.midi.min,
@@ -256,6 +256,7 @@ function generateFilterParams() {
   
 }
 
+// Only gets called once on init
 function generateCalibrationParams() {
   var offsetX = (w.winW) ? w.winW : 1000;
   var offsetY = (w.winH) ? w.winH : 1000;
@@ -268,7 +269,7 @@ function generateCalibrationParams() {
         min: 100, 
         max: 254, 
         value: w.calibration_depthThreshold || 150, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_depthThreshold', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_depthThreshold.midi.cc : -1
+        cc: -1
       }
     },
     calibration_depthRange: {
@@ -278,7 +279,7 @@ function generateCalibrationParams() {
         min: 1, 
         max: 55, 
         value: w.calibration_depthRange || 30, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_depthRange', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_depthRange.midi.cc : -1
+        cc: -1
       }
     },
     calibration_offsetX: {
@@ -288,7 +289,7 @@ function generateCalibrationParams() {
         min: -offsetX/2, 
         max: offsetX/2, 
         value: w.calibration_offsetX || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetX', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_offsetX.midi.cc : -1
+        cc: -1
       }
     },
     calibration_offsetY: {
@@ -298,7 +299,7 @@ function generateCalibrationParams() {
         min: -offsetY/2, 
         max: offsetY/2, 
         value: w.calibration_offsetY || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_offsetY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_offsetY.midi.cc : -1
+        cc: -1
       }
     },
     calibration_zoom: {
@@ -309,7 +310,7 @@ function generateCalibrationParams() {
         max: 4.0, 
         step: 0.1, 
         value: w.calibration_zoom || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_zoom', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_zoom.midi.cc : -1
+        cc: -1
       }
     },
     calibration_perspective: {
@@ -318,7 +319,7 @@ function generateCalibrationParams() {
       midi: {min: 100, 
         max: 2000, 
         value: 800,
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_perspective', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_perspective.midi.cc : -1
+        cc: -1
       }
     },
     calibration_rotateX: {
@@ -328,7 +329,7 @@ function generateCalibrationParams() {
         min: -65, 
         max: 65, 
         value: w.calibration_rotateX || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateX', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_rotateX.midi.cc : -1
+        cc: -1
       }
     },
     calibration_rotateY: {
@@ -338,7 +339,7 @@ function generateCalibrationParams() {
         min: -65, 
         max: 65, 
         value: w.calibration_rotateY || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_rotateY', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_rotateY.midi.cc : -1
+        cc: -1
       }
     },
     calibration_mirror: {
@@ -348,10 +349,12 @@ function generateCalibrationParams() {
         min: 0, 
         max: 1, 
         value: w.calibration_mirrored || 0, 
-        cc: (w.lastScriptName !== false && isObjectPathSet(w.mappings, [w.lastScriptName, 'calibration_mirrored', 'midi', 'cc'])) ? w.mappings[w.lastScriptName].calibration_mirrored.midi.cc : -1
+        cc: -1
       }
     }
   };
+
+  //overwrite calibration mapping if it exists in mappings already
   $.each(calibrationParams,function(key,param) {
     if(isObjectPathSet(w.mappings, [w.hash, key])) {
       console.log('mapping for calibration already exists!', key, w.mappings[w.hash][key]);
