@@ -139,44 +139,36 @@ function loaded() {
 		showAlert({
 			title: 'Copy to a text file:',
 			message: '<p>Be careful if you choose to modify this, min/max values are there for a reason.</p><textarea>'+JSON.stringify(w.mappings, null, 3)+'</textarea>',
-			buttons: [{label: 'Otayy'}]
-		});
-		// prompt('Copy the following to a text file:', JSON.stringify(w.mappings));
+		}, [
+			{label: 'Otayy'}
+		]);
 	});
 	$('#importButton').unbind('click').bind('click', function(e) {
 
-		showAlert({
-			title: 'Import Settings',
-			message: '<p>Paste your exported data:</p><textarea></textarea>',
-			buttons: [
-				{label: 'Cancel'},
-				{label: 'Import', callback: function() {
+		showAlert(uiMessages.importButton, [
+			{label: 'Cancel'},
+			{label: 'Import', callback: function() {
 
-					var importedData = $('.alertBox textarea').first().val();
-					// alert(importedData);
+				var importedData = $('.alertBox textarea').first().val();
+				// alert(importedData);
 
-					try {
-						JSON.parse(importedData);
-					} catch (e) {
-						console.log('unable to parse json string');
-						setTimeout(function() {
-							showAlert({
-								title: 'Unable to parse JSON string!',
-								message: 'Try running it through a JSON validator or something',
-								buttons: [{label: 'Aw rats!'}]
-							});
-						}, 500);
-						
-						return false;
-					}
-					w.mappings = JSON.parse(importedData);
-					w.saveCookie();
-					w.loadCookie();
-					window.close();
+				try {
+					JSON.parse(importedData);
+				} catch (e) {
+					console.log('unable to parse json string');
+					setTimeout(function() {
+						showAlert(uiMessages.importError, [{label: 'Aw rats!'}]);
+					}, 500);
+					
+					return false;
+				}
+				w.mappings = JSON.parse(importedData);
+				w.saveCookie();
+				w.loadCookie();
+				window.close();
 
-				}}
-			]
-		});
+			}}
+		]);
 
 
 	});
@@ -340,7 +332,7 @@ function keyPressed(event) {
   
 }
 
-function showAlert(config) {
+function showAlert(config, buttons) {
 
 	console.log('showing alert');
 	var alertWindow = $('#alertWindow');
@@ -352,9 +344,9 @@ function showAlert(config) {
 	$('.title',dialog).html(config.title || '');
 	$('.message',dialog).html(config.message || '');
 	if(isset(config.message)) $('.message',dialog).html(config.message);
-	if(isset(config.buttons)) {
-		for(var i=0; i<config.buttons.length; i++) {
-			$('.button'+(i+1),dialog).html(config.buttons[i].label || 'Okay').unbind('click').bind('click', config.buttons[i].callback).removeClass('hidden');
+	if(isset(buttons)) {
+		for(var i=0; i<buttons.length; i++) {
+			$('.button'+(i+1),dialog).html(buttons[i].label || 'Okay').unbind('click').bind('click', buttons[i].callback).removeClass('hidden');
 		}
 		$('.button:not(.hidden)',dialog).bind('click', function() { closeAlert(false) });
 		$('.button:not(.hidden)',dialog).last().focus();

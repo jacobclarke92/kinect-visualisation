@@ -8,7 +8,8 @@ requirejs(
 		'/app/scripts/ui/ui.js',
 		'/app/scripts/ui/midi.js',
 		'/app/scripts/ui/templates.js',
-		'/app/scripts/ui/window_events.js'
+		'/app/scripts/ui/window_events.js',
+		'/app/scripts/ui/ui_messages.js'
 	],
 	function($) {
 

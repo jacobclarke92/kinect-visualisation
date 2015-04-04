@@ -77,17 +77,13 @@ function mappingAudioDone(e) {
 		if(elem) {
 
 			$('body').addClass('disabled');
-			showAlert({
-				title: 'Audio mapping behavior',
-				message: 'Average is good for broader ranges whereas trigger is good for small ranges, e.g. a kick.',
-				buttons: [
-					{label: 'Cancel', callback: function() { 
-						$('body').removeClass('disabled');
-					}},
-					{label: 'Average', callback: function() { saveAudioMapping('average', elem) }},
-					{label: 'Trigger', callback: function() { saveAudioMapping('trigger', elem) }}
-				]
-			});
+			showAlert(uiMessages.mappingAudioDone, [
+				{label: 'Cancel', callback: function() { 
+					$('body').removeClass('disabled');
+				}},
+				{label: 'Average', callback: function() { saveAudioMapping('average', elem) }},
+				{label: 'Trigger', callback: function() { saveAudioMapping('trigger', elem) }}
+			]);
 
 		}else{
 			console.log('no audio mappable element selected -- how did you get this far??');
@@ -320,28 +316,24 @@ function deleteSelectedAudioMapping() {
 }
 
 function commenceAutoMapping() {
-	showAlert({
-		title: 'Auto Midi Map...',
-		message: '<p>This will allow you to quickly set up sequences of MIDI mappings, choose from the following sets to start:</p>',
-		buttons: [
-			{label: 'Cancel'},
-			{label: 'Visualisation List', callback: function() {
+	showAlert(uiMessages.commenceAutoMapping, [
+		{label: 'Cancel'},
+		{label: 'Visualisation List', callback: function() {
 
-			}},
-			{label: 'Colours', callback: function() {
+		}},
+		{label: 'Colours', callback: function() {
 
-			}},
-			{label: 'Calibration Params', callback: function() {
+		}},
+		{label: 'Calibration Params', callback: function() {
 
-			}},
-			{label: 'Filter Params', callback: function() {
+		}},
+		{label: 'Filter Params', callback: function() {
 
-			}},
-			{label: 'Current Visualisation Params', callback: function() {
+		}},
+		{label: 'Current Visualisation Params', callback: function() {
 
-			}}
-		]
-	});
+		}}
+	]);
 }
 
 
