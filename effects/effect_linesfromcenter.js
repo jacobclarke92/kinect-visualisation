@@ -1,3 +1,4 @@
+//exclude
 effect_linesfromcenter = {
 
   requiresOutlines: true,
@@ -22,7 +23,7 @@ effect_linesfromcenter = {
     setMapping('outlinePointSkip', 3, 10, 1);
     setMapping('spawnAmount', 1, 100, 20);
     setMapping('outlineAlpha', 0, 1, 1);
-    setMapping('trailAmount', 0, 0.5, 0.1);
+    setMapping('trailAmount', 0, 1, 0.1);
   },
 
   draw: function() {

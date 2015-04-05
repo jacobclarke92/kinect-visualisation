@@ -163,10 +163,9 @@ function loaded() {
 					return false;
 				}
 				console.info('IMPORTED DATA IS GOOD');
-				console.log(w.mappings);
 				w.mappings = {};
-				console.log(w.mappings);
 				w.mappings = JSON.parse(importedData);
+				w.clearStorage();
 				w.saveStorage();
 				setTimeout(function() {
 					w.loadStorage();
