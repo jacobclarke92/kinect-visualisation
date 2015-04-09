@@ -1,4 +1,3 @@
-//exclude
 effect_linesfromcenter = {
 
   requiresOutlines: true,
@@ -13,6 +12,8 @@ effect_linesfromcenter = {
   minY: false,
   centerX: false,
   centerY: false,
+  aimCenterX: tX( 160 ),
+  aimCenterY: tY( 120 ),
 
   screens: [],
   graphics: false,
@@ -22,13 +23,14 @@ effect_linesfromcenter = {
     setMapping('randomizeAmount', 0, 50, 1);
     setMapping('outlinePointSkip', 3, 10, 1);
     setMapping('spawnAmount', 1, 100, 20);
+    setMapping('lineAlpha', 0, 1, 1);
     setMapping('outlineAlpha', 0, 1, 1);
     setMapping('trailAmount', 0, 1, 0.1);
   },
 
   draw: function() {
 
-   if(gotImage && typeof outlineArray != 'undefined') {
+   if(gotImage && isset(outlineArray) && outlineArray.length > 0) {
       
       this.graphics.lineStyle(lineThickness, randomPaletteColour(), outlineAlpha);
 
@@ -37,6 +39,7 @@ effect_linesfromcenter = {
       this.maxX = 0;
       this.minY = 0;
 
+      //draws outlines and generates max and min XY values
       var firstX, firstY, offsetX, offsetY, outline, x, y;
       var skip = (outlinePointSkip < 1) ? 1 : Math.round(outlinePointSkip);
       for(var n=0; n < outlineArray.length; n ++) {
@@ -51,6 +54,7 @@ effect_linesfromcenter = {
             x = outline[i][0] + offsetX;
             y = outline[i][1] + offsetY;
 
+            //moveTo if first point otherwise lineTo
             if(i == 0) {
               firstX = x;
               firstY = y;
@@ -59,46 +63,40 @@ effect_linesfromcenter = {
               this.graphics.lineTo( tX( x ), tY( y ) );
             }
 
+            //update min/max values
             if(x > this.maxX) this.maxX = x;
             else if(x < this.minX) this.minX = x;
             if(y > this.maxY) this.maxY = y;
             else if(y < this.minY) this.minY;
+
           }
+          //complete the outline by drawing back to first point
           this.graphics.lineTo(tX( firstX ), tY( firstY ));
+
         }
       }
 
       
-
+      //gets mid point
       this.centerX = this.minX + (this.maxX-this.minX)/2;
       this.centerY = this.minY + (this.maxY-this.minY)/2;
 
-      /*
-      var isInOutline = true;
-      for(var n=0; n < outlineArray.length; n ++) {
-        if(typeof outlineArray[n] != 'undefined' && !isPointInsidePolygon({x: this.centerX, y: this.centerY}, outlineArray[n], true)) {
-          isInOutline = false;
-        }
-      }
-      console.log(isInOutline);
+      //eases aimCenter to center
+      this.aimCenterX += (this.centerX-this.aimCenterX)/30;
+      this.aimCenterY += (this.centerY-this.aimCenterY)/30;
 
-      
-      */
+      // this.graphics.drawCircle(tX( this.centerX), tY( this.centerY ), 10);
 
-
-      this.graphics.drawCircle(tX( this.centerX), tY( this.centerY ), 10);
+      //draw random lines
       var px, outline, randOutline;
       for(var n=0; n < spawnAmount; n ++) {
-        randOutline = Math.floor(outlineArray.length);
-        // console.log(randOutline, outlineArray, outlineArray[randOutline]);
-        if(isset(outlineArray[randOutline])) {
-          console.log('is outline');
-          outline = outlineArray[randOutline];
-          px = outline[Math.floor(outline.length-1)];
-          this.graphics.lineStyle(lineThickness, randomPaletteColour());
-          this.graphics.moveTo(tX( this.centerX ), tY( this.centerY ));
-          this.graphics.lineTo(tX( px[0] ), tY( px[1] ));
-        }
+        var z = Math.floor(Math.random()*outlineArray.length);
+        outline = outlineArray[z];
+        px = outline[Math.floor(Math.random()*outline.length)];
+        this.graphics.lineStyle(lineThickness, randomPaletteColour(), lineAlpha);
+        this.graphics.moveTo(tX( this.aimCenterX ), tY( this.aimCenterY ));
+        this.graphics.lineTo(tX( px[0] ), tY( px[1] ));
+
       }
 
     }else{
