@@ -58,9 +58,9 @@ effect_linesfromcenter = {
             if(i == 0) {
               firstX = x;
               firstY = y;
-              this.graphics.moveTo(tX( firstX ), tY( firstY ));
+              if(outlineAlpha > 0) this.graphics.moveTo(tX( firstX ), tY( firstY ));
             }else{
-              this.graphics.lineTo( tX( x ), tY( y ) );
+              if(outlineAlpha > 0) this.graphics.lineTo( tX( x ), tY( y ) );
             }
 
             //update min/max values
@@ -71,7 +71,7 @@ effect_linesfromcenter = {
 
           }
           //complete the outline by drawing back to first point
-          this.graphics.lineTo(tX( firstX ), tY( firstY ));
+          if(outlineAlpha > 0) this.graphics.lineTo(tX( firstX ), tY( firstY ));
 
         }
       }
@@ -90,12 +90,17 @@ effect_linesfromcenter = {
       //draw random lines
       var px, outline, randOutline;
       for(var n=0; n < spawnAmount; n ++) {
-        var z = Math.floor(Math.random()*outlineArray.length);
-        outline = outlineArray[z];
+
+        //select random point from any of the outlines
+        outline = outlineArray[Math.floor(Math.random()*outlineArray.length)];
         px = outline[Math.floor(Math.random()*outline.length)];
+        
+        offsetX = Math.random()*randomizeAmount - (randomizeAmount/2);
+        offsetY = Math.random()*randomizeAmount - (randomizeAmount/2);
+        
         this.graphics.lineStyle(lineThickness, randomPaletteColour(), lineAlpha);
         this.graphics.moveTo(tX( this.aimCenterX ), tY( this.aimCenterY ));
-        this.graphics.lineTo(tX( px[0] ), tY( px[1] ));
+        this.graphics.lineTo(tX( px[0] + offsetX ), tY( px[1] + offsetY ));
 
       }
 
