@@ -12,7 +12,21 @@ effect_rain = {
 		setMapping('wind',-12, 12, 0);
 		setMapping('gust',0, 10, 2);
     	setMapping('lineAlpha', 0, 1, 1);
+		setMapping('lineLength',1, 50, 20);
 		setMapping('trailAmount', 0, 1, 0.2); //irrelevant
+
+		var thing = [
+			[
+				[140, 100],
+				[180, 100],
+				[180, 200],
+				[140, 200],
+				[140, 100]
+			]
+		];
+
+		console.log('intersecting?', isPointInsidePolygon([160, 150], thing[0], true));
+
 	},
 
 	draw: function() {
@@ -48,7 +62,7 @@ Droplet = {
 
 		this.shape.lineStyle(lineThickness, randomPaletteColour(), lineAlpha);
 		this.shape.moveTo(0,0);
-		this.shape.lineTo(0, -20);
+		this.shape.lineTo(0, -lineLength);
 
 		this.life = 0;
 
@@ -63,10 +77,10 @@ Droplet = {
 		if(this.splash) {
 
 			this.shape.scale.x += 0.5;
-			this.shape.scale.y += 0.5;
+			this.shape.scale.y -= 0.1;
 			this.shape.alpha -= 0.2;
 			
-			if(this.life > 3) {
+			if(this.life > 8) {
 				this.selfRemove();
 			}
 
@@ -91,7 +105,7 @@ Droplet = {
 				this.changeToSplash();
 			//if intersecting an outline then make splash
 			}else if(this.isIntersectingOutline()) {// || (this.moveX > 140 && this.moveX < 180 && this.moveY > 100)) {
-				console.log('IS IN OUTLINE');
+				// console.log('IS IN OUTLINE');
 				this.changeToSplash();
 			}
 
@@ -116,7 +130,7 @@ Droplet = {
 		this.shape.lineTo(15, -10);
 
 		this.shape.scale.x = 0.5;
-		this.shape.scale.y = 0.5;
+		this.shape.scale.y = 1;
 
 		this.life = 0;
 		this.splash = true;
@@ -125,21 +139,24 @@ Droplet = {
 
 	isIntersectingOutline: function() {
 
-		outlineArray = [
-			[
-				[140, 100],
-				[180, 100],
-				[180, 200],
-				[140, 200]
-			]
-		];
+		if(isset(outlineArray)) {
+			if(outlineArray.length == 0) outlineArray = [
+				[
+					[140, 100],
+					[180, 100],
+					[180, 200],
+					[140, 200]
+				]
+			];
 
-		if(isset(outlineArray) && outlineArray.length > 0) {
-			
-			for(var n=0; n < outlineArray.length; n ++) {
-				if(isPointInsidePolygon( {x: this.moveX, y: this.moveY}, outlineArray[n], true )) return true;
+
+			if(outlineArray.length > 0) {
+				
+				for(var n=0; n < outlineArray.length; n ++) {
+					if(isPointInsidePolygon( [this.moveX, this.moveY], outlineArray[n], true )) return true;
+				}
+				return false;
 			}
-			return false;
 
 		}else{
 			// console.log('no outline array');

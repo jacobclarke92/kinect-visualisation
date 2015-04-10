@@ -42,25 +42,25 @@ Works for any polygon, not just convex polygons.
 function isPointInsidePolygon(point, polygon, onBorderCountsAsOutside) {
     // point is any javascript object that contains both x & y numeric parameters
     // polygon is array of points, properly sorted to form a polygon
-    var pointVerticalLine = [point, { x: point.x, y: point.y + 1 }];
+    var pointVerticalLine = [point, [point[0], point[1]+1]];
     var higherIntersectionsCount = 0;
     var lowerIntersectionCount = 0;
 	for (var i = 0; i < polygon.length; i++) {
 	    var polygonLine = [polygon[i], polygon[(i+1) % polygon.length]];
 	    var result = intersectionLines(pointVerticalLine, polygonLine);
-	    // console.log(result);
 	    if (result.onLine2) {
 	        if (pointsEqual(point, result)) {
 	            return !onBorderCountsAsOutside;
 	        }
 
-	        if (result.y > point.y) {
+	        if (result.y > point[1]) {
 	            higherIntersectionsCount++;
 	        } else {
 	            lowerIntersectionCount++;
 	        }
 	    }
 	}  
+    // console.log(higherIntersectionsCount, lowerIntersectionCount);
     if (higherIntersectionsCount % 2 != 0 && lowerIntersectionCount % 2 != 0) {
         return true;
     } else {
@@ -69,7 +69,7 @@ function isPointInsidePolygon(point, polygon, onBorderCountsAsOutside) {
 }
 
 function intersectionLines(line1, line2, excludeStartingPoints, includeEndingPoints) {
-    return checkLineIntersection(line1[0].x, line1[0].y, line1[1].x, line1[1].y, line2[0].x, line2[0].y, line2[1].x, line2[1].y, excludeStartingPoints, includeEndingPoints);
+    return checkLineIntersection(line1[0][0], line1[0][1], line1[1][0], line1[1][1], line2[0][0], line2[0][1], line2[1][0], line2[1][1], excludeStartingPoints, includeEndingPoints);
 }
 
 
