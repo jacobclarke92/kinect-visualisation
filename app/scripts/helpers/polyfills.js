@@ -37,6 +37,29 @@ function isObjectEmpty(obj) {
 function byteCount(s) {
     return encodeURI(s).split(/%..|./).length - 1;
 }
+function randRound(range) {
+    if(typeof range == 'object') {
+        var actualRange = Math.abs(range[1]-range[0]);
+        return range[0] + Math.floor(Math.random()*actualRange);
+    }else if(typeof range == 'number') {
+        return Math.floor(Math.random()*range);
+    }else{
+        console.log('randRound range is not a number or array');
+        return 0;
+    }
+}
+function rand(range) {
+    if(typeof range == 'object') {
+        var actualRange = Math.abs(range[1]-range[0]);
+        return range[0] + Math.random()*actualRange;
+    }else if(typeof range == 'number') {
+        return Math.random()*range;
+    }else{
+        console.log('randRound range is not a number or array');
+        return 0;
+    }
+}
+
 function supports_html5_storage() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;

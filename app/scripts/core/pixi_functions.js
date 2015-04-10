@@ -137,10 +137,6 @@ function dist(x1,y1,x2,y2) {
 	
 	return Math.sqrt( Math.pow(x2-x1,2) + Math.pow(y2-y1,2) );
 }
-function rand(from,to) {
-	var range = Math.abs(from) + Math.abs(to);
-	return (from + Math.random()*range);
-}
 function r(flot) {
 	return Math.round(flot);
 }
