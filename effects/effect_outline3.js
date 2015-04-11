@@ -87,7 +87,7 @@ effect_outline3 = {
               this.graphics.lineTo(tX( x ), tY( y ));
             }
           }
-          this.graphics.lineTo(tX( firstX ), tY( firstY ));
+          this.graphics.lineTo( firstX , firstY );
         }
       }
 

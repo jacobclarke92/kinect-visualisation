@@ -12,7 +12,7 @@ effect_rain = {
 		setMapping('wind',-12, 12, 0);
 		setMapping('gust',0, 10, 2);
     	setMapping('lineAlpha', 0, 1, 1);
-		setMapping('lineLength',1, 50, 20);
+		setMapping('lineLength',1, 100, 20);
 		setMapping('trailAmount', 0, 1, 0.2); //irrelevant
 
 		var thing = [
@@ -49,11 +49,11 @@ effect_rain = {
 Droplet = {
 	init: function() {
 
-		var windOffset = Math.abs(wind*25);
+		this.windOffset = Math.abs(wind*25);
 
 
 		this.shape = new PIXI.Graphics();
-		this.moveX = this.lastX = randRound(320 + windOffset*2) - windOffset;
+		this.moveX = this.lastX = randRound(320 + this.windOffset*2) - this.windOffset;
 
 		// console.log(this.moveX, tX( this.moveX ));
 		this.moveY = this.lastY = 0;
@@ -86,6 +86,8 @@ Droplet = {
 
 		}else{
 
+			this.windOffset = Math.abs(wind*25);
+
 			//update position
 			this.moveX += wind;
 			this.moveY += this.gravity + (this.moveY/240)*this.gravity;
@@ -99,7 +101,7 @@ Droplet = {
 			this.shape.y = tY( this.moveY );
 
 			//if out of bounds then clear
-			if(this.moveX < -20 || this.moveX > 320+20) {
+			if(this.moveX < -this.windOffset*2 || this.moveX > 320 + this.windOffset*2) {
 				this.selfRemove();
 			}else if(this.moveY >= 240) {
 				this.changeToSplash();
@@ -140,15 +142,7 @@ Droplet = {
 	isIntersectingOutline: function() {
 
 		if(isset(outlineArray)) {
-			if(outlineArray.length == 0) outlineArray = [
-				[
-					[140, 100],
-					[180, 100],
-					[180, 200],
-					[140, 200]
-				]
-			];
-
+			// if(outlineArray.length == 0) outlineArray = [[[140, 100],[180, 100],[180, 200],[140, 200]]];
 
 			if(outlineArray.length > 0) {
 				
