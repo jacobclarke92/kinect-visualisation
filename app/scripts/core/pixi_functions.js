@@ -11,7 +11,8 @@ var breakLoop = 500; //amount of times a while loop can try before breaking
 
 
 //filter effects
-var displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementTexture;
+var displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, kaleidoscopeFilter, glowFilter;
+var displacementTexture;
 var filterCollection = [];
 
 window.filter_displacement = 0;
@@ -34,16 +35,18 @@ function initPixiFilters() {
 	
 	displacementTexture = PIXI.Texture.fromImage("/app/img/displacement_map.png");
 	
-	displacementFilter = new PIXI.filters.DisplacementFilter(displacementTexture);
-	blurFilter = new PIXI.filters.BlurFilter();
-	pixelateFilter = new PIXI.filters.PixelateFilter();
-	invertFilter = new PIXI.filters.InvertFilter();
-	rgbSplitterFilter = new PIXI.filters.RGBSplitFilter();
-	twistFilter = new PIXI.filters.TwistFilter();
+	displacementFilter 	= new PIXI.filters.DisplacementFilter(displacementTexture);
+	blurFilter 			= new PIXI.filters.BlurFilter();
+	pixelateFilter 		= new PIXI.filters.PixelateFilter();
+	invertFilter 		= new PIXI.filters.InvertFilter();
+	rgbSplitterFilter 	= new PIXI.filters.RGBSplitFilter();
+	twistFilter 		= new PIXI.filters.TwistFilter();
+	kaleidoscopeFilter 	= new PIXI.filters.KaleidoscopeFilter();
+	// glowFilter 			= new PIXI.filters.GlowFilter();
 
 	rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = rgbSplitterFilter.green.y = rgbSplitterFilter.blue.x = rgbSplitterFilter.blue.y = 0;
 
-	filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter];
+	filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter, glowFilter, kaleidoscopeFilter];
 }
 
 function getWindowSize() {
@@ -249,6 +252,8 @@ function animateFrame() {
 		if(filter_displacement != 0) filterCollection.push(displacementFilter);
 		if(filter_invert != 0) filterCollection.push(invertFilter);
 		if(filter_blur != 0) filterCollection.push(blurFilter);
+		// if(1 != 0) filterCollection.push(glowFilter);
+		// if(1 != 0) filterCollection.push(kaleidoscopeFilter); // not ready yet .. all in good time
 		if(filterCollection.length == 0) filterCollection = null;
 	}	
 
