@@ -11,17 +11,8 @@ var breakLoop = 500; //amount of times a while loop can try before breaking
 
 
 //filter effects
-var displacementTexture = PIXI.Texture.fromImage("/app/img/displacement_map.png");
-var displacementFilter = new PIXI.DisplacementFilter(displacementTexture);
-var blurFilter = new PIXI.BlurFilter();
-var pixelateFilter = new PIXI.PixelateFilter();
-var invertFilter = new PIXI.InvertFilter();
-var rgbSplitterFilter = new PIXI.RGBSplitFilter();
-var twistFilter = new PIXI.TwistFilter();
-
-rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = rgbSplitterFilter.green.y = rgbSplitterFilter.blue.x = rgbSplitterFilter.blue.y = 0;
-
-var filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter];
+var displacementFilter, blurFilter, pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementTexture;
+var filterCollection = [];
 
 window.filter_displacement = 0;
 window.filter_blur = 0;
@@ -38,6 +29,22 @@ var endDrawY = winH;
 
 
 var sizeRatio = 1;
+
+function initPixiFilters() {
+	
+	displacementTexture = PIXI.Texture.fromImage("/app/img/displacement_map.png");
+	
+	displacementFilter = new PIXI.filters.DisplacementFilter(displacementTexture);
+	blurFilter = new PIXI.filters.BlurFilter();
+	pixelateFilter = new PIXI.filters.PixelateFilter();
+	invertFilter = new PIXI.filters.InvertFilter();
+	rgbSplitterFilter = new PIXI.filters.RGBSplitFilter();
+	twistFilter = new PIXI.filters.TwistFilter();
+
+	rgbSplitterFilter.red.x = rgbSplitterFilter.red.y = rgbSplitterFilter.green.x = rgbSplitterFilter.green.y = rgbSplitterFilter.blue.x = rgbSplitterFilter.blue.y = 0;
+
+	filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter];
+}
 
 function getWindowSize() {
 
@@ -103,6 +110,8 @@ function initPIXI() {
 	renderer.view.style.display = "block";
 
 	getWindowSize();
+
+	initPixiFilters();
 
 	document.getElementById('contentZone').appendChild(renderer.view);
 
@@ -248,6 +257,6 @@ function animateFrame() {
 
 	//render it go go go
 	renderer.render(stage);
-	if(animating) requestAnimFrame(animateFrame);
+	if(animating) requestAnimationFrame(animateFrame);
 
 }

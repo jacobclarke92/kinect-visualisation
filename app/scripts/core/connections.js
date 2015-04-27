@@ -161,7 +161,7 @@ this.initLoadedScript = function(script) {
 
 	if(!_this.animating) {
 		_this.animating = true;
-		this.requestAnimFrame(animateFrame);
+		this.requestAnimationFrame(animateFrame);
 	}
 
 
