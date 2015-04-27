@@ -22037,13 +22037,13 @@ function KaleidoscopeFilter()
 {
     core.AbstractFilter.call(this,
         // vertex shader
-        "varying vec2 vUv;\n\nvoid main() {\n\n\tvUv = uv;\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\n}",
+        null, // fs.readFileSync(__dirname + '/kaleidoscope.vert', 'utf8'),
         // fragment shader
-        "uniform sampler2D tDiffuse;\nuniform float sides;\nuniform float angle;\n\nvarying vec2 vUv;\n\nvoid main() {\n\n\tvec2 p = vUv - 0.5;\n\tfloat r = length(p);\n\tfloat a = atan(p.y, p.x) + angle;\n\tfloat tau = 2. * 3.1416 ;\n\ta = mod(a, tau/sides);\n\ta = abs(a - tau/sides/2.) ;\n\tp = r * vec2(cos(a), sin(a));\n\tvec4 color = texture2D(tDiffuse, p + 0.5);\n\tgl_FragColor = color;\n\n}\"",
+        "precision lowp float;\n\nvarying vec2 vUv;\n\nuniform float sides;\nuniform float angle;\n\nuniform sampler2D tDiffuse;\n\nvoid main(void) {\n\n   vec2 p = vUv - 0.5;\n   float r = length(p);\n   float a = atan(p.y, p.x) + angle;\n   float tau = 2. * 3.1416 ;\n   a = mod(a, tau/sides);\n   a = abs(a - tau/sides/2.) ;\n   p = r * vec2(cos(a), sin(a));\n   vec4 color = texture2D(tDiffuse, p + 0.5);\n   gl_FragColor = color;\n\n}",
         // custom uniforms
         {
-            sides: { type: '1f', value: 1 },
-            angle: { type: '1f', value: 0 },
+            sides: { type: '1f', value: 1.0 },
+            angle: { type: '1f', value: 0.0 },
             tDiffuse: {type: 't', value: null}
         }
     );
