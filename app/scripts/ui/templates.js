@@ -371,3 +371,25 @@ function generateCalibrationParams() {
   createSliders(calibrationParams,calibrationZone);
 
 }
+
+function generateDisplacementThumbs() {
+   $('#displacementThumbZone').html('');
+  if(isset(displacementMapImages)) {
+    $.each(displacementMapImages,function(i, thumbURL) {
+      var template = $('#templates #displacementImage').children().clone();
+      $('#displacementThumbZone').append(template);
+      var thumb =  $('#displacementThumbZone .displacement-thumb').last();
+      thumb.css('background-image','url("/'+thumbURL+'")').attr('data-url','/'+thumbURL);
+      if(i == 0) thumb.addClass('selected');
+      thumb.unbind('click').bind('click',function() {
+        $('.displacement-thumb').removeClass('selected');
+        $(this).addClass('selected');
+        w.updateDisplacementImage($(this).attr('data-url'));
+      })
+    });
+  }else{
+    console.warn('displacement map image list not inited');
+  }
+}
+
+

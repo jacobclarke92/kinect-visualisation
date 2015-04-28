@@ -49,6 +49,11 @@ function initPixiFilters() {
 	filterCollection = [pixelateFilter, invertFilter, rgbSplitterFilter, twistFilter, displacementFilter, blurFilter, glowFilter, kaleidoscopeFilter];
 }
 
+function updateDisplacementImage(url) {
+	displacementTexture = PIXI.Sprite.fromImage(url);
+	displacementFilter 	= new PIXI.filters.DisplacementFilter(displacementTexture);
+}
+
 function getWindowSize() {
 
 	winW = $(window).width();

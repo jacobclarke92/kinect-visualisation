@@ -291,6 +291,7 @@ function initAllParameters() {
 	generateEffectParams();
 	generateFilterParams();
 	generateCalibrationParams();
+	generateDisplacementThumbs();
 
 	// Init mappable elements ... but wait for DOM to propgate first it misses elements otherwise :/
 	setTimeout(function() {
@@ -301,7 +302,6 @@ function initAllParameters() {
 	},1000);
 
 }
-
 
 function keyPressed(event) {
 
