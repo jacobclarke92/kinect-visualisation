@@ -17,6 +17,7 @@ var isWin = /^win/.test(process.platform);
 var fs = require('fs');
 var colors = require('colors/safe');
 var clear = require('clear');
+var glob = require("glob");
 
 var sys = require('sys');
 var tty = require('tty');
@@ -336,44 +337,52 @@ if(!skipEffectsList) {
 
 	var effects = [];
 	var effectsScanned = 0;
-	fs.readdir('./effects/',function(err, files) {
-		if(!err) {
 
-			if(files.length > 0) {
-				var totalEffects = files.length;
+	glob("**/effects/effect_*.js", function (er, files) {
+		if(verbose) console.log(files.length+' effects scanned');
+		if(er == null) {
+			files.forEach(function (file) {
+				fs.readFile(files[i], 'utf8', function (err, data) {
+					if (err) {
+						if(verbose) console.log(colors.orange('Unable to read file: '+file));
+					}else if(data.indexOf('//exclude') === 0) {
+						if(verbose) console.log('Exluding '+file+' '+i);
+					}else{
+						effects.push(file.substring(15,file.length-3));
+						// console.log(file+' '+i);
+					}
 
-				if(verbose) console.log('Scanning effects folder...');
-				files.forEach(function(file) {
-					if(file.indexOf('effect_') === 0) {
-						fs.readFile('./effects/'+file, 'utf8', function(err,data) {
-							if(err) {
-								console.log(colors.red('Error reading '+file+'! Check your permissions.'));
-							}else if(data.indexOf('//exclude') != 0) {
-								effects.push(file.substring(7,file.length-3));
-							}else{
-								if(verbose) console.log('Exluding '+file+', as per the //exclude comment on line 1');
-							}
-
-							if(++effectsScanned >= totalEffects) {
-
-								if(verbose) console.log(effects.length+' effects scanned');
-								var str = 'effects = ["'+effects.join('", "')+'"];';
-								fs.writeFile('./app/scripts/effects_list.js', str, function() {
-									if(err) console.log(colors.red('Unable to save effects list! Check your writable permissions.'));
-								});
-							}
-
+					//gotta do the list write in the recursion because async
+					if(++effectsScanned == files.length) {
+						if(verbose) console.log('Writing effects list to file');
+						var str = 'effects = ["'+effects.join('", "')+'"];';
+						fs.writeFile('./app/scripts/effects_list.js', str, function(err) {
+							if(err) console.log(colors.red('Unable to save effects list! Check your writable permissions.'));
+							else if(devMode) console.log(colors.green('Effect list created!'));
 						});
-					}else totalEffects--;
-				});
-				
-				// fs.writeFile()
+					}
 
-			}else{
-				console.log(colors.red('No effect files in effects folder ... um send help.'));
-			}
+				});
+			});
+		}
+	});
+
+	var displacementImages = [];
+	var displacementImageScanned = 0;
+
+	glob("**/img/displacement_maps/*.jpg", function (er, files) {
+		if(er == null) {
+			if(verbose) console.log(files.length+' displacement map images scanned');
+			var file;
+			for(i in files) displacementImages.push(files[i]);
+			if(verbose) console.log('Writing displacement map image list to file');
+			var str = 'displacementMapImages = ["'+displacementImages.join('", "')+'"];';
+			fs.writeFile('./app/scripts/displacement_image_list.js', str, function(err) {
+				if(err) console.log(colors.red('Unable to displacement map image list! Check your writable permissions.'));
+				else if(devMode) console.log(colors.green('Displacement map image list created!'));
+			});
 		}else{
-			console.log(colors.red('Error scanning effects folder... very problematic! Check your folder permissions.'));
+			if(devMode) console.log(colors.red('Unable to scan displacement map image folder.. send help'));
 		}
 	});
 

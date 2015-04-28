@@ -9,6 +9,7 @@
     "colors": "^1.0.3",
     "connect": "^3.3.5",
     "event-source-polyfill": "0.0.1",
+    "glob": "^5.0.5",
     "http-request": "^0.7.0",
     "keypress": "^0.2.1",
     "less": "^2.4.0",
