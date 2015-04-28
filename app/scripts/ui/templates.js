@@ -186,7 +186,7 @@ function generateFilterParams() {
     filter_displacement: {
       label: 'Displacement', name: 'filter_displacement',  midi: {
           min: 0, 
-          max: 100, 
+          max: 1000, 
           value: 0,
           cc: -1
       } 

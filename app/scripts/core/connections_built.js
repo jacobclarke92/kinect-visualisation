@@ -495,6 +495,7 @@ var Duplexify = function(writable, readable, opts) {
   this._readable2 = null
 
   this._forwardDestroy = !opts || opts.destroy !== false
+  this._forwardEnd = !opts || opts.end !== false
   this._corked = 1 // start corked
   this._ondrain = null
   this._drained = false
@@ -540,7 +541,7 @@ Duplexify.prototype.setWritable = function(writable) {
   }
 
   var self = this
-  var unend = eos(writable, {writable:true, readable:false}, destroyer(this, true))
+  var unend = eos(writable, {writable:true, readable:false}, destroyer(this, this._forwardEnd))
 
   var ondrain = function() {
     var ondrain = self._ondrain
@@ -661,7 +662,7 @@ Duplexify.prototype._finish = function(cb) {
   var self = this
   this.emit('preend')
   onuncork(this, function() {
-    end(self._writable, function() {
+    end(self._forwardEnd && self._writable, function() {
       self.emit('prefinish')
       onuncork(self, cb)
     })
@@ -3112,6 +3113,7 @@ function WebSocketStream(target, protocols) {
   }
 
   function onclose() {
+    stream.end();
     stream.destroy()
   }
 

@@ -32,8 +32,8 @@ var endDrawY = winH;
 var sizeRatio = 1;
 
 function initPixiFilters() {
-	
-	displacementTexture = PIXI.Texture.fromImage("/app/img/displacement_map.png");
+
+	displacementTexture = PIXI.Sprite.fromImage("/app/img/displacement_maps/001.jpg");
 	
 	displacementFilter 	= new PIXI.filters.DisplacementFilter(displacementTexture);
 	blurFilter 			= new PIXI.filters.BlurFilter();
