@@ -1,0 +1,3 @@
+[submodule "app/libs/pixi"]
+	path = app/libs/pixi
+	url = https://github.com/GoodBoyDigital/pixi.js.git
