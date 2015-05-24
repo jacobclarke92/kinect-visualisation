@@ -182,7 +182,8 @@ function generateFilterParams() {
         value: 0,
         cc: -1
       }
-    },
+    }
+    ,
     filter_displacement: {
       label: 'Displacement', name: 'filter_displacement',  midi: {
           min: 0, 
@@ -190,7 +191,8 @@ function generateFilterParams() {
           value: 0,
           cc: -1
       } 
-    },
+    }
+    ,
     filter_pixelate: {
       label: 'Pixelate', name: 'filter_pixelate', midi: {
           min: 0, 
@@ -198,7 +200,8 @@ function generateFilterParams() {
           value: 0,
           cc: -1
       } 
-    },
+    }
+    ,
     filter_twist: {
       label: 'Twist', name: 'filter_twist', midi: {
           min: 0, 
@@ -206,7 +209,8 @@ function generateFilterParams() {
           value: 0,
           cc: -1
       } 
-    },
+    }
+    ,
     filter_invert: {
       label: 'Invert', name: 'filter_invert', midi: {
         min: -2.5,
@@ -214,11 +218,21 @@ function generateFilterParams() {
         value: 0,
         cc: -1
       }
-    },
+    }
+    ,
     filter_blur: {
       label: 'Blur', name: 'filter_blur', midi: {
           min: 0, 
           max: 100, 
+          value: 0,
+          cc: -1
+      } 
+    }
+    ,
+    filter_kaleidoscope: {
+      label: 'Kaleidoscope', name: 'filter_kaleidoscope', midi: {
+          min: 0, 
+          max: 30, 
           value: 0,
           cc: -1
       } 

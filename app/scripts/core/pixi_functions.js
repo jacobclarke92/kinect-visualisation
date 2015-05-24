@@ -21,6 +21,7 @@ window.filter_pixelate = 0;
 window.filter_invert = 0;
 window.filter_rgbSplit = 0;
 window.filter_twist = 0;
+window.filter_kaleidoscope = 0;
 
 
 var startDrawX = 0;
@@ -249,6 +250,7 @@ function animateFrame() {
 		rgbSplitterFilter.red.x = filter_rgbSplit;
 		rgbSplitterFilter.blue.x = -filter_rgbSplit;
 		blurFilter.blurX = blurFilter.blurY = filter_blur;
+		kaleidoscopeFilter.sides = Math.round(filter_kaleidoscope);
 
 		filterCollection = [];
 		if(filter_rgbSplit != 0) filterCollection.push(rgbSplitterFilter);
@@ -258,7 +260,7 @@ function animateFrame() {
 		if(filter_invert != 0) filterCollection.push(invertFilter);
 		if(filter_blur != 0) filterCollection.push(blurFilter);
 		// if(1 != 0) filterCollection.push(glowFilter);
-		// if(1 != 0) filterCollection.push(kaleidoscopeFilter); // not ready yet .. all in good time
+		if(filter_kaleidoscope != 0) filterCollection.push(kaleidoscopeFilter); // not ready yet .. all in good time
 		if(filterCollection.length == 0) filterCollection = null;
 	}	
 
