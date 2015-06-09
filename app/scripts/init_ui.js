@@ -6,6 +6,7 @@ requirejs(
 		'/settings.js',
 		'/app/scripts/effects_list.js',
 		'/app/scripts/displacement_image_list.js',
+		'/app/scripts/demo_effects.js',
 
 		'/app/scripts/ui/ui.js',
 		'/app/scripts/ui/midi.js',

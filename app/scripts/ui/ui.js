@@ -2,6 +2,7 @@
 var mappingAudio = false;
 var mappingMIDI = false;
 var autoMapInProgress = false;
+var demoMode = false;
 var autoMapType = '';
 
 //reset all mappable elements' click bindings
@@ -564,4 +565,42 @@ function receivedAutoMapMidi(byteArray, midiType) {
 
 }
 
+var effectInterval, colourInterval, currentDemoEffect, lastDemoEffect;
+var effectIntervalTime = 15 * 1000;
+var colourIntervalTime = 4 * 1000;
+function toggleDemoMode() {
+	demoMode = !demoMode;
+	$('#demoModeButton').html((demoMode) ? 'Disable Demo Mode' : 'Enable Demo Mode');
+	if(!demoMode) {
+		if(effectInterval) clearInterval(effectInterval);
+		if(colourInterval) clearInterval(colourInterval);
+	}else{
+
+		if(!demoEffects) {
+			console.warn('Demo effects not loaded!');
+			return false;
+		}
+		currentDemoEffect = randRound([0, demoEffects.length]);
+
+
+		// Init random effect
+		effectInterval = setInterval(function() {
+
+			currentDemoEffect ++;
+			if(currentDemoEffect >= demoEffects.length) currentDemoEffect = 0;
+			lastDemoEffect = demoEffects[currentDemoEffect];
+
+			w.changeScript(lastDemoEffect);
+
+		}, effectIntervalTime);
+
+		// Init random colour palette interval
+		colourInterval = setInterval(function() {
+
+			w.currentPalette = w.palettes[randRound([0, w.palettes.length])];
+
+		}, colourIntervalTime);
+
+	}
+}
 

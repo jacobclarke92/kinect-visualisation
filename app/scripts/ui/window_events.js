@@ -133,6 +133,9 @@ function loaded() {
 	$('#autoMapButton').unbind('click').bind('click', function(e) {
 		commenceAutoMapping();
 	});	
+	$('#demoModeButton').unbind('click').bind('click', function(e) {
+		toggleDemoMode();
+	});
 
 
 	$('#exportButton').unbind('click').bind('click', function(e) {
