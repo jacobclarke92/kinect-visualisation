@@ -11,7 +11,7 @@ effect_lines1 = {
   init: function() {
     setMapping('lineThickness', 1, 30, 1);
     setMapping('maxPointDist', 2, 100, 20);
-    setMapping('volumeDivider', 100, 5000, 150);
+    setMapping('volumeDivider', 50, 5000, 150);
     setMapping('trailAmount', 0, 1, 0.5);
   },
 

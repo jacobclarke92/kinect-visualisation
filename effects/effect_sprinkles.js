@@ -9,7 +9,7 @@ effect_sprinkles = {
   init: function() {
     setMapping('lineThickness', 1, 50, 2);
     setMapping('maxPointDist', 10, 200, 20);
-    setMapping('volumeDivider', 100, 400, 150);
+    setMapping('volumeDivider', 50, 400, 150);
     setMapping('trailAmount', 0, 1, 0.2);
   },
 

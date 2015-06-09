@@ -7,7 +7,7 @@ effect_triangles2 = {
 
 
 	init: function() {
-		setMapping('volumeDivider', 100, 400, 150);
+		setMapping('volumeDivider', 50, 400, 150);
 		setMapping('trailAmount', 0, 1, 0.2); //51 works well
 	},
 	
