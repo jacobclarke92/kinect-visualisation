@@ -1,1 +1,1 @@
-demoEffects=["circles1","lines1","lsd1","rain","triangles1","outline3","outline1","triangulation1","sprinkles"];
+demoEffects=["circles1","lines1","lsd1","rain","triangles1","outline3","outline1","triangulation1","sprinkles","smoke"];
