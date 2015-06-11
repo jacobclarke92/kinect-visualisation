@@ -113,7 +113,7 @@ SmokeParticle = {
 
 		this.shape.beginFill(randomPaletteColour(), particleAlpha);
 		// this.shape.lineStyle(0, 0x000000, 0);
-		this.shape.drawCircle(posX, posY, this.radius);
+		this.shape.drawCircle(0, 0, this.radius);
 
 		this.dead = false;
 		this.rotateSpeed = rand([0,0.2]);
@@ -130,7 +130,7 @@ SmokeParticle = {
 
 		
 			//update position
-			this.moveX += wind + (Math.random()*1 - 1);
+			this.moveX += wind + (Math.random()*1 - 0.5);
 			this.moveY -= this.gravity;
 
 			this.shape.scale.x = this.shape.scale.y += 0.02;
