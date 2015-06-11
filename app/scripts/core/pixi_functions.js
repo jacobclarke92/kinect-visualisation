@@ -190,9 +190,11 @@ function clearStage() {
 
 function initFrame() {
 	//clear excess frames
-	if(currentScript.screens.length > maxFrames) {
-		while(stage.children[maxFrames]) { stage.removeChild(stage.children[maxFrames]); }
-		currentScript.screens = currentScript.screens.splice(0,maxFrames);
+	if(typeof currentScript.ignoreStageThrottle == 'undefined') {
+		if(currentScript.screens.length > maxFrames) {
+			while(stage.children[maxFrames]) { stage.removeChild(stage.children[maxFrames]); }
+			currentScript.screens = currentScript.screens.splice(0,maxFrames);
+		}
 	}
 
 	//apply fade out to past frames
